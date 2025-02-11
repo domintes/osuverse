@@ -5,7 +5,7 @@ function App() {
   return (
     <>
       <div>
-        Welcome to osuverse!
+        Welcome to osuverse! dev
       </div>
     </>
   )
