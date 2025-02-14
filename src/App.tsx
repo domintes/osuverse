@@ -7,11 +7,13 @@ import UserColletionsPage from './pages/UserColletionsPage';
 function App() {
 
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="/collections" element={<UserColletionsPage />} />
-    </Routes>
+    <div className="osuverse-main-container">
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/collections" element={<UserColletionsPage />} />
+      </Routes>
+    </div>
   )
 }
 

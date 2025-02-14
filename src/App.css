@@ -40,3 +40,15 @@
 .read-the-docs {
   color: #888;
 }
+
+@font-face {
+  font-family: 'Bruno Ace';
+  src: url('/fonts/BrunoAce-Regular.woff2') format('woff2'),
+    url('/fonts/BrunoAce-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Bruno Ace', sans-serif;
+}
