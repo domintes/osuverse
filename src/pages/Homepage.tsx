@@ -1,8 +1,8 @@
-export default function Homepage() {
+export default function HomePage() {
 
     return (
-<div className='Homepage-container'>
-        Homepage
-</div>
+        <div className='HomePage-container'>
+            Homepage
+    </div>
     );
 }

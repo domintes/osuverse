@@ -1,14 +1,16 @@
 import './App.css'
 import { Routes, Route } from 'react-router-dom';
-import Homepage from './pages/Homepage';
-import About from './pages/About';
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import UserColletionsPage from './pages/UserColletionsPage';
 
 function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Homepage />} />
-      <Route path="/about" element={<About />} />
+      <Route path="/" element={<HomePage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/collections" element={<UserColletionsPage />} />
     </Routes>
   )
 }
