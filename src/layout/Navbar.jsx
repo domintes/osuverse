@@ -1,15 +1,19 @@
 import { css } from 'goober';
+import { useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
-    return (
-        <div className={navbarStyle}>
-            <div className="navbar-item">Home</div>
-            <div className="navbar-item">Collection</div>
-            <div className="navbar-item">About</div>
-        </div>
-    );
+  const navigate = useNavigate();
+
+  return (
+    <div className={navbarStyle}>
+      <div className="navbar-item" onClick={() => navigate('/')}>Home</div>
+      <div className="navbar-item" onClick={() => navigate('/collections')}>Collection</div>
+      <div className="navbar-item" onClick={() => navigate('/about')}>About</div>
+    </div>
+  );
 }
 
+//  Styles
 const navbarStyle = css`
   display: flex;
   justify-content: space-around;
