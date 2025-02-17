@@ -1,8 +1,13 @@
-export default function ContentContainer(props) {
+import { css } from 'goober';
 
+export default function AppContainer(props) {
     return (
-        <div className='osuverse-app-container'>
+        <div className={containerStyle}>
             {props.children}
         </div>
     );
 }
+
+const containerStyle = css`
+
+`;
