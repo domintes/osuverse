@@ -1,79 +1,20 @@
 import { useState, useEffect } from 'react';
-import { css } from 'goober';
 import axios from 'axios';
-
-const containerStyle = css`
-  width: 100%;
-  padding: 16px;
-`;
-
-const inputStyle = css`
-  padding: 8px;
-  width: 100%;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  margin-bottom: 16px;
-`;
-
-const resultListStyle = css`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
-
-const resultItemStyle = css`
-  display: block;
-  height: 200px;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  text-decoration: none;
-  overflow: hidden;
-  color: white;
-  transition: all 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  }
-
-  & > div {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 8px;
-    border-radius: 8px;
-  }
-
-  .title {
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-
-  .difficulty,
-  .mapper {
-    font-size: 0.9rem;
-  }
-`;
+import './beatmapSearch.scss';
 
 export default function BeatmapSearch() {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Opóźnienie w wywołaniu API (debouncing)
     useEffect(() => {
         const timer = setTimeout(() => {
             if (query) {
                 fetchBeatmaps(query);
             }
-        }, 1000); // 1 sekunda opóźnienia
+        }, 1000);
 
-        return () => clearTimeout(timer); // Czyszczenie timera przy zmianie zapytania
+        return () => clearTimeout(timer);
     }, [query]);
 
     const fetchBeatmaps = async (term) => {
@@ -108,33 +49,43 @@ export default function BeatmapSearch() {
     };
 
     return (
-        <div className={containerStyle}>
+        <div className="osuverse-search-container">
             <input
                 type="text"
                 placeholder="Search beatmaps..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className={inputStyle}
+                className="osuverse-search-input"
             />
 
             {loading ? (
                 <p>Loading...</p>
             ) : (
-                <div className={resultListStyle}>
+                <div className="osuverse-search-result-list">
                     {results.map((beatmap) => (
                         <a
                             key={beatmap.id}
                             href={`https://osu.ppy.sh/beatmapsets/${beatmap.id}`}
-                            className={resultItemStyle}
+                            className="osuverse-search-result-item"
                             style={{
                                 backgroundImage: `url(${beatmap.covers['cover@2x']})`,
                             }}
                         >
                             <div>
-                                <p className="title">{beatmap.artist} - {beatmap.title}</p>
-                                <p className="difficulty">{`Difficulty: ${beatmap.beatmaps.length > 0 ? beatmap.beatmaps[0].difficulty_rating : 'N/A'}`}</p>
-                                <p className="mapper">
-                                    Mapper: <a href={`https://osu.ppy.sh/users/${beatmap.user_id}`} className="underline text-blue-200">{beatmap.creator}</a>
+                                <p className="osuverse-search-title">
+                                    {beatmap.artist} - {beatmap.title}
+                                </p>
+                                <p className="osuverse-search-difficulty">
+                                    {`Difficulty: ${beatmap.beatmaps.length > 0 ? beatmap.beatmaps[0].difficulty_rating : 'N/A'}`}
+                                </p>
+                                <p className="osuverse-search-mapper">
+                                    Mapper:{' '}
+                                    <a
+                                        href={`https://osu.ppy.sh/users/${beatmap.user_id}`}
+                                        className="osuverse-search-mapper-link"
+                                    >
+                                        {beatmap.creator}
+                                    </a>
                                 </p>
                             </div>
                         </a>

@@ -1,5 +1,3 @@
-import { css } from 'goober';
-
 export default function AppContainer(props) {
     return (
         <div className={containerStyle}>
@@ -8,6 +6,3 @@ export default function AppContainer(props) {
     );
 }
 
-const containerStyle = css`
-
-`;
