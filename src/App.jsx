@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import UserColletionsPage from './pages/UserColletionsPage';
+import Testo from './pages/Testo';
 import Header from './layout/Header';
 import AppContainer from './layout/AppContainer';
 import ContentContainer from './layout/ContentContainer';
@@ -20,6 +21,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/collections" element={<UserColletionsPage />} />
+            <Route path="/testo" element={<Testo />} />
           </Routes>
         </ContentContainer>
         <Footer />

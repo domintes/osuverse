@@ -9,9 +9,11 @@ export default function Navbar() {
       <div className="navbar-item" onClick={() => navigate('/')}>Home</div>
       <div className="navbar-item" onClick={() => navigate('/collections')}>Collection</div>
       <div className="navbar-item" onClick={() => navigate('/about')}>About</div>
+      <div className="navbar-item" onClick={() => navigate('/testo')}>Testo</div>
     </div>
   );
 }
+
 
 //  Styles
 const navbarStyle = css`
