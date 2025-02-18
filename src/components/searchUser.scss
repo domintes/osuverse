@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Cracked+Code&display=swap');
+
+.osuverse-search-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #1a1a1a;
+    color: #fff;
+    font-family: 'Cracked Code', monospace;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.osuverse-search-input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 2px solid #4a4a4a;
+    border-radius: 5px;
+    background: #2a2a2a;
+    color: #fff;
+    font-family: 'Cracked Code', monospace;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.osuverse-search-input:focus {
+    border-color: #ff00ff;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px 0;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    background: #000;
+    color: #fff;
+    font-family: 'Cracked Code', monospace;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+button:hover {
+    background: #333;
+    border-color: #ff00ff;
+}
+
+.osuverse-user-data {
+    margin-top: 20px;
+    padding: 20px;
+    background: #2a2a2a;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.osuverse-user-data h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #ff00ff;
+}
+
+.osuverse-user-data img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    border: 2px solid #ff00ff;
+}
+
+.osuverse-user-data p {
+    margin: 5px 0;
+    font-size: 18px;
+    color: #00ffff;
+}
