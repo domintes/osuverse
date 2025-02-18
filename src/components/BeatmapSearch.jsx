@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import './beatmapSearch.scss';
 
@@ -6,22 +6,14 @@ export default function BeatmapSearch() {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (query) {
-                fetchBeatmaps(query);
-            }
-        }, 1000);
-
-        return () => clearTimeout(timer);
-    }, [query]);
+    const [error, setError] = useState(null);
 
     const fetchBeatmaps = async (term) => {
         try {
             setLoading(true);
+            setError(null);
             const tokenResponse = await axios.post(
-                'https://cors-anywhere.herokuapp.com/https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/oauth/token',
+                'https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/oauth/token',
                 {
                     client_id: '38309',
                     client_secret: '13hePdYOxB2WwJTvO9t9PuF6xlqxgYgVNb7gZ0f0',
@@ -33,7 +25,7 @@ export default function BeatmapSearch() {
             const accessToken = tokenResponse.data.access_token;
 
             const response = await axios.get(
-                `https://cors-anywhere.herokuapp.com/https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/api/v2/beatmapsets/search?query=${term}`,
+                `https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/api/v2/beatmapsets/search?query=${term}`,
                 {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
@@ -44,6 +36,7 @@ export default function BeatmapSearch() {
             setLoading(false);
         } catch (error) {
             console.error('Error fetching beatmaps:', error);
+            setError('Error fetching beatmap data');
             setLoading(false);
         }
     };
@@ -57,8 +50,12 @@ export default function BeatmapSearch() {
                 onChange={(e) => setQuery(e.target.value)}
                 className="osuverse-search-input"
             />
+            <button onClick={() => fetchBeatmaps(query)}>SEARCH BEATMAPS</button>
+
             {loading ? (
                 <p>Loading...</p>
+            ) : error ? (
+                <p>{error}</p>
             ) : (
                 <div className="osuverse-search-result-list">
                     {results.map((beatmap) => (
