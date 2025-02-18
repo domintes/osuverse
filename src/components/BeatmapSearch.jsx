@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import axios from 'axios';
 import './beatmapSearch.scss';
 
@@ -7,11 +7,13 @@ export default function BeatmapSearch() {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [page, setPage] = useState(1);
 
-    const fetchBeatmaps = async (term) => {
+    const fetchBeatmaps = async (term, page) => {
         try {
             setLoading(true);
             setError(null);
+            console.log('Fetching token...');
             const tokenResponse = await axios.post(
                 'https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/oauth/token',
                 {
@@ -21,18 +23,28 @@ export default function BeatmapSearch() {
                     scope: 'public',
                 }
             );
+            console.log('Token response:', tokenResponse);
 
             const accessToken = tokenResponse.data.access_token;
 
+            console.log('Fetching beatmaps...');
             const response = await axios.get(
-                `https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/api/v2/beatmapsets/search?query=${term}`,
+                `https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/api/v2/beatmapsets/search?query=${term}&limit=8&offset=${(page - 1) * 8}`,
                 {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
                     },
                 }
             );
-            setResults(response.data.beatmapsets || []);
+            console.log('Beatmaps response:', response);
+            console.log('Beatmaps data:', response.data);
+            console.log('Beatmapsets:', response.data.beatmapsets);
+            if (response.data.beatmapsets) {
+                response.data.beatmapsets.forEach((beatmap, index) => {
+                    console.log(`Beatmap ${index}:`, beatmap);
+                });
+            }
+            setResults((prevResults) => [...prevResults, ...response.data.beatmapsets]);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching beatmaps:', error);
@@ -40,6 +52,25 @@ export default function BeatmapSearch() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (query) {
+            fetchBeatmaps(query, page);
+        }
+    }, [query, page]);
+
+    const handleSearch = () => {
+        setResults([]);
+        setPage(1);
+        fetchBeatmaps(query, 1);
+    };
+
+    const loadMore = () => {
+        setPage((prevPage) => prevPage + 1);
+    };
+
+    console.log('results');
+    console.log(results);
 
     return (
         <div className="osuverse-search-container">
@@ -50,44 +81,22 @@ export default function BeatmapSearch() {
                 onChange={(e) => setQuery(e.target.value)}
                 className="osuverse-search-input"
             />
-            <button onClick={() => fetchBeatmaps(query)}>SEARCH BEATMAPS</button>
+            <button onClick={handleSearch}>SEARCH BEATMAPS</button>
 
-            {loading ? (
-                <p>Loading...</p>
-            ) : error ? (
-                <p>{error}</p>
-            ) : (
+            {!loading && results.length > 0 && (
                 <div className="osuverse-search-result-list">
                     {results.map((beatmap) => (
-                        <a
-                            key={beatmap.id}
-                            href={`https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/beatmapsets/${beatmap.id}`}
-                            className="osuverse-search-result-item"
-                            style={{
-                                backgroundImage: `url(${beatmap.covers['cover@2x']})`,
-                            }}
-                        >
-                            <div>
-                                <p className="osuverse-search-title">
-                                    {beatmap.artist} - {beatmap.title}
-                                </p>
-                                <p className="osuverse-search-difficulty">
-                                    {`Difficulty: ${beatmap.beatmaps.length > 0 ? beatmap.beatmaps[0].difficulty_rating : 'N/A'}`}
-                                </p>
-                                <p className="osuverse-search-mapper">
-                                    Mapper:{' '}
-                                    <a
-                                        href={`https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/users/${beatmap.user_id}`}
-                                        className="osuverse-search-mapper-link"
-                                    >
-                                        {beatmap.creator}
-                                    </a>
-                                </p>
-                            </div>
-                        </a>
+                        <div key={beatmap.id} className="osuverse-search-result-item">
+                            <p>{beatmap.artist}</p>
+                        </div>
                     ))}
+                    <button onClick={loadMore}>Load More</button>
                 </div>
             )}
+
+            <Suspense fallback={<p>Loading...</p>}>
+                {error && <p>{error}</p>}
+            </Suspense>
         </div>
     );
 }
