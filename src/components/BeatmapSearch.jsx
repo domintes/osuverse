@@ -88,6 +88,7 @@ export default function BeatmapSearch() {
                     {results.map((beatmap) => (
                         <div key={beatmap.id} className="osuverse-search-result-item">
                             <p>{beatmap.artist}</p>
+                            <img src={beatmap.covers.list}></img>
                         </div>
                     ))}
                     <button onClick={loadMore}>Load More</button>
