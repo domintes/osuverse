@@ -1,3 +1,24 @@
+@font-face {
+  font-family: "Guardian";
+  src: url("/fonts/Guardian.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Glitch Inside";
+  src: url("/fonts/Glitch-Inside.otf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Cracked Code";
+  src: url("/fonts/Cracked-Code.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -124,6 +145,6 @@ button:focus-visible {
 }
 
 body {
-  font-family: 'Bruno Ace', sans-serif;
+  font-family: "'Bruno Ace', sans-serif;"
 }
 
