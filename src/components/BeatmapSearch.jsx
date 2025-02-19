@@ -38,8 +38,6 @@ export default function BeatmapSearch() {
                 }
             );
             console.log('Beatmaps response:', response);
-            console.log('Beatmaps data:', response.data);
-            console.log('Beatmapsets:', response.data.beatmapsets);
             if (response.data.beatmapsets) {
                 response.data.beatmapsets.forEach((beatmap, index) => {
                     console.log(`Beatmap ${index}:`, beatmap);
