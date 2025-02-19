@@ -3,11 +3,12 @@ import useStore from '../store';
 import './addBeatmapModal.scss';
 import GetMapData from '../utils/GetMapData';
 
-export default function AddBeatmapModal({ onClose }) {
+export default function AddBeatmapModal() {
     const [link, setLink] = useState('');
     const [beatmapData, setBeatmapData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [isOpen, setIsOpen] = useState(false);
     const addBeatmap = useStore(state => state.addBeatmap);
 
     const fetchBeatmapData = async () => {
@@ -23,9 +24,7 @@ export default function AddBeatmapModal({ onClose }) {
                 throw new Error('Please specify a specific difficulty in the link.');
             }
 
-            console.log('Fetching beatmap data...');
             const data = await GetMapData(link);
-            console.log('Beatmap data response:', data);
             setBeatmapData(data);
         } catch (error) {
             console.error('Failed to fetch beatmap data:', error);
@@ -36,38 +35,45 @@ export default function AddBeatmapModal({ onClose }) {
     };
 
     const handleAddToCollection = () => {
+        console.log('Adding beatmap to collection:', beatmapData);
         addBeatmap(beatmapData);
-        onClose();
+        console.log('Beatmap added successfully');
+        setIsOpen(false);
     };
 
     return (
-        <div className="modal">
-            <div className="modal-content">
-                <span className="close" onClick={onClose}>&times;</span>
-                <input
-                    type="text"
-                    value={link}
-                    onChange={(e) => setLink(e.target.value)}
-                    placeholder="Podaj link do beatmapy"
-                />
-                <button onClick={fetchBeatmapData} disabled={loading}>
-                    {loading ? 'Ładowanie...' : 'Pobierz dane'}
-                </button>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                {beatmapData &&
-                    <Suspense fallback={<p>Loading...</p>}>
-                        <div>
-                            <h3>{beatmapData.title}</h3>
-                            <p>Artist: {beatmapData.beatmapset.artist}</p>
-                            <p>BPM: {beatmapData.bpm}</p>
-                            <img src={beatmapData.beatmapset.covers.cover} alt={`${beatmapData.title} cover`} />
-                            <button onClick={handleAddToCollection}>
-                                Dodaj {beatmapData.version} do kolekcji
-                            </button>
-                        </div>
-                    </Suspense>
-                }
-            </div>
-        </div>
+        <>
+            <button onClick={() => setIsOpen(true)}>Dodaj beatmapę</button>
+            {isOpen && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <span className="close" onClick={() => setIsOpen(false)}>&times;</span>
+                        <input
+                            type="text"
+                            value={link}
+                            onChange={(e) => setLink(e.target.value)}
+                            placeholder="Podaj link do beatmapy"
+                        />
+                        <button onClick={fetchBeatmapData} disabled={loading}>
+                            {loading ? 'Ładowanie...' : 'Pobierz dane'}
+                        </button>
+                        {error && <p style={{ color: 'red' }}>{error}</p>}
+                        {beatmapData &&
+                            <Suspense fallback={<p>Loading...</p>}>
+                                <div>
+                                    <h3>{beatmapData.title}</h3>
+                                    <p>Artist: {beatmapData.beatmapset.artist}</p>
+                                    <p>BPM: {beatmapData.bpm}</p>
+                                    <img src={beatmapData.beatmapset.covers.cover} alt={`${beatmapData.title} cover`} />
+                                    <button onClick={handleAddToCollection}>
+                                        Dodaj {beatmapData.version} do kolekcji
+                                    </button>
+                                </div>
+                            </Suspense>
+                        }
+                    </div>
+                </div>
+            )}
+        </>
     );
 }

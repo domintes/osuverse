@@ -1,6 +1,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import axios from 'axios';
 import './beatmapSearch.scss';
+import { useCollection } from '../context/CollectionContext';
 
 export default function BeatmapSearch() {
     const [query, setQuery] = useState('');
@@ -9,12 +10,12 @@ export default function BeatmapSearch() {
     const [error, setError] = useState(null);
     const [page, setPage] = useState(1);
     const [sortConfig, setSortConfig] = useState({ key: 'artist', direction: 'ascending' });
+    const { collection, dispatch } = useCollection();
 
     const fetchBeatmaps = async (term, page) => {
         try {
             setLoading(true);
             setError(null);
-            console.log('Fetching token...');
             const tokenResponse = await axios.post(
                 'https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/oauth/token',
                 {
@@ -24,11 +25,8 @@ export default function BeatmapSearch() {
                     scope: 'public',
                 }
             );
-            console.log('Token response:', tokenResponse);
 
             const accessToken = tokenResponse.data.access_token;
-
-            console.log('Fetching beatmaps...');
             const response = await axios.get(
                 `https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/api/v2/beatmapsets/search?query=${term}&limit=8&offset=${(page - 1) * 8}`,
                 {
@@ -37,6 +35,7 @@ export default function BeatmapSearch() {
                     },
                 }
             );
+            // Log
             console.log('Beatmaps response:', response);
             if (response.data.beatmapsets) {
                 response.data.beatmapsets.forEach((beatmap, index) => {
@@ -86,8 +85,11 @@ export default function BeatmapSearch() {
         setSortConfig({ key, direction });
     };
 
-    console.log('results');
-    console.log(results);
+    const addToCollection = (beatmap) => {
+        if (!collection.some(item => item.id === beatmap.id)) {
+            dispatch({ type: 'ADD_TO_COLLECTION', payload: beatmap });
+        }
+    };
 
     return (
         <div className="osuverse-search-container">
@@ -120,6 +122,9 @@ export default function BeatmapSearch() {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Cover
                                 </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -129,6 +134,9 @@ export default function BeatmapSearch() {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{beatmap.title}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <img src={beatmap.covers.list} alt={`${beatmap.title} cover`} className="w-16 h-16 object-cover" />
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <button onClick={() => addToCollection(beatmap)} className="px-4 py-2 bg-green-500 text-white rounded">Add to Collection</button>
                                     </td>
                                 </tr>
                             ))}
@@ -141,6 +149,15 @@ export default function BeatmapSearch() {
             <Suspense fallback={<p>Loading...</p>}>
                 {error && <p>{error}</p>}
             </Suspense>
+
+            <div className="osuverse-collection">
+                <h2>Your Collection</h2>
+                <ul>
+                    {collection.map((beatmap) => (
+                        <li key={beatmap.id}>{beatmap.artist} - {beatmap.title}</li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 }
