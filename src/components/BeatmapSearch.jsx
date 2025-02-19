@@ -8,6 +8,7 @@ export default function BeatmapSearch() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [page, setPage] = useState(1);
+    const [sortConfig, setSortConfig] = useState({ key: 'artist', direction: 'ascending' });
 
     const fetchBeatmaps = async (term, page) => {
         try {
@@ -69,6 +70,24 @@ export default function BeatmapSearch() {
         setPage((prevPage) => prevPage + 1);
     };
 
+    const sortedResults = [...results].sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+    });
+
+    const requestSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
+
     console.log('results');
     console.log(results);
 
@@ -85,13 +104,39 @@ export default function BeatmapSearch() {
 
             {!loading && results.length > 0 && (
                 <div className="osuverse-search-result-list">
-                    {results.map((beatmap) => (
-                        <div key={beatmap.id} className="osuverse-search-result-item">
-                            <p>{beatmap.artist}</p>
-                            <img src={beatmap.covers.list}></img>
-                        </div>
-                    ))}
-                    <button onClick={loadMore}>Load More</button>
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                                    onClick={() => requestSort('artist')}
+                                >
+                                    Artist
+                                </th>
+                                <th
+                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                                    onClick={() => requestSort('title')}
+                                >
+                                    Title
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Cover
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {sortedResults.map((beatmap) => (
+                                <tr key={beatmap.id}>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{beatmap.artist}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{beatmap.title}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <img src={beatmap.covers.list} alt={`${beatmap.title} cover`} className="w-16 h-16 object-cover" />
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    <button onClick={loadMore} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Load More</button>
                 </div>
             )}
 
