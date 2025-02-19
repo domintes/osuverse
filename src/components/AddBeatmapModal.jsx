@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import useStore from '../store';
-import axios from 'axios';
 import './addBeatmapModal.scss';
+import GetMapData from '../utils/GetMapData';
 
 export default function AddBeatmapModal({ onClose }) {
     const [link, setLink] = useState('');
@@ -12,31 +12,10 @@ export default function AddBeatmapModal({ onClose }) {
     const fetchBeatmapData = async () => {
         setLoading(true);
         try {
-            console.log('Fetching token...');
-            const tokenResponse = await axios.post(
-                'https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/oauth/token',
-                {
-                    client_id: '38309',
-                    client_secret: '13hePdYOxB2WwJTvO9t9PuF6xlqxgYgVNb7gZ0f0',
-                    grant_type: 'client_credentials',
-                    scope: 'public',
-                }
-            );
-            console.log('Token response:', tokenResponse);
-
-            const accessToken = tokenResponse.data.access_token;
-
             console.log('Fetching beatmap data...');
-            const response = await axios.get(
-                `https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/api/v2/beatmaps/4`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                }
-            );
-            console.log('Beatmap data response:', response);
-            setBeatmapData(response.data);
+            const data = await GetMapData(link);
+            console.log('Beatmap data response:', data);
+            setBeatmapData(data);
         } catch (error) {
             console.error('Failed to fetch beatmap data:', error);
             alert('Failed to fetch beatmap data. Please check the link and try again.');
@@ -63,16 +42,20 @@ export default function AddBeatmapModal({ onClose }) {
                 <button onClick={fetchBeatmapData} disabled={loading}>
                     {loading ? 'Ładowanie...' : 'Pobierz dane'}
                 </button>
-                {beatmapData && (
-                    <div>
-                        <h3>{beatmapData.title}</h3>
-                        {beatmapData.difficulties.map(difficulty => (
-                            <button key={difficulty.id} onClick={() => handleAddToCollection(difficulty)}>
-                                Dodaj {difficulty.name} do kolekcji
-                            </button>
-                        ))}
-                    </div>
-                )}
+                {beatmapData && beatmapData.difficulties &&
+                    <Suspense fallback={<p>Loading...</p>}>
+                        <div>
+                            <h3>{beatmapData.title}</h3>
+                            {beatmapData.difficulties.map(difficulty => (
+                                <button key={difficulty.id} onClick={() => handleAddToCollection(difficulty)}>
+                                    Dodaj {difficulty.name} do kolekcji
+                                </button>
+                            ))}
+                        </div>
+                    </Suspense>
+                }
+
+
             </div>
         </div>
     );
