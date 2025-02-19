@@ -7,25 +7,36 @@ export default function AddBeatmapModal({ onClose }) {
     const [link, setLink] = useState('');
     const [beatmapData, setBeatmapData] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const addBeatmap = useStore(state => state.addBeatmap);
 
     const fetchBeatmapData = async () => {
         setLoading(true);
+        setError('');
         try {
+            const url = new URL(link);
+            const parts = url.pathname.split('/');
+            const beatmapId = parts.pop();
+            const beatmapsetId = parts.pop();
+
+            if (!beatmapId || !beatmapsetId) {
+                throw new Error('Please specify a specific difficulty in the link.');
+            }
+
             console.log('Fetching beatmap data...');
             const data = await GetMapData(link);
             console.log('Beatmap data response:', data);
             setBeatmapData(data);
         } catch (error) {
             console.error('Failed to fetch beatmap data:', error);
-            alert('Failed to fetch beatmap data. Please check the link and try again.');
+            setError('Failed to fetch beatmap data. Please specify a specific difficulty in the link.');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleAddToCollection = (difficulty) => {
-        addBeatmap({ ...beatmapData, difficulty });
+    const handleAddToCollection = () => {
+        addBeatmap(beatmapData);
         onClose();
     };
 
@@ -42,20 +53,20 @@ export default function AddBeatmapModal({ onClose }) {
                 <button onClick={fetchBeatmapData} disabled={loading}>
                     {loading ? 'Ładowanie...' : 'Pobierz dane'}
                 </button>
-                {beatmapData && beatmapData.difficulties &&
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+                {beatmapData &&
                     <Suspense fallback={<p>Loading...</p>}>
                         <div>
                             <h3>{beatmapData.title}</h3>
-                            {beatmapData.difficulties.map(difficulty => (
-                                <button key={difficulty.id} onClick={() => handleAddToCollection(difficulty)}>
-                                    Dodaj {difficulty.name} do kolekcji
-                                </button>
-                            ))}
+                            <p>Artist: {beatmapData.beatmapset.artist}</p>
+                            <p>BPM: {beatmapData.bpm}</p>
+                            <img src={beatmapData.beatmapset.covers.cover} alt={`${beatmapData.title} cover`} />
+                            <button onClick={handleAddToCollection}>
+                                Dodaj {beatmapData.version} do kolekcji
+                            </button>
                         </div>
                     </Suspense>
                 }
-
-
             </div>
         </div>
     );
