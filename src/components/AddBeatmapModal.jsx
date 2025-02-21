@@ -43,7 +43,7 @@ export default function AddBeatmapModal() {
 
     return (
         <>
-            <button onClick={() => setIsOpen(true)}>Dodaj beatmapę</button>
+            <button onClick={() => setIsOpen(true)}>Add beatmap</button>
             {isOpen && (
                 <div className="modal">
                     <div className="modal-content">
@@ -66,7 +66,7 @@ export default function AddBeatmapModal() {
                                     <p>BPM: {beatmapData.bpm}</p>
                                     <img src={beatmapData.beatmapset.covers.cover} alt={`${beatmapData.title} cover`} />
                                     <button onClick={handleAddToCollection}>
-                                        Dodaj {beatmapData.version} do kolekcji
+                                        Add {beatmapData.version} to collection
                                     </button>
                                 </div>
                             </Suspense>

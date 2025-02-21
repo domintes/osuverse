@@ -47,7 +47,7 @@ export default function TagInput({ onTagsChange }) {
                         }
                     }}
                 />
-                <button type="submit" className="add-tag-btn">+ Dodaj tag</button>
+                <button type="submit" className="add-tag-btn">+ Add tag</button>
             </form>
         </div>
     );
