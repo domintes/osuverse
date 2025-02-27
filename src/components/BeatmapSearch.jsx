@@ -1,6 +1,5 @@
 import { useState, useEffect, Suspense } from 'react';
 import axios from 'axios';
-import './beatmapSearch.scss';
 import { useCollection } from '../context/CollectionContext';
 
 export default function BeatmapSearch() {

@@ -1,15 +1,24 @@
 import { useEffect, useState } from 'react';
+import useStore from '../../store';
 import './customTags.css';
 
 export default function CustomTags({ items }) {
     const [selectedTags, setSelectedTags] = useState([]);
     const [uniqueTags, setUniqueTags] = useState([]);
+    const filterByTags = useStore(state => state.filterByTags);
+    const filteredBeatmaps = useStore(state => state.filteredBeatmaps) || []; // Ensure filteredBeatmaps is always an array
 
     useEffect(() => {
         // Generowanie unikalnej listy tagów na podstawie przekazanych propsów
         const allTags = Array.from(new Set(items.flatMap(item => item.tags)));
         setUniqueTags(allTags);
     }, [items]);
+
+    useEffect(() => {
+        if (typeof filterByTags === 'function') {
+            filterByTags(selectedTags);
+        }
+    }, [selectedTags, filterByTags]);
 
     // Funkcja do przełączania tagów
     const toggleTag = (tagName) => {
@@ -48,16 +57,12 @@ export default function CustomTags({ items }) {
             <div className="collection-category-container">
                 <h3>Items with Selected Tags</h3>
                 <ul className="maplist-container">
-                    {items.filter(
-                        (item) => selectedTags.every((tag) => item.tags.includes(tag))
-                    ).map((item, i) => (
+                    {filteredBeatmaps.map((item, i) => (
                         <li key={i} className="single-item">
                             {item.name}
                         </li>
                     ))}
-                    {items.filter(
-                        (item) => selectedTags.every((tag) => item.tags.includes(tag))
-                    ).length === 0 && <li>No items found.</li>}
+                    {filteredBeatmaps.length === 0 && <li>No items found.</li>}
                 </ul>
             </div>
         </div>

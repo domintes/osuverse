@@ -1,12 +1,14 @@
 import create from 'zustand';
 
 const useStore = create((set) => ({
-    beatmapCollection: [],
-    addBeatmap: (beatmap) => set((state) => {
-        const updatedCollection = [...state.beatmapCollection, beatmap];
-        localStorage.setItem('beatmapCollection', JSON.stringify(updatedCollection));
-        return { beatmapCollection: updatedCollection };
-    }),
+    beatmaps: [],
+    addBeatmap: (beatmap) => set((state) => ({
+        beatmaps: [...state.beatmaps, beatmap]
+    })),
+    removeBeatmap: (beatmapId) => set((state) => ({
+        beatmaps: state.beatmaps.filter(beatmap => beatmap.id !== beatmapId)
+    }))
+
 }));
 
 export default useStore;

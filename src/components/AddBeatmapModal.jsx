@@ -9,7 +9,10 @@ export default function AddBeatmapModal() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [isOpen, setIsOpen] = useState(false);
+    const [tags, setTags] = useState([]);
     const addBeatmap = useStore(state => state.addBeatmap);
+    const beatmaps = useStore(state => state.beatmaps);
+    const removeBeatmap = useStore(state => state.removeBeatmap);
 
     const fetchBeatmapData = async () => {
         setLoading(true);
@@ -35,15 +38,22 @@ export default function AddBeatmapModal() {
     };
 
     const handleAddToCollection = () => {
-        console.log('Adding beatmap to collection:', beatmapData);
-        addBeatmap(beatmapData);
-        console.log('Beatmap added successfully');
+        const beatmapWithTags = { ...beatmapData, tags };
+        addBeatmap(beatmapWithTags);
         setIsOpen(false);
+    };
+
+    const handleTagInputChange = (e) => {
+        setTags(e.target.value.split(',').map(tag => tag.trim()));
+    };
+
+    const handleRemoveMap = (beatmapId) => {
+        removeBeatmap(beatmapId);
     };
 
     return (
         <>
-            <button onClick={() => setIsOpen(true)}>Add beatmap</button>
+            <button className="add-beatmap-button" onClick={() => setIsOpen(true)}>Add beatmap</button>
             {isOpen && (
                 <div className="modal">
                     <div className="modal-content">
@@ -65,6 +75,11 @@ export default function AddBeatmapModal() {
                                     <p>Artist: {beatmapData.beatmapset.artist}</p>
                                     <p>BPM: {beatmapData.bpm}</p>
                                     <img src={beatmapData.beatmapset.covers.cover} alt={`${beatmapData.title} cover`} />
+                                    <input
+                                        type="text"
+                                        placeholder="Add tags (comma separated)"
+                                        onChange={handleTagInputChange}
+                                    />
                                     <button onClick={handleAddToCollection}>
                                         Add {beatmapData.version} to collection
                                     </button>
@@ -74,6 +89,18 @@ export default function AddBeatmapModal() {
                     </div>
                 </div>
             )}
+            <div className="beatmap-collection">
+                {beatmaps.map((beatmap, index) => (
+                    <div key={index} className="beatmap-item" style={{ backgroundImage: `url(${beatmap.beatmapset.covers.cover})` }}>
+                        <div className="beatmap-info">
+                            <button onClick={() => handleRemoveMap(beatmap.id)}>Remove map</button>
+                            <h3>{beatmap.beatmapset.artist} - {beatmap.title} [{beatmap.version}]</h3>
+                            <p>Difficulty: {beatmap.difficulty_rating}★</p>
+                            <p>Mapper: <a href={`https://osu.ppy.sh/users/${beatmap.beatmapset.creator_id}`} target="_blank" rel="noopener noreferrer">{beatmap.beatmapset.creator}</a></p>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </>
     );
 }

@@ -12,6 +12,16 @@ const useStore = create((set) => ({
         });
         console.log('Beatmap has been added to the store');
     },
+    removeBeatmap(beatmapId) {
+        console.log('removeBeatmap called with:', beatmapId);
+        set((state) => {
+            const updatedBeatmaps = state.beatmaps.filter(beatmap => beatmap.id !== beatmapId);
+            localStorage.setItem('beatmaps', JSON.stringify(updatedBeatmaps));
+            console.log('Updated beatmaps array after removal:', updatedBeatmaps);
+            return { beatmaps: updatedBeatmaps };
+        });
+        console.log('Beatmap has been removed from the store');
+    }
 }));
 
 export default useStore;
