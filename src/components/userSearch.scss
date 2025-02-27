@@ -4,9 +4,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: #1a1a1a;
     color: #fff;
-    font-family: 'Cracked Code', monospace;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
@@ -20,7 +18,7 @@
     border-radius: 5px;
     background: #2a2a2a;
     color: #fff;
-    font-family: 'Cracked Code', monospace;
+    font-family: 'Rubik Glich', monospace;
     font-size: 16px;
     outline: none;
     transition: border-color 0.3s;
@@ -75,4 +73,11 @@ button:hover {
     margin: 5px 0;
     font-size: 18px;
     color: #00ffff;
+}
+
+.osuverse-navbar-item {
+    font-family: "Cracked Code", monospace;
+    letter-spacing: 3px;
+    font-size: 15px;
+    ;
 }

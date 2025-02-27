@@ -19,8 +19,10 @@ function App() {
   return (
       <CollectionProvider>
         <AppContainer>
-          <Header />
-          <Navbar />
+          <div className="osuverse-header-container">
+          < Header />
+            <Navbar />
+          </div>
           <ContentContainer>
             <Routes>
               <Route path="/" element={<HomePage />} />
