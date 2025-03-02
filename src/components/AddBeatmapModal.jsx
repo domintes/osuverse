@@ -11,8 +11,6 @@ export default function AddBeatmapModal() {
     const [isOpen, setIsOpen] = useState(false);
     const [tags, setTags] = useState([]);
     const addBeatmap = useStore(state => state.addBeatmap);
-    const beatmaps = useStore(state => state.beatmaps);
-    const removeBeatmap = useStore(state => state.removeBeatmap);
 
     const fetchBeatmapData = async () => {
         setLoading(true);
@@ -45,10 +43,6 @@ export default function AddBeatmapModal() {
 
     const handleTagInputChange = (e) => {
         setTags(e.target.value.split(',').map(tag => tag.trim()));
-    };
-
-    const handleRemoveMap = (beatmapId) => {
-        removeBeatmap(beatmapId);
     };
 
     return (
@@ -89,18 +83,7 @@ export default function AddBeatmapModal() {
                     </div>
                 </div>
             )}
-            <div className="beatmap-collection">
-                {beatmaps.map((beatmap, index) => (
-                    <div key={index} className="beatmap-item" style={{ backgroundImage: `url(${beatmap.beatmapset.covers.cover})` }}>
-                        <div className="beatmap-info">
-                            <button onClick={() => handleRemoveMap(beatmap.id)}>Remove map</button>
-                            <h3>{beatmap.beatmapset.artist} - {beatmap.title} [{beatmap.version}]</h3>
-                            <p>Difficulty: {beatmap.difficulty_rating}★</p>
-                            <p>Mapper: <a href={`https://osu.ppy.sh/users/${beatmap.beatmapset.creator_id}`} target="_blank" rel="noopener noreferrer">{beatmap.beatmapset.creator}</a></p>
-                        </div>
-                    </div>
-                ))}
-            </div>
+
         </>
     );
 }

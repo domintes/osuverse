@@ -153,7 +153,7 @@ export default function BeatmapSearch() {
                 <h2>Your Collection</h2>
                 <ul>
                     {collection.map((beatmap) => (
-                        <li key={beatmap.id}>{beatmap.artist} - {beatmap.title}</li>
+                        <li key={`${beatmap.id}-${beatmap.version}`}>{beatmap.artist} - {beatmap.title}</li>
                     ))}
                 </ul>
             </div>
