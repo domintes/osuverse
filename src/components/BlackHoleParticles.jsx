@@ -47,7 +47,7 @@ const FloatingParticles = () => {
                 }
             }
             draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(this.opacity, 0.1)})`;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -65,7 +65,7 @@ const FloatingParticles = () => {
         }
 
         function animate() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+            ctx.fillStyle = "rgba(0, 0, 0, 1)"; // Ensure background is always black
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             particles.current = particles.current.filter(particle =>
@@ -90,10 +90,21 @@ const FloatingParticles = () => {
         };
 
         window.addEventListener("mousemove", handleMouseMove);
-        return () => window.removeEventListener("mousemove", handleMouseMove);
+        window.addEventListener("resize", () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("resize", () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        };
     }, []);
 
-    return <canvas ref={canvasRef} style={{ position: "absolute", top: 0, left: 0, zIndex: -1 }}></canvas>;
+    return <canvas ref={canvasRef} style={{ position: "fixed", top: 0, left: 0, zIndex: -1, pointerEvents: "none" }}></canvas>;
 };
 
 export default FloatingParticles;
