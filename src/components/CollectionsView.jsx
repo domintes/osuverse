@@ -3,7 +3,7 @@ import CustomTags from './CustomTags/CustomTags';
 import './collectionsView.scss';
 
 export default function CollectionsView() {
-    const { collections, removeBeatmapFromCollection } = useStore();
+    const { collections, removeBeatmapFromCollection, removeCollection } = useStore();
 
     return (
         <div className="collections-view">
@@ -11,7 +11,15 @@ export default function CollectionsView() {
             
             {Object.entries(collections).map(([collectionName, beatmaps]) => (
                 <div key={collectionName} className="collection-section">
-                    <h2 className="collection-title">{collectionName}</h2>
+                    <div className="collection-header">
+                        <h2 className="collection-title">{collectionName}</h2>
+                        <button 
+                            className="remove-collection-button"
+                            onClick={() => removeCollection(collectionName)}
+                        >
+                            ×
+                        </button>
+                    </div>
                     <div className="beatmaps-list">
                         {beatmaps.map((beatmap) => (
                             <div 

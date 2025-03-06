@@ -75,6 +75,13 @@ const useStore = create((set, get) => ({
         return { collections: updatedCollections };
     }),
 
+    removeCollection: (collectionName) => set((state) => {
+        const updatedCollections = { ...state.collections };
+        delete updatedCollections[collectionName];
+        localStorage.setItem('collections', JSON.stringify(updatedCollections));
+        return { collections: updatedCollections };
+    }),
+
     getBeatmapsByCollection: (collectionName) => {
         const { collections } = get();
         return collections[collectionName] || [];
