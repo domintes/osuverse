@@ -1,8 +1,7 @@
 .tag-input-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+max-height: 32px;
+display: block;
+margin-bottom: 30%;
 }
 
 .tag-list {

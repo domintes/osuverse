@@ -3,6 +3,7 @@ import useStore from '../store';
 import './addBeatmapModal.scss';
 import GetMapData from '../utils/GetMapData';
 import CollectionManager from './CollectionManager';
+import TagInput from './TagInput/TagInput';
 
 export default function AddBeatmapModal() {
     const [link, setLink] = useState('');
@@ -75,11 +76,7 @@ export default function AddBeatmapModal() {
                                 <p>Artist: {beatmapData.beatmapset.artist}</p>
                                 <p>BPM: {beatmapData.bpm}</p>
                                 <img src={beatmapData.beatmapset.covers.cover} alt={`${beatmapData.title} cover`} />
-                                <input
-                                    type="text"
-                                    placeholder="Add tags (comma separated)"
-                                    onChange={handleTagInputChange}
-                                />
+                                <TagInput onTagsChange={setTags} />
                                 <button onClick={() => setStep(3)}>Next</button>
                             </>
                         )}

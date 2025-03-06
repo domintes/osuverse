@@ -69,6 +69,9 @@
     color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     animation: fadeIn 0.3s ease-in-out;
+    img {
+        max-width: 100%;
+    }
 }
 
 @keyframes fadeIn {
