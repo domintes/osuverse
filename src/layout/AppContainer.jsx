@@ -1,6 +1,6 @@
 export default function AppContainer(props) {
     return (
-        <div>
+        <div className="osuverse-main-container">
             {props.children}
         </div>
     );

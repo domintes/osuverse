@@ -14,7 +14,7 @@ export default function UserColletionsPage() {
     const displayedBeatmaps = filteredBeatmaps.length > 0 ? filteredBeatmaps : beatmaps;
 
     return (
-        <div className='UserColletionsPage-container'>
+        <div>
             <h1>Your Collection</h1>
             <CustomTags items={beatmaps} />
             <div className="beatmap-collection">

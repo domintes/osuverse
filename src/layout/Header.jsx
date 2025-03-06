@@ -5,8 +5,8 @@ export default function Header() {
 
     return (
 <div className='Header-container'>
-            <OsuverseLogo />
-            <BlackHoleParticles />
+    <OsuverseLogo />
+    <BlackHoleParticles />
 </div>
     );
 }

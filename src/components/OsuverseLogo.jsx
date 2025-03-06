@@ -1,11 +1,11 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./osuverseLogo.scss";
 import '@fontsource-variable/orbitron';
 
-
 export default function OsuverseLogo() {
     return (
-        <div className="osuverse-logo-container">
+        <Link to="/" className="osuverse-logo-container">
             <div className="wonderful-void"></div>
             <div className="osuverse-logo">
                 <span className="osuniverse-logo-letter-first">O</span>
@@ -17,6 +17,6 @@ export default function OsuverseLogo() {
                 <span className="osuniverse-logo-letter">S</span>
                 <span className="osuniverse-logo-letter">E</span>
             </div>
-        </div>
+        </Link>
     );
 };

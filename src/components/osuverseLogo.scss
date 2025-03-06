@@ -3,24 +3,25 @@
     align-items: center;
     gap: 20px;
     position: relative;
+    &:hover {
+        cursor: pointer !important;
+    }
 }
 
 .osuverse-logo {
-        font-size: 42px;
-        font-weight: 900;
-        color: black;
-        text-shadow: 0 0 7px rgb(212, 212, 219), 0 0 5px rgb(206, 206, 219), 0 0 3px rgb(202, 202, 209);
-        display: flex;
-        align-items: center;
-        gap: 10px;
+    font-size: 42px;
+    font-weight: 900;
+    color: black;
+    text-shadow: 0 0 7px rgb(212, 212, 219), 0 0 5px rgb(206, 206, 219), 0 0 3px rgb(202, 202, 209);
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .osuniverse-logo-letter-first {
-    // visibility: hidden !important;
-    // padding-right: 20px;
     z-index: 10;
     font-weight: 900;
-    font-family: 'Cracked Code';;
+    font-family: 'Cracked Code';
 }
 
 .wonderful-void {
@@ -38,12 +39,9 @@
 }
 
 @keyframes glow {
-
-    0%,
-    100% {
+    0%, 100% {
         box-shadow: 0 0 25px 12px rgba(211, 48, 170, 0.8);
     }
-
     50% {
         box-shadow: 0 0 30px 15px rgba(211, 48, 138, 0.8);
     }
@@ -53,12 +51,10 @@
     0% {
         transform: rotate(0deg);
     }
-
     100% {
         transform: rotate(360deg);
     }
 }
-
 
 .osuniverse-logo-letter {
     font-weight: 900;
@@ -66,19 +62,12 @@
     z-index: 777;
 }
 
-.black-hole:hover+.osuniverse-logo-letter,
-.osuniverse-logo-letter:hover {
-    cursor: default;
-}
-
 .nav-bar {
     width: 100%;
-    height: 100vh; // Full height for desktop
-    // ...existing code...
+    height: 100vh;
 }
 
 .AboutPage-container {
     width: 100%;
-    height: 100vh; // Full height for desktop
-    // ...existing code...
+    height: 100vh;
 }

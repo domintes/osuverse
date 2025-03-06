@@ -5,7 +5,7 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const menuItems = [
-    { itemName: 'Home', itemNav: '/home' },
+    { itemName: 'Home', itemNav: '/home', inactive: true},
     { itemName: 'Collections', itemNav: '/collections' },
     { itemName: 'About', itemNav: '/about', inactive: true },
     { itemName: 'Add Beatmap', itemNav: '/add' },

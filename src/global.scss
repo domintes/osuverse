@@ -107,12 +107,6 @@ button:focus-visible {
   }
 }
 
-#root {
-  margin: 1vw;
-  padding: 2rem;
-  text-align: center;
-}
-
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -161,3 +155,11 @@ body {
   font-family: "'Bruno Ace', sans-serif;"
 }
 
+.osuverse-main-container {
+  margin: 2.5%;
+  text-align: center;
+}
+
+.maplist-container {
+  list-style-type: none;
+}
