@@ -35,7 +35,9 @@ export default function CollectionsView() {
                                         </a>]
                                     </span>
                                     <span className="beatmap-difficulty">
-                                        {beatmap.version} ({beatmap.difficulty_rating.toFixed(2)} ★)
+                                        <a href={`https://osu.ppy.sh/beatmapsets/${beatmap.beatmapset_id}#osu/${beatmap.id}`} target="_blank" rel="noopener noreferrer">
+                                            {beatmap.version} ({beatmap.difficulty_rating.toFixed(2)} ★)
+                                        </a>
                                     </span>
                                     <button 
                                         className="remove-button"
