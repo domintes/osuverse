@@ -10,7 +10,7 @@ export default function Navbar() {
     { itemName: 'About', itemNav: '/about', inactive: true },
     { itemName: 'Add Beatmap', itemNav: '/add' },
     { itemName: 'Add Mapper', itemNav: '/mappers' },
-    { itemName: 'Testo', itemNav: '/testo', inactive: true }
+    { itemName: 'Testo', itemNav: '/testo'  }
   ];
 
   const renderMenuItems = () => {

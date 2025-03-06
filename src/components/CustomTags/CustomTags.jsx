@@ -2,15 +2,19 @@ import { useEffect, useState } from 'react';
 import useStore from '../../store';
 import './customTags.css';
 
-export default function CustomTags({ items }) {
+export default function CustomTags({ items = [] }) {
     const [selectedTags, setSelectedTags] = useState([]);
     const [uniqueTags, setUniqueTags] = useState([]);
     const filterByTags = useStore(state => state.filterByTags);
-    const filteredBeatmaps = useStore(state => state.filteredBeatmaps) || []; // Ensure filteredBeatmaps is always an array
+    const filteredBeatmaps = useStore(state => state.filteredBeatmaps) || [];
 
     useEffect(() => {
-        // Generowanie unikalnej listy tagów na podstawie przekazanych propsów
-        const allTags = Array.from(new Set(items.flatMap(item => item.tags)));
+        // Safely generate unique tags list, ensuring items have tags
+        const allTags = Array.from(new Set(
+            items
+                .filter(item => item && Array.isArray(item.tags))
+                .flatMap(item => item.tags)
+        ));
         setUniqueTags(allTags);
     }, [items]);
 
@@ -20,7 +24,6 @@ export default function CustomTags({ items }) {
         }
     }, [selectedTags, filterByTags]);
 
-    // Funkcja do przełączania tagów
     const toggleTag = (tagName) => {
         setSelectedTags((prevSelectedTags) =>
             prevSelectedTags.includes(tagName)
@@ -29,24 +32,28 @@ export default function CustomTags({ items }) {
         );
     };
 
+    const getItemsWithTag = (tag) => {
+        return items.filter(item => 
+            item && 
+            Array.isArray(item.tags) && 
+            item.tags.includes(tag) &&
+            selectedTags.every(selectedTag => item.tags.includes(selectedTag))
+        ).length;
+    };
+
     return (
         <div className='customtags-container'>
             <h2>Custom Tags</h2>
             <div className="tags-list">
                 {uniqueTags.map((tag, index) => {
-                    // Zlicz dynamicznie ile elementów ma dany tag z uwzględnieniem wybranych tagów
-                    const filteredCount = items.filter(
-                        (item) =>
-                            item.tags.includes(tag) &&
-                            selectedTags.every((selectedTag) => item.tags.includes(selectedTag))
-                    ).length;
+                    const filteredCount = getItemsWithTag(tag);
 
                     return (
                         <button
                             key={index}
                             className={`tag-button ${selectedTags.includes(tag) ? 'tag-button-active' : 'tag-button-inactive'} ${filteredCount === 0 ? 'tag-button-disabled' : ''}`}
                             onClick={() => toggleTag(tag)}
-                            disabled={filteredCount === 0} // Wyłącz przycisk, jeśli licznik wynosi 0
+                            disabled={filteredCount === 0}
                         >
                             #{tag} ({filteredCount})
                         </button>
@@ -59,7 +66,7 @@ export default function CustomTags({ items }) {
                 <ul className="maplist-container">
                     {filteredBeatmaps.map((item, i) => (
                         <li key={i} className="single-item">
-                            {item.name}
+                            {item.name || 'Unnamed Item'}
                         </li>
                     ))}
                     {filteredBeatmaps.length === 0 && <li>No items found.</li>}
