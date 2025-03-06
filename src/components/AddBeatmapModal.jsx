@@ -45,10 +45,6 @@ export default function AddBeatmapModal() {
         setIsOpen(false);
     };
 
-    const handleTagInputChange = (e) => {
-        setTags(e.target.value.split(',').map(tag => tag.trim()));
-    };
-
     return (
         <>
             <button className="add-beatmap-button" onClick={() => setIsOpen(true)}>Add beatmap</button>

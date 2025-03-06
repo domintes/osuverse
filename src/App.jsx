@@ -10,7 +10,6 @@ import Header from './layout/Header';
 import AppContainer from './layout/AppContainer';
 import ContentContainer from './layout/ContentContainer';
 import Navbar from './layout/Navbar';
-import Footer from './layout/Footer';
 import React from 'react';
 import { CollectionProvider } from './context/CollectionProvider';
 
