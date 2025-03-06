@@ -2,7 +2,7 @@ import './global.scss'
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
-import MappersPage from './pages/MappersPage';
+import AddMapper from './pages/AddMapper';
 import AddBeatmap from './pages/AddBeatmap.jsx';
 import UserColletionsPage from './pages/UserColletionsPage';
 import Testo from './pages/Testo';
@@ -30,7 +30,7 @@ function App() {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/add" element={<AddBeatmap />} />
               <Route path="/collections" element={<UserColletionsPage />} />
-              <Route path="/mappers" element={<MappersPage />} />
+            <Route path="/mappers" element={<AddMapper />} />
               <Route path="/testo" element={<Testo />} />
             </Routes>
           </ContentContainer>

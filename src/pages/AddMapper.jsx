@@ -4,7 +4,7 @@ import { useState } from 'react';
 import AddBeatmapModal from '../components/AddBeatmapModal';
 
 
-export default function SearchPage() {
+export default function AddMapper() {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleCloseModal = () => {
