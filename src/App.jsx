@@ -34,7 +34,7 @@ function App() {
               <Route path="/testo" element={<Testo />} />
             </Routes>
           </ContentContainer>
-          <Footer />
+          {/* <Footer /> */}
         </AppContainer>
       </CollectionProvider>
   )
