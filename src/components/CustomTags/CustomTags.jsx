@@ -66,7 +66,7 @@ export default function CustomTags({ items = [] }) {
                 <ul className="maplist-container">
                     {filteredBeatmaps.map((item, i) => (
                         <li key={i} className="single-item">
-                            {item.name || 'Unnamed Item'}
+                            {item.name || item.title || 'Unnamed Item'}
                         </li>
                     ))}
                     {filteredBeatmaps.length === 0 && <li>No items found.</li>}

@@ -22,7 +22,7 @@ export default function CollectionsView() {
                                 <div className="beatmap-data">
                                     <span className="beatmap-name">
                                         {beatmap.beatmapset.artist} - {beatmap.title} 
-                                        [<a href={`https://osu.ppy.sh/users/${beatmap.beatmapset.creator_id}`} target="_blank" rel="noopener noreferrer">
+                                        [<a href={`https://osu.ppy.sh/users/${beatmap.beatmapset.user_id}`} target="_blank" rel="noopener noreferrer">
                                             {beatmap.beatmapset.creator}
                                         </a>]
                                     </span>
