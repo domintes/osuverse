@@ -4,13 +4,32 @@ import './navbar.scss';
 export default function Navbar() {
   const navigate = useNavigate();
 
+  const menuItems = [
+    { itemName: 'Home', itemNav: '/home' },
+    { itemName: 'Collections', itemNav: '/collections' },
+    { itemName: 'About', itemNav: '/about', inactive: true },
+    { itemName: 'Add Beatmap', itemNav: '/add' },
+    { itemName: 'Add Mapper', itemNav: '/mappers' },
+    { itemName: 'Testo', itemNav: '/testo', inactive: true }
+  ];
+
+  const renderMenuItems = () => {
+    return menuItems
+      .filter(item => !item.inactive)
+      .map((item, index) => (
+        <div 
+          key={index} 
+          className="osuverse-navbar-item" 
+          onClick={() => navigate(item.itemNav)}
+        >
+          {item.itemName}
+        </div>
+      ));
+  };
+
   return (
     <div className="osuverse-navbar">
-      <div className="osuverse-navbar-item" onClick={() => navigate('/')}>Home</div>
-      <div className="osuverse-navbar-item" onClick={() => navigate('/collections')}>Collection</div>
-      <div className="osuverse-navbar-item" onClick={() => navigate('/about')}>About</div>
-      <div className="osuverse-navbar-item" onClick={() => navigate('/add')}>Add Map</div>
-      <div className="osuverse-navbar-item" onClick={() => navigate('/testo')}>Testo</div>
+      {renderMenuItems()}
     </div>
   );
 }
