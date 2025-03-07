@@ -13,6 +13,12 @@ const useStore = create((set, get) => ({
                 ...beatmap,
                 tags: Array.isArray(beatmap.tags) ? beatmap.tags : []
             };
+            // Check if beatmap already exists
+            const beatmapExists = state.beatmaps.some(b => b.id === beatmap.id);
+            if (beatmapExists) {
+                console.log('Beatmap already exists in the store');
+                return state;
+            }
             const updatedBeatmaps = [...state.beatmaps, beatmapWithTags];
             localStorage.setItem('beatmaps', JSON.stringify(updatedBeatmaps));
             console.log('Updated beatmaps array:', updatedBeatmaps);
@@ -57,6 +63,12 @@ const useStore = create((set, get) => ({
 
     addBeatmapToCollection: (collectionName, beatmap) => set((state) => {
         const collection = state.collections[collectionName] || [];
+        // Check if beatmap already exists in the collection
+        const beatmapExists = collection.some(b => b.id === beatmap.id);
+        if (beatmapExists) {
+            console.log('Beatmap already exists in the collection');
+            return state;
+        }
         const updatedCollections = {
             ...state.collections,
             [collectionName]: [...collection, beatmap]

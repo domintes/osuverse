@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import useStore from '../../store';
 import './customTags.css';
 
@@ -6,7 +6,16 @@ export default function CustomTags({ items = [] }) {
     const [selectedTags, setSelectedTags] = useState([]);
     const [uniqueTags, setUniqueTags] = useState([]);
     const filterByTags = useStore(state => state.filterByTags);
-    const filteredBeatmaps = useStore(state => state.filteredBeatmaps) || [];
+
+    // Use useCallback to memoize the tag filtering logic
+    const getItemsWithTag = useCallback((tag) => {
+        return items.filter(item =>
+            item &&
+            Array.isArray(item.tags) &&
+            item.tags.includes(tag) &&
+            selectedTags.every(selectedTag => item.tags.includes(selectedTag))
+        ).length;
+    }, [items, selectedTags]);
 
     useEffect(() => {
         // Safely generate unique tags list, ensuring items have tags
@@ -19,9 +28,7 @@ export default function CustomTags({ items = [] }) {
     }, [items]);
 
     useEffect(() => {
-        if (typeof filterByTags === 'function') {
-            filterByTags(selectedTags);
-        }
+        filterByTags(selectedTags);
     }, [selectedTags, filterByTags]);
 
     const toggleTag = (tagName) => {
@@ -30,15 +37,6 @@ export default function CustomTags({ items = [] }) {
                 ? prevSelectedTags.filter((tag) => tag !== tagName)
                 : [...prevSelectedTags, tagName]
         );
-    };
-
-    const getItemsWithTag = (tag) => {
-        return items.filter(item => 
-            item && 
-            Array.isArray(item.tags) && 
-            item.tags.includes(tag) &&
-            selectedTags.every(selectedTag => item.tags.includes(selectedTag))
-        ).length;
     };
 
     return (
@@ -59,18 +57,6 @@ export default function CustomTags({ items = [] }) {
                         </button>
                     );
                 })}
-            </div>
-
-            <div className="collection-category-container">
-                <h3>Items with Selected Tags</h3>
-                <ul className="maplist-container">
-                    {filteredBeatmaps.map((item, i) => (
-                        <li key={i} className="single-item">
-                            {item.name || item.title || 'Unnamed Item'}
-                        </li>
-                    ))}
-                    {filteredBeatmaps.length === 0 && <li>No items found.</li>}
-                </ul>
             </div>
         </div>
     );
