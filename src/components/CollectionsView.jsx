@@ -24,7 +24,7 @@ export default function CollectionsView() {
                             ×
                         </button>
                     </div>
-                    <div className="beatmaps-list">
+                    <div className="beatmap-item-container">
                         {filteredBeatmaps
                             .filter(beatmap => beatmaps.some(b => b.id === beatmap.id))
                             .map((beatmap) => (
@@ -40,6 +40,7 @@ export default function CollectionsView() {
                                                 {beatmap.beatmapset.creator}
                                             </a>]
                                         </span>
+
                                         <span className="beatmap-difficulty">
                                             <a href={`https://osu.ppy.sh/beatmapsets/${beatmap.beatmapset_id}#osu/${beatmap.id}`} target="_blank" rel="noopener noreferrer">
                                                 {beatmap.version} ({beatmap.difficulty_rating.toFixed(2)} ★)
