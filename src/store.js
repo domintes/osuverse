@@ -84,7 +84,12 @@ const useStore = create((set, get) => ({
             [collectionName]: collection.filter(b => b.id !== beatmapId)
         };
         localStorage.setItem('collections', JSON.stringify(updatedCollections));
-        return { collections: updatedCollections };
+        
+        // Also remove the beatmap from the global store
+        const updatedBeatmaps = state.beatmaps.filter(beatmap => beatmap.id !== beatmapId);
+        localStorage.setItem('beatmaps', JSON.stringify(updatedBeatmaps));
+        
+        return { collections: updatedCollections, beatmaps: updatedBeatmaps };
     }),
 
     removeCollection: (collectionName) => set((state) => {

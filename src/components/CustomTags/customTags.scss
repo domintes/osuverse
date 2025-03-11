@@ -10,7 +10,7 @@
     border: 1px solid #585b69;
     outline: none;
     cursor: pointer;
-    transition: 0.3s all;
+    transition: 0.2s all;
 }
 
 .tag-button:focus,
@@ -19,7 +19,9 @@
 }
 
 .tag-button:hover {
-    background-color: #33333d;
+    background-color: #363642;
+    border-color: #72ff72;
+    color: #72ff72;
 }
 
 .tag-button-active {
@@ -28,11 +30,12 @@
 }
 
 .tag-button-disabled {
-    border-color: #222;
-    color: #222;
-}
-
-.tag-button-disabled:hover {
-    background-color: #131020;
-    cursor: default;
+    border-color: #222 !important;
+    color: #222 !important;
+    &:hover {
+        color: #222 !important;
+        border-color: #222 !important;
+        background-color: #131020  !important;
+        cursor: default;
+    }
 }

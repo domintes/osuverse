@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import useStore from '../../store';
-import './customTags.css';
+import './customTags.scss';
 
 export default function CustomTags({ items = [] }) {
     const [selectedTags, setSelectedTags] = useState([]);
