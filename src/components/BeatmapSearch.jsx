@@ -1,69 +1,63 @@
-import { useState, useEffect, Suspense } from 'react';
-import axios from 'axios';
+import { useState, useEffect, useCallback } from 'react';
 import { useCollection } from '../context/CollectionContext';
+import { osuApi } from '../utils/osuApi';
+import debounce from 'lodash/debounce';
+import './beatmapSearch.scss';
 
 export default function BeatmapSearch() {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState(null);
     const [page, setPage] = useState(1);
     const [sortConfig, setSortConfig] = useState({ key: 'artist', direction: 'ascending' });
     const { collection, dispatch } = useCollection();
 
-    const fetchBeatmaps = async (term, page) => {
+    const fetchBeatmaps = async (term, currentPage, append = false) => {
         try {
-            setLoading(true);
-            setError(null);
-            const tokenResponse = await axios.post(
-                'https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/oauth/token',
-                {
-                    client_id: '38309',
-                    client_secret: '13hePdYOxB2WwJTvO9t9PuF6xlqxgYgVNb7gZ0f0',
-                    grant_type: 'client_credentials',
-                    scope: 'public',
-                }
-            );
-
-            const accessToken = tokenResponse.data.access_token;
-            const response = await axios.get(
-                `https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/api/v2/beatmapsets/search?query=${term}&limit=8&offset=${(page - 1) * 8}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                }
-            );
-            // Log
-            console.log('Beatmaps response:', response);
-            if (response.data.beatmapsets) {
-                response.data.beatmapsets.forEach((beatmap, index) => {
-                    console.log(`Beatmap ${index}:`, beatmap);
-                });
+            if (currentPage === 1) {
+                setLoading(true);
+            } else {
+                setLoadingMore(true);
             }
-            setResults((prevResults) => [...prevResults, ...response.data.beatmapsets]);
-            setLoading(false);
+            setError(null);
+
+            const data = await osuApi.searchBeatmaps(term, currentPage);
+            
+            if (data.beatmapsets) {
+                setResults(prev => append ? [...prev, ...data.beatmapsets] : data.beatmapsets);
+            }
         } catch (error) {
             console.error('Error fetching beatmaps:', error);
-            setError('Error fetching beatmap data');
+            setError('Error fetching beatmap data. Please try again.');
+        } finally {
             setLoading(false);
+            setLoadingMore(false);
         }
     };
+
+    // Debounced search function
+    const debouncedSearch = useCallback(
+        debounce((searchTerm) => {
+            if (searchTerm) {
+                setResults([]);
+                setPage(1);
+                fetchBeatmaps(searchTerm, 1);
+            }
+        }, 500),
+        []
+    );
 
     useEffect(() => {
-        if (query) {
-            fetchBeatmaps(query, page);
-        }
-    }, [query, page]);
-
-    const handleSearch = () => {
-        setResults([]);
-        setPage(1);
-        fetchBeatmaps(query, 1);
-    };
+        debouncedSearch(query);
+        return () => debouncedSearch.cancel();
+    }, [query, debouncedSearch]);
 
     const loadMore = () => {
-        setPage((prevPage) => prevPage + 1);
+        const nextPage = page + 1;
+        setPage(nextPage);
+        fetchBeatmaps(query, nextPage, true);
     };
 
     const sortedResults = [...results].sort((a, b) => {
@@ -92,71 +86,80 @@ export default function BeatmapSearch() {
 
     return (
         <div className="osuverse-search-container">
-            <input
-                type="text"
-                placeholder="Search beatmaps..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="osuverse-search-input"
-            />
-            <button onClick={handleSearch}>SEARCH BEATMAPS</button>
+            <div className="search-box">
+                <input
+                    type="text"
+                    placeholder="Search beatmaps..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="osuverse-search-input"
+                />
+            </div>
 
-            {!loading && results.length > 0 && (
+            {error && (
+                <div className="error-message">
+                    {error}
+                </div>
+            )}
+
+            {loading ? (
+                <div className="loading-spinner">Loading...</div>
+            ) : results.length > 0 ? (
                 <div className="osuverse-search-result-list">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                    <table>
+                        <thead>
                             <tr>
-                                <th
-                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                                    onClick={() => requestSort('artist')}
-                                >
-                                    Artist
+                                <th onClick={() => requestSort('artist')}>
+                                    Artist {sortConfig.key === 'artist' && (sortConfig.direction === 'ascending' ? '↑' : '↓')}
                                 </th>
-                                <th
-                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                                    onClick={() => requestSort('title')}
-                                >
-                                    Title
+                                <th onClick={() => requestSort('title')}>
+                                    Title {sortConfig.key === 'title' && (sortConfig.direction === 'ascending' ? '↑' : '↓')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Cover
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Actions
-                                </th>
+                                <th>Cover</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody>
                             {sortedResults.map((beatmap) => (
                                 <tr key={beatmap.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{beatmap.artist}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{beatmap.title}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <img src={beatmap.covers.list} alt={`${beatmap.title} cover`} className="w-16 h-16 object-cover" />
+                                    <td>{beatmap.artist}</td>
+                                    <td>{beatmap.title}</td>
+                                    <td>
+                                        <img 
+                                            src={beatmap.covers.list} 
+                                            alt={`${beatmap.title} cover`} 
+                                            loading="lazy"
+                                        />
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <button onClick={() => addToCollection(beatmap)} className="px-4 py-2 bg-green-500 text-white rounded">Add to Collection</button>
+                                    <td>
+                                        <button 
+                                            onClick={() => addToCollection(beatmap)}
+                                            disabled={collection.some(item => item.id === beatmap.id)}
+                                        >
+                                            {collection.some(item => item.id === beatmap.id) ? 'Added' : 'Add to Collection'}
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-                    <button onClick={loadMore} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Load More</button>
+                    
+                    {loadingMore ? (
+                        <div className="loading-spinner">Loading more...</div>
+                    ) : (
+                        <button 
+                            onClick={loadMore} 
+                            className="load-more-button"
+                        >
+                            Load More
+                        </button>
+                    )}
+                </div>
+            ) : query && !loading && (
+                <div className="no-results">
+                    No beatmaps found for "{query}"
                 </div>
             )}
-
-            <Suspense fallback={<p>Loading...</p>}>
-                {error && <p>{error}</p>}
-            </Suspense>
-
-            <div className="osuverse-collection">
-                <h2>Your Collection</h2>
-                <ul>
-                    {collection.map((beatmap) => (
-                        <li key={`${beatmap.id}-${beatmap.version}`}>{beatmap.artist} - {beatmap.title}</li>
-                    ))}
-                </ul>
-            </div>
         </div>
     );
 }
