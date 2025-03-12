@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { color, shadow, radius, space, transition, gradients } from './theme';
 
 // Replace void-container mixin

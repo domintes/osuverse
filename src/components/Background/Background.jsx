@@ -1,63 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { styled } from '@linaria/react';
-
-// Design constants
-const Z_INDEX = {
-    background: -1,
-    tooltip: 1000
-};
-
-const COLORS = {
-    void: '#0a0a0f',
-    border: '#2a2a3a',
-    text: '#ffffff',
-    textSecondary: '#9999aa',
-    primary: '#6666ff',
-    secondary: '#4444cc',
-};
-
-const SPACING = {
-    md: '1rem'
-};
-
-const Canvas = styled.canvas`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: ${Z_INDEX.background};
-    pointer-events: none;
-    opacity: ${props => props.$disabled ? 0 : 0.3};
-    transition: opacity 0.2s ease;
-`;
-
-const ToggleButton = styled.button`
-    position: fixed;
-    bottom: ${SPACING.md};
-    left: ${SPACING.md};
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(10, 10, 15, 0.3);
-    border: 1px solid ${COLORS.border};
-    color: ${COLORS.text};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    z-index: ${Z_INDEX.tooltip};
-    opacity: 0.6;
-    transition: all 0.2s ease;
-    cursor: pointer;
-
-    &:hover {
-        opacity: 1;
-        transform: translateY(-2px);
-        background: rgba(10, 10, 15, 0.5);
-        border-color: ${COLORS.primary};
-    }
-`;
+import '../../styles/cyberpunk.css';
 
 class Particle {
     constructor(canvas, x, y) {
@@ -67,7 +9,6 @@ class Particle {
         this.size = Math.random() * 2 + 1;
         this.baseSpeed = Math.random() * 0.5 + 0.1;
         this.speed = this.baseSpeed;
-        this.direction = Math.random() * Math.PI * 2;
         this.brightness = Math.random();
         this.alpha = 1;
         this.distanceFromBlackHole = 0;
@@ -247,24 +188,24 @@ const Background = () => {
         }
     }, []);
 
-    const toggleBackground = () => {
-        const newState = !isEnabled;
-        setIsEnabled(newState);
-        localStorage.setItem('backgroundEnabled', newState);
-    };
-
     return (
         <>
-            <Canvas
-                ref={canvasRef}
-                $disabled={!isEnabled}
+            <canvas 
+                ref={canvasRef} 
+                className={`background-canvas ${!isEnabled ? 'disabled' : ''}`}
+                style={{ opacity: isEnabled ? 0.3 : 0 }}
             />
-            <ToggleButton
-                onClick={toggleBackground}
+            <button 
+                className="background-toggle cyber-button cyber-button-outlined"
+                onClick={() => {
+                    const newState = !isEnabled;
+                    setIsEnabled(newState);
+                    localStorage.setItem('backgroundEnabled', newState.toString());
+                }} 
                 title={isEnabled ? 'Disable background animation' : 'Enable background animation'}
             >
                 {isEnabled ? '✨' : '🌌'}
-            </ToggleButton>
+            </button>
         </>
     );
 };

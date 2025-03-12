@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { color, shadow, radius, space, font, fontSize, transition, lighten, darken } from '../../styles/theme';
 
 export const SearchContainer = styled.div`

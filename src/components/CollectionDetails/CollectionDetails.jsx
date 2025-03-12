@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react';
 import useBeatmapStore from '../../stores/beatmapStore';
 import TagInput from '../TagInput/TagInput';
-import { styled } from '@linaria/react';
 
 // Design constants
 const COLORS = {

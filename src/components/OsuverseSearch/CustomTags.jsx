@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
 import useStore from '../../store';
-import { styled } from '@linaria/react';
 
 // Design constants matching our void/space theme
 const COLORS = {
