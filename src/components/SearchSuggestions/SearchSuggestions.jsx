@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import './SearchSuggestions.scss';
 
 export default function SearchSuggestions({ 
     suggestions, 

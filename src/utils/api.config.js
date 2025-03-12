@@ -14,3 +14,27 @@ export const API_CONFIG = {
 };
 
 export const createApiEndpoint = (endpoint) => `${API_CONFIG.OSU_API.BASE_URL}/${endpoint}`;
+
+import axios from 'axios';
+
+// Create and export the osuApi axios instance
+export const osuApi = axios.create({
+    baseURL: API_CONFIG.OSU_API.BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+});
+
+// Add request interceptor to include auth token
+osuApi.interceptors.request.use(
+    async (config) => {
+        // Get token from localStorage or other auth mechanism
+        const token = localStorage.getItem('osu_token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);

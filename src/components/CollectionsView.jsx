@@ -1,6 +1,5 @@
 import useStore from '../store';
 import CustomTags from './CustomTags/CustomTags';
-import './collectionsView.scss';
 
 export default function CollectionsView() {
     const { collections, removeBeatmapFromCollection, removeCollection } = useStore();

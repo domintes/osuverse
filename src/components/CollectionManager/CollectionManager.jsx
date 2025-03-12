@@ -3,7 +3,6 @@ import useBeatmapStore from '../../stores/beatmapStore';
 import OsuverseSearch from '../OsuverseSearch/OsuverseSearch';
 import BeatmapSet from '../BeatmapSet/BeatmapSet';
 import CollectionExport from './CollectionExport';
-import './CollectionManager.scss';
 
 export default function CollectionManager() {
     const [selectedCollection, setSelectedCollection] = useState(null);

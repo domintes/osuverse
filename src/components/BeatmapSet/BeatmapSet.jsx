@@ -1,5 +1,28 @@
 import { useState } from 'react';
-import './BeatmapSet.scss';
+import {
+    BeatmapSetContainer,
+    BeatmapSetMain,
+    CoverContainer,
+    StatusBadge,
+    BeatmapInfo,
+    BeatmapHeader,
+    Title,
+    Artist,
+    Mapper,
+    BeatmapStats,
+    Stat,
+    StatLabel,
+    StatValue,
+    BeatmapActions,
+    ActionButton,
+    DifficultiesList,
+    DifficultyItem,
+    DifficultyInfo,
+    DifficultyName,
+    DifficultyRating,
+    DifficultyStats,
+    DifficultyActions
+} from './BeatmapSet.styled';
 
 export default function BeatmapSet({ beatmapset, onAddToCollection, onRemoveFromCollection, isInCollection }) {
     const [showDifficulties, setShowDifficulties] = useState(false);
@@ -44,119 +67,131 @@ export default function BeatmapSet({ beatmapset, onAddToCollection, onRemoveFrom
     };
 
     return (
-        <div 
-            className={`beatmapset void-container ${isHovered ? 'hovered' : ''}`}
+        <BeatmapSetContainer 
+            className={isHovered ? 'hovered' : ''}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            <div className="beatmapset-main">
-                <div className="beatmapset-cover">
+            <BeatmapSetMain>
+                <CoverContainer>
                     <img src={beatmapset.covers.card} alt={beatmapset.title} loading="lazy" />
-                    <div className={`status-badge ${getStatusClass(beatmapset.status)}`}>
+                    <StatusBadge className={getStatusClass(beatmapset.status)}>
                         {getStatusIcon(beatmapset.status)}
-                    </div>
-                </div>
+                    </StatusBadge>
+                </CoverContainer>
                 
-                <div className="beatmapset-info">
-                    <div className="beatmapset-header">
-                        <h3 className="title">
+                <BeatmapInfo>
+                    <BeatmapHeader>
+                        <Title>
                             {beatmapset.title}
                             {beatmapset.artist && (
-                                <span className="artist"> by {beatmapset.artist}</span>
+                                <Artist> by {beatmapset.artist}</Artist>
                             )}
-                        </h3>
-                        <div className="mapper">
+                        </Title>
+                        <Mapper>
                             mapped by <a href={`https://osu.ppy.sh/users/${beatmapset.user_id}`} target="_blank" rel="noopener noreferrer">
                                 {beatmapset.creator}
                             </a>
-                        </div>
-                    </div>
+                        </Mapper>
+                    </BeatmapHeader>
 
-                    <div className="beatmapset-stats">
-                        <div className="stat">
-                            <span className="label">Difficulty:</span>
-                            <span className="value">
+                    <BeatmapStats>
+                        <Stat>
+                            <StatLabel>Difficulty:</StatLabel>
+                            <StatValue>
                                 {difficultyRange.min === difficultyRange.max
                                     ? `${difficultyRange.min}★`
                                     : `${difficultyRange.min}★ - ${difficultyRange.max}★`}
-                            </span>
-                        </div>
-                        <div className="stat">
-                            <span className="label">Length:</span>
-                            <span className="value">{formatLength(beatmapset.beatmaps[0].total_length)}</span>
-                        </div>
-                        <div className="stat">
-                            <span className="label">BPM:</span>
-                            <span className="value">{beatmapset.bpm}</span>
-                        </div>
-                    </div>
-                </div>
+                            </StatValue>
+                        </Stat>
+                        <Stat>
+                            <StatLabel>Length:</StatLabel>
+                            <StatValue>{formatLength(beatmapset.beatmaps[0].total_length)}</StatValue>
+                        </Stat>
+                        <Stat>
+                            <StatLabel>BPM:</StatLabel>
+                            <StatValue>{beatmapset.bpm}</StatValue>
+                        </Stat>
+                    </BeatmapStats>
+                </BeatmapInfo>
 
-                <div className="beatmapset-actions">
+                <BeatmapActions>
                     {isInCollection ? (
-                        <button 
-                            className="action-btn remove" 
+                        <ActionButton 
+                            className="remove" 
                             onClick={() => onRemoveFromCollection(beatmapset.id)}
                             title="Remove from collection"
                         >
                             ✕
-                        </button>
+                        </ActionButton>
                     ) : (
-                        <button 
-                            className="action-btn add" 
+                        <ActionButton 
+                            className="add" 
                             onClick={() => onAddToCollection(beatmapset.id)}
                             title="Add to collection"
                         >
                             +
-                        </button>
+                        </ActionButton>
                     )}
-                    <button 
-                        className={`action-btn toggle-difficulties ${showDifficulties ? 'active' : ''}`}
+                    <ActionButton 
+                        className={`toggle-difficulties ${showDifficulties ? 'active' : ''}`}
                         onClick={() => setShowDifficulties(!showDifficulties)}
                         title="Show difficulties"
                     >
                         ▼
-                    </button>
-                </div>
-            </div>
+                    </ActionButton>
+                </BeatmapActions>
+            </BeatmapSetMain>
 
             {showDifficulties && (
-                <div className="difficulties-list">
+                <DifficultiesList>
                     {sortedDifficulties.map((diff) => (
-                        <div key={diff.id} className="difficulty-item">
-                            <div className="difficulty-info">
-                                <span className="difficulty-name">{diff.version}</span>
-                                <span className="difficulty-rating">{diff.difficulty_rating}★</span>
-                            </div>
-                            <div className="difficulty-stats">
-                                <span className="stat">CS: {diff.cs}</span>
-                                <span className="stat">AR: {diff.ar}</span>
-                                <span className="stat">OD: {diff.accuracy}</span>
-                                <span className="stat">HP: {diff.drain}</span>
-                            </div>
-                            <div className="difficulty-actions">
+                        <DifficultyItem key={diff.id}>
+                            <DifficultyInfo>
+                                <DifficultyName>{diff.version}</DifficultyName>
+                                <DifficultyRating>{diff.difficulty_rating}★</DifficultyRating>
+                            </DifficultyInfo>
+                            <DifficultyStats>
+                                <Stat>
+                                    <StatLabel>CS:</StatLabel>
+                                    <StatValue>{diff.cs}</StatValue>
+                                </Stat>
+                                <Stat>
+                                    <StatLabel>AR:</StatLabel>
+                                    <StatValue>{diff.ar}</StatValue>
+                                </Stat>
+                                <Stat>
+                                    <StatLabel>OD:</StatLabel>
+                                    <StatValue>{diff.accuracy}</StatValue>
+                                </Stat>
+                                <Stat>
+                                    <StatLabel>HP:</StatLabel>
+                                    <StatValue>{diff.drain}</StatValue>
+                                </Stat>
+                            </DifficultyStats>
+                            <DifficultyActions>
                                 {isInCollection ? (
-                                    <button 
-                                        className="action-btn remove small" 
+                                    <ActionButton 
+                                        className="remove small" 
                                         onClick={() => onRemoveFromCollection(beatmapset.id, diff.id)}
                                         title="Remove difficulty"
                                     >
                                         ✕
-                                    </button>
+                                    </ActionButton>
                                 ) : (
-                                    <button 
-                                        className="action-btn add small" 
+                                    <ActionButton 
+                                        className="add small" 
                                         onClick={() => onAddToCollection(beatmapset.id, diff.id)}
                                         title="Add difficulty"
                                     >
                                         +
-                                    </button>
+                                    </ActionButton>
                                 )}
-                            </div>
-                        </div>
+                            </DifficultyActions>
+                        </DifficultyItem>
                     ))}
-                </div>
+                </DifficultiesList>
             )}
-        </div>
+        </BeatmapSetContainer>
     );
 }

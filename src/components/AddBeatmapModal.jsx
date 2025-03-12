@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import useStore from '../store';
-import './addBeatmapModal.scss';
 import GetMapData from '../utils/GetMapData';
 import CollectionManager from './CollectionManager';
 import TagInput from './TagInput/TagInput';

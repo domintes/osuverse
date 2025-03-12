@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import useBeatmapStore from '../../stores/beatmapStore';
-import './CollectionExport.scss';
 
 export default function CollectionExport({ onClose }) {
     const [selectedCollections, setSelectedCollections] = useState(new Set());

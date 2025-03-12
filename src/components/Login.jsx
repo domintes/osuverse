@@ -1,5 +1,4 @@
 import { useAuth } from '../auth/AuthContext';
-import './login.scss';
 
 export default function Login() {
     const { login } = useAuth();

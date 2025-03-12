@@ -1,4 +1,3 @@
-import './beatmapSearch.scss';
 import UserSearch from '../components/UserSearch';
 import { useState } from 'react';
 import AddBeatmapModal from '../components/AddBeatmapModal';

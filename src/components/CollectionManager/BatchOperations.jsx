@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
 import useBeatmapStore from '../../stores/beatmapStore';
-import './BatchOperations.scss';
 
 export default function BatchOperations({ onClose }) {
     const [selectedCollections, setSelectedCollections] = useState(new Set());

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import axios from 'axios';
-import './userSearch.scss';
 
 export default function UserSearch() {
     const [userQuery, setUserQuery] = useState('');

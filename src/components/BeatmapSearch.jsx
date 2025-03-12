@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useCollection } from '../context/CollectionContext';
 import { osuApi } from '../utils/osuApi';
 import debounce from 'lodash/debounce';
-import './beatmapSearch.scss';
 
 export default function BeatmapSearch() {
     const [query, setQuery] = useState('');

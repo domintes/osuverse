@@ -1,5 +1,63 @@
 import { useEffect, useRef, useState } from 'react';
-import './Background.scss';
+import { styled } from '@linaria/react';
+
+// Design constants
+const Z_INDEX = {
+    background: -1,
+    tooltip: 1000
+};
+
+const COLORS = {
+    void: '#0a0a0f',
+    border: '#2a2a3a',
+    text: '#ffffff',
+    textSecondary: '#9999aa',
+    primary: '#6666ff',
+    secondary: '#4444cc',
+};
+
+const SPACING = {
+    md: '1rem'
+};
+
+const Canvas = styled.canvas`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: ${Z_INDEX.background};
+    pointer-events: none;
+    opacity: ${props => props.$disabled ? 0 : 0.3};
+    transition: opacity 0.2s ease;
+`;
+
+const ToggleButton = styled.button`
+    position: fixed;
+    bottom: ${SPACING.md};
+    left: ${SPACING.md};
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(10, 10, 15, 0.3);
+    border: 1px solid ${COLORS.border};
+    color: ${COLORS.text};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    z-index: ${Z_INDEX.tooltip};
+    opacity: 0.6;
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 1;
+        transform: translateY(-2px);
+        background: rgba(10, 10, 15, 0.5);
+        border-color: ${COLORS.primary};
+    }
+`;
 
 class Particle {
     constructor(canvas, x, y) {
@@ -132,7 +190,7 @@ const Background = () => {
                 50
             );
             gradient.addColorStop(0, 'rgba(0, 0, 0, 1)');
-            gradient.addColorStop(0.5, 'rgba(128, 0, 128, 0.3)');
+            gradient.addColorStop(0.5, 'rgba(102, 102, 255, 0.3)');
             gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
             ctx.beginPath();
@@ -197,17 +255,16 @@ const Background = () => {
 
     return (
         <>
-            <canvas
+            <Canvas
                 ref={canvasRef}
-                className={`background-canvas ${!isEnabled ? 'disabled' : ''}`}
+                $disabled={!isEnabled}
             />
-            <button
-                className="background-toggle"
+            <ToggleButton
                 onClick={toggleBackground}
                 title={isEnabled ? 'Disable background animation' : 'Enable background animation'}
             >
-                {isEnabled ? '✨' : '⭐'}
-            </button>
+                {isEnabled ? '✨' : '🌌'}
+            </ToggleButton>
         </>
     );
 };

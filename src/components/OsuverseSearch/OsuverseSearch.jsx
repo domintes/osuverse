@@ -2,7 +2,20 @@ import { useState, useRef, useEffect } from 'react';
 import { debounce } from 'lodash';
 import useBeatmapSearch from '../../hooks/useBeatmapSearch';
 import SearchSuggestions from '../SearchSuggestions/SearchSuggestions';
-import './OsuverseSearch.scss';
+import {
+    SearchContainer,
+    SearchInput,
+    SearchIcon,
+    SearchDropdown,
+    SearchDropdownHeader,
+    SearchTitle,
+    SearchCloseButton,
+    SearchFilters,
+    FilterGroup,
+    FilterLabel,
+    FilterInput,
+    LoadingIndicator
+} from './OsuverseSearch.styled';
 
 export default function OsuverseSearch({ onSearch }) {
     const [query, setQuery] = useState('');
@@ -62,7 +75,7 @@ export default function OsuverseSearch({ onSearch }) {
 
     // Obsługa klawiszy
     const handleKeyDown = (e) => {
-        const suggestions = [
+        const suggestionsList = [
             ...suggestions.tags,
             ...suggestions.collections,
             ...suggestions.mappers,
@@ -77,7 +90,7 @@ export default function OsuverseSearch({ onSearch }) {
                     setActiveIndex(0);
                 } else {
                     setActiveIndex((prev) => 
-                        prev < suggestions.length - 1 ? prev + 1 : prev
+                        prev < suggestionsList.length - 1 ? prev + 1 : prev
                     );
                 }
                 break;
@@ -88,9 +101,9 @@ export default function OsuverseSearch({ onSearch }) {
                 break;
 
             case 'Enter':
-                if (activeIndex >= 0 && activeIndex < suggestions.length) {
+                if (activeIndex >= 0 && activeIndex < suggestionsList.length) {
                     e.preventDefault();
-                    handleSuggestionSelect(suggestions[activeIndex]);
+                    handleSuggestionSelect(suggestionsList[activeIndex]);
                 }
                 break;
 
@@ -100,9 +113,9 @@ export default function OsuverseSearch({ onSearch }) {
                 break;
 
             case 'Tab':
-                if (showSuggestions && suggestions.length > 0) {
+                if (showSuggestions && suggestionsList.length > 0) {
                     e.preventDefault();
-                    handleSuggestionSelect(suggestions[0]);
+                    handleSuggestionSelect(suggestionsList[0]);
                 }
                 break;
 
@@ -110,8 +123,8 @@ export default function OsuverseSearch({ onSearch }) {
                 if (e.key.match(/^[1-9]$/) && e.metaKey) {
                     e.preventDefault();
                     const index = parseInt(e.key) - 1;
-                    if (index < suggestions.length) {
-                        handleSuggestionSelect(suggestions[index]);
+                    if (index < suggestionsList.length) {
+                        handleSuggestionSelect(suggestionsList[index]);
                     }
                 }
                 break;
@@ -134,26 +147,22 @@ export default function OsuverseSearch({ onSearch }) {
     }, []);
 
     return (
-        <div className="osuverse-search">
-            <div className="search-input-container void-container">
-                <input
-                    ref={inputRef}
-                    type="text"
-                    className="search-input"
-                    value={query}
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    onFocus={() => setShowSuggestions(true)}
-                    placeholder="Search beatmaps, collections, or use #tags..."
-                />
-                <button 
-                    className="expand-filters-btn"
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    title={isExpanded ? "Hide filters" : "Show filters"}
-                >
-                    <span className={`arrow-icon ${isExpanded ? 'expanded' : ''}`}>▼</span>
-                </button>
-            </div>
+        <SearchContainer>
+            <SearchInput
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                onFocus={() => setShowSuggestions(true)}
+                placeholder="Search beatmaps, collections, or use #tags..."
+            />
+            <SearchIcon 
+                onClick={() => setIsExpanded(!isExpanded)}
+                title={isExpanded ? "Hide filters" : "Show filters"}
+            >
+                <span style={{ transform: isExpanded ? 'rotate(180deg)' : 'none', display: 'inline-block' }}>▼</span>
+            </SearchIcon>
 
             {showSuggestions && (
                 <div ref={dropdownRef}>
@@ -169,141 +178,147 @@ export default function OsuverseSearch({ onSearch }) {
             )}
 
             {isExpanded && (
-                <div className="search-filters void-container">
-                    <div className="filter-section">
-                        <h3>Search in:</h3>
-                        <div className="filter-options">
-                            <label className="filter-option">
-                                <input
-                                    type="checkbox"
-                                    checked={filters.collections}
-                                    onChange={(e) => {
-                                        setFilters(prev => ({
-                                            ...prev,
-                                            collections: e.target.checked
-                                        }));
-                                        handleSearch(query);
-                                    }}
-                                />
-                                My Collections
-                            </label>
-                            <label className="filter-option">
-                                <input
-                                    type="checkbox"
-                                    checked={filters.allBeatmaps}
-                                    onChange={(e) => {
-                                        setFilters(prev => ({
-                                            ...prev,
-                                            allBeatmaps: e.target.checked
-                                        }));
-                                        handleSearch(query);
-                                    }}
-                                />
-                                All Beatmaps
-                            </label>
-                        </div>
-                    </div>
+                <SearchDropdown>
+                    <SearchDropdownHeader>
+                        <SearchTitle>Advanced Filters</SearchTitle>
+                        <SearchCloseButton onClick={() => setIsExpanded(false)}>×</SearchCloseButton>
+                    </SearchDropdownHeader>
+                    
+                    <SearchFilters>
+                        <FilterGroup>
+                            <FilterLabel>Search in:</FilterLabel>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={filters.collections}
+                                        onChange={(e) => {
+                                            setFilters(prev => ({
+                                                ...prev,
+                                                collections: e.target.checked
+                                            }));
+                                            handleSearch(query);
+                                        }}
+                                    />
+                                    My Collections
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={filters.allBeatmaps}
+                                        onChange={(e) => {
+                                            setFilters(prev => ({
+                                                ...prev,
+                                                allBeatmaps: e.target.checked
+                                            }));
+                                            handleSearch(query);
+                                        }}
+                                    />
+                                    All Beatmaps
+                                </label>
+                            </div>
+                        </FilterGroup>
 
-                    <div className="filter-section">
-                        <h3>Filter by:</h3>
-                        <div className="filter-options">
-                            <label className="filter-option">
-                                <input
-                                    type="checkbox"
-                                    checked={filters.ranked}
-                                    onChange={(e) => {
-                                        setFilters(prev => ({
-                                            ...prev,
-                                            ranked: e.target.checked,
-                                            unranked: e.target.checked ? false : prev.unranked
-                                        }));
-                                        handleSearch(query);
-                                    }}
-                                />
-                                Ranked Maps
-                            </label>
-                            <label className="filter-option">
-                                <input
-                                    type="checkbox"
-                                    checked={filters.loved}
-                                    onChange={(e) => {
-                                        setFilters(prev => ({
-                                            ...prev,
-                                            loved: e.target.checked
-                                        }));
-                                        handleSearch(query);
-                                    }}
-                                />
-                                Loved Maps
-                            </label>
-                            <label className="filter-option">
-                                <input
-                                    type="checkbox"
-                                    checked={filters.unranked}
-                                    onChange={(e) => {
-                                        setFilters(prev => ({
-                                            ...prev,
-                                            unranked: e.target.checked,
-                                            ranked: e.target.checked ? false : prev.ranked
-                                        }));
-                                        handleSearch(query);
-                                    }}
-                                />
-                                Unranked Maps
-                            </label>
-                        </div>
-                    </div>
+                        <FilterGroup>
+                            <FilterLabel>Status:</FilterLabel>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={filters.ranked}
+                                        onChange={(e) => {
+                                            setFilters(prev => ({
+                                                ...prev,
+                                                ranked: e.target.checked
+                                            }));
+                                            handleSearch(query);
+                                        }}
+                                    />
+                                    Ranked
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={filters.loved}
+                                        onChange={(e) => {
+                                            setFilters(prev => ({
+                                                ...prev,
+                                                loved: e.target.checked
+                                            }));
+                                            handleSearch(query);
+                                        }}
+                                    />
+                                    Loved
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={filters.unranked}
+                                        onChange={(e) => {
+                                            setFilters(prev => ({
+                                                ...prev,
+                                                unranked: e.target.checked
+                                            }));
+                                            handleSearch(query);
+                                        }}
+                                    />
+                                    Unranked
+                                </label>
+                            </div>
+                        </FilterGroup>
 
-                    <div className="filter-section">
-                        <h3>Difficulty Range:</h3>
-                        <div className="filter-options range-inputs">
-                            <input 
-                                type="number" 
-                                min="0" 
-                                max="10" 
-                                step="0.1" 
-                                placeholder="Min ★"
-                                value={filters.minStars}
-                                onChange={(e) => {
-                                    setFilters(prev => ({
-                                        ...prev,
-                                        minStars: e.target.value
-                                    }));
-                                    handleSearch(query);
-                                }}
-                            />
-                            <span>-</span>
-                            <input 
-                                type="number" 
-                                min="0" 
-                                max="10" 
-                                step="0.1" 
-                                placeholder="Max ★"
-                                value={filters.maxStars}
-                                onChange={(e) => {
-                                    setFilters(prev => ({
-                                        ...prev,
-                                        maxStars: e.target.value
-                                    }));
-                                    handleSearch(query);
-                                }}
-                            />
-                        </div>
-                    </div>
-                </div>
+                        <FilterGroup>
+                            <FilterLabel>Star Rating:</FilterLabel>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <FilterInput
+                                    type="number"
+                                    placeholder="Min"
+                                    value={filters.minStars}
+                                    onChange={(e) => {
+                                        setFilters(prev => ({
+                                            ...prev,
+                                            minStars: e.target.value
+                                        }));
+                                        handleSearch(query);
+                                    }}
+                                    min="0"
+                                    max="12"
+                                    step="0.1"
+                                />
+                                <span>to</span>
+                                <FilterInput
+                                    type="number"
+                                    placeholder="Max"
+                                    value={filters.maxStars}
+                                    onChange={(e) => {
+                                        setFilters(prev => ({
+                                            ...prev,
+                                            maxStars: e.target.value
+                                        }));
+                                        handleSearch(query);
+                                    }}
+                                    min="0"
+                                    max="12"
+                                    step="0.1"
+                                />
+                            </div>
+                        </FilterGroup>
+                    </SearchFilters>
+                </SearchDropdown>
             )}
 
-            {isLoading && (
-                <div className="search-status loading">
-                    Searching...
-                </div>
-            )}
-
+            {isLoading && <LoadingIndicator>Searching...</LoadingIndicator>}
+            
             {error && (
-                <div className="search-status error">
+                <div style={{ 
+                    padding: '10px',
+                    color: '#ff6b6b',
+                    marginTop: '10px',
+                    textAlign: 'center'
+                }}>
                     Error: {error}
                 </div>
             )}
-        </div>
+        </SearchContainer>
     );
 }
