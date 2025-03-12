@@ -1,0 +1,293 @@
+@import '../../styles/variables';
+
+.batch-operations {
+    width: 100%;
+    max-width: 800px;
+    background: $gradient-void;
+    border: 2px solid $color-border;
+    padding: $spacing-lg;
+    animation: slideUp $transition-normal forwards;
+
+    .batch-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-lg;
+        padding-bottom: $spacing-md;
+        border-bottom: 2px solid rgba($color-border, 0.3);
+
+        h3 {
+            font-family: $font-family-heading;
+            color: $color-text;
+            font-size: $font-size-xl;
+            margin: 0;
+        }
+
+        .close-btn {
+            @include hover-effect;
+            color: $color-text-secondary;
+            font-size: $font-size-lg;
+            transition: all $transition-normal;
+
+            &:hover {
+                color: $color-danger;
+                transform: scale(1.1);
+            }
+        }
+    }
+
+    .batch-content {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xl;
+
+        h4 {
+            font-family: $font-family-heading;
+            color: $color-text;
+            font-size: $font-size-lg;
+            margin: 0 0 $spacing-md;
+        }
+
+        h5 {
+            font-family: $font-family-heading;
+            color: $color-text-secondary;
+            font-size: $font-size-md;
+            margin: 0 0 $spacing-sm;
+        }
+
+        .collections-list {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-sm;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: $spacing-sm;
+
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: rgba($color-void, 0.5);
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: $color-secondary;
+                border-radius: $border-radius-sm;
+
+                &:hover {
+                    background: lighten($color-secondary, 10%);
+                }
+            }
+        }
+
+        .collection-checkbox, .operation-radio, .tag-checkbox {
+            @include void-container;
+            display: flex;
+            align-items: center;
+            gap: $spacing-md;
+            padding: $spacing-sm $spacing-md;
+            cursor: pointer;
+            transition: all $transition-normal;
+
+            &:hover {
+                background: rgba($color-secondary, 0.1);
+                transform: translateX(5px);
+            }
+
+            input[type="checkbox"], input[type="radio"] {
+                display: none;
+            }
+
+            .checkbox-custom, .radio-custom {
+                width: 20px;
+                height: 20px;
+                border: 2px solid $color-border;
+                position: relative;
+                transition: all $transition-normal;
+            }
+
+            .checkbox-custom {
+                border-radius: $border-radius-sm;
+
+                &::after {
+                    content: '✓';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) scale(0);
+                    color: $color-primary;
+                    font-size: $font-size-md;
+                    transition: all $transition-normal;
+                }
+            }
+
+            .radio-custom {
+                border-radius: 50%;
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) scale(0);
+                    width: 10px;
+                    height: 10px;
+                    background: $color-primary;
+                    border-radius: 50%;
+                    transition: all $transition-normal;
+                }
+            }
+
+            input[type="checkbox"]:checked + .checkbox-custom,
+            input[type="radio"]:checked + .radio-custom {
+                border-color: $color-primary;
+                background: rgba($color-primary, 0.1);
+
+                &::after {
+                    transform: translate(-50%, -50%) scale(1);
+                }
+            }
+
+            .collection-name {
+                flex: 1;
+                font-family: $font-family-glitch;
+                color: $color-text;
+            }
+
+            .beatmap-count {
+                color: $color-text-secondary;
+                font-size: $font-size-sm;
+            }
+        }
+
+        .operation-types {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-sm;
+        }
+
+        .merge-options, .tags-options {
+            .merge-input {
+                @include void-container;
+                width: 100%;
+                background: rgba($color-void, 0.3);
+                border: 2px solid $color-border;
+                padding: $spacing-sm $spacing-md;
+                color: $color-text;
+                font-family: $font-family-glitch;
+                font-size: $font-size-md;
+                margin-bottom: $spacing-lg;
+                transition: all $transition-normal;
+
+                &:focus {
+                    border-color: $color-primary;
+                    outline: none;
+                    box-shadow: 0 0 0 4px rgba($color-primary, 0.1);
+                }
+
+                &::placeholder {
+                    color: rgba($color-text, 0.5);
+                }
+            }
+        }
+
+        .tags-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: $spacing-sm;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: $spacing-sm;
+
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: rgba($color-void, 0.5);
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: $color-secondary;
+                border-radius: $border-radius-sm;
+
+                &:hover {
+                    background: lighten($color-secondary, 10%);
+                }
+            }
+        }
+
+        .delete-warning {
+            padding: $spacing-lg;
+            background: rgba($color-danger, 0.1);
+            border: 2px solid $color-danger;
+            border-radius: $border-radius-md;
+            text-align: center;
+
+            p {
+                color: $color-text;
+                margin: $spacing-xs 0;
+
+                &:first-child {
+                    font-size: $font-size-lg;
+                    color: $color-danger;
+                }
+            }
+        }
+
+        .batch-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: $spacing-md;
+            margin-top: $spacing-lg;
+            padding-top: $spacing-lg;
+            border-top: 2px solid rgba($color-border, 0.3);
+
+            button {
+                @include void-container;
+                @include hover-effect;
+                padding: $spacing-sm $spacing-xl;
+                font-family: $font-family-glitch;
+                font-size: $font-size-md;
+                transition: all $transition-normal;
+
+                &.cancel-btn {
+                    background: rgba($color-secondary, 0.1);
+                    color: $color-text-secondary;
+
+                    &:hover {
+                        background: rgba($color-secondary, 0.2);
+                    }
+                }
+
+                &.apply-btn {
+                    background: $color-primary;
+                    color: $color-text;
+
+                    &:hover:not(:disabled) {
+                        background: lighten($color-primary, 10%);
+                    }
+
+                    &:disabled {
+                        opacity: 0.5;
+                        cursor: not-allowed;
+                        background: $color-secondary;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Animacja
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

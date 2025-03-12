@@ -1,0 +1,241 @@
+@import '../../styles/variables';
+
+.collection-export {
+    width: 100%;
+    max-width: 600px;
+    background: $gradient-void;
+    border: 2px solid $color-border;
+    padding: $spacing-lg;
+    animation: slideUp $transition-normal forwards;
+
+    .export-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $spacing-lg;
+        padding-bottom: $spacing-md;
+        border-bottom: 2px solid rgba($color-border, 0.3);
+
+        h3 {
+            font-family: $font-family-heading;
+            color: $color-text;
+            font-size: $font-size-xl;
+            margin: 0;
+        }
+
+        .close-btn {
+            @include hover-effect;
+            color: $color-text-secondary;
+            font-size: $font-size-lg;
+            transition: all $transition-normal;
+
+            &:hover {
+                color: $color-danger;
+                transform: scale(1.1);
+            }
+        }
+    }
+
+    .export-content {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-xl;
+
+        h4 {
+            font-family: $font-family-heading;
+            color: $color-text;
+            font-size: $font-size-lg;
+            margin: 0 0 $spacing-md;
+        }
+
+        .collections-list {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-sm;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: $spacing-sm;
+
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: rgba($color-void, 0.5);
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: $color-secondary;
+                border-radius: $border-radius-sm;
+
+                &:hover {
+                    background: lighten($color-secondary, 10%);
+                }
+            }
+
+            .collection-checkbox {
+                @include void-container;
+                display: flex;
+                align-items: center;
+                gap: $spacing-md;
+                padding: $spacing-sm $spacing-md;
+                cursor: pointer;
+                transition: all $transition-normal;
+
+                &:hover {
+                    background: rgba($color-secondary, 0.1);
+                    transform: translateX(5px);
+                }
+
+                input[type="checkbox"] {
+                    display: none;
+                }
+
+                .checkbox-custom {
+                    width: 20px;
+                    height: 20px;
+                    border: 2px solid $color-border;
+                    border-radius: $border-radius-sm;
+                    position: relative;
+                    transition: all $transition-normal;
+
+                    &::after {
+                        content: '✓';
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%) scale(0);
+                        color: $color-primary;
+                        font-size: $font-size-md;
+                        transition: all $transition-normal;
+                    }
+                }
+
+                input[type="checkbox"]:checked + .checkbox-custom {
+                    border-color: $color-primary;
+                    background: rgba($color-primary, 0.1);
+
+                    &::after {
+                        transform: translate(-50%, -50%) scale(1);
+                    }
+                }
+
+                .collection-name {
+                    flex: 1;
+                    font-family: $font-family-glitch;
+                    color: $color-text;
+                }
+
+                .beatmap-count {
+                    color: $color-text-secondary;
+                    font-size: $font-size-sm;
+                }
+            }
+        }
+
+        .export-options {
+            margin: $spacing-md 0;
+
+            .format-select {
+                display: flex;
+                align-items: center;
+                gap: $spacing-md;
+                color: $color-text;
+
+                select {
+                    @include void-container;
+                    background: rgba($color-void, 0.3);
+                    border: 2px solid $color-border;
+                    padding: $spacing-sm $spacing-md;
+                    color: $color-text;
+                    font-family: $font-family-glitch;
+                    transition: all $transition-normal;
+
+                    &:focus {
+                        border-color: $color-primary;
+                        outline: none;
+                    }
+
+                    option {
+                        background: $color-void;
+                        color: $color-text;
+                    }
+                }
+            }
+        }
+
+        .export-btn {
+            @include void-container;
+            @include hover-effect;
+            width: 100%;
+            padding: $spacing-md;
+            background: $color-primary;
+            color: $color-text;
+            font-family: $font-family-glitch;
+            font-size: $font-size-md;
+            margin-top: $spacing-md;
+            transition: all $transition-normal;
+
+            &:hover:not(:disabled) {
+                background: lighten($color-primary, 10%);
+                transform: translateY(-2px);
+            }
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                background: $color-secondary;
+            }
+        }
+
+        .import-section {
+            .import-dropzone {
+                input[type="file"] {
+                    display: none;
+                }
+
+                label {
+                    @include void-container;
+                    display: block;
+                    padding: $spacing-xl;
+                    border: 2px dashed $color-border;
+                    cursor: pointer;
+                    transition: all $transition-normal;
+
+                    &:hover {
+                        border-color: $color-primary;
+                        background: rgba($color-primary, 0.05);
+                    }
+
+                    .dropzone-content {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: $spacing-md;
+
+                        .icon {
+                            font-size: $font-size-xxl;
+                        }
+
+                        .text {
+                            color: $color-text-secondary;
+                            text-align: center;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Animacja
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

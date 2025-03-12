@@ -14,8 +14,12 @@ import AddMapper from './pages/AddMapper';
 import AddBeatmap from './pages/AddBeatmap';
 import UserColletionsPage from './pages/UserCollectionsPage';
 import Testo from './pages/Testo';
-import React from 'react';
+import React, { useEffect } from 'react';
+import CollectionManager from './components/CollectionManager/CollectionManager';
+import CollectionDetails from './components/CollectionDetails/CollectionDetails';
+import useBeatmapStore from './stores/beatmapStore';
 import './styles/global.scss';
+import './App.scss';
 
 // Komponent ochrony trasy - przekieruje na login jeśli użytkownik nie jest zalogowany
 const ProtectedRoute = ({ children }) => {
@@ -39,6 +43,11 @@ const ProtectedRoute = ({ children }) => {
 // Główny komponent aplikacji
 function AppContent() {
     const { user } = useAuth();
+    const { loadCollections } = useBeatmapStore();
+
+    useEffect(() => {
+        loadCollections();
+    }, [loadCollections]);
 
     // Jeśli użytkownik nie jest zalogowany i nie jest na stronie logowania/callback,
     // pokazujemy tylko komponent logowania
@@ -48,6 +57,15 @@ function AppContent() {
 
     return (
         <div className="app">
+            <div className="stars-background">
+                {Array.from({ length: 50 }).map((_, i) => (
+                    <div key={i} className="star" style={{
+                        top: `${Math.random() * 100}%`,
+                        left: `${Math.random() * 100}%`,
+                        animationDelay: `${Math.random() * 5}s`
+                    }} />
+                ))}
+            </div>
             <Background />
             <CollectionProvider>
                 <AppContainer>
@@ -67,6 +85,8 @@ function AppContent() {
                             <Route path="/collections" element={<ProtectedRoute><UserColletionsPage /></ProtectedRoute>} />
                             <Route path="/mappers" element={<ProtectedRoute><AddMapper /></ProtectedRoute>} />
                             <Route path="/testo" element={<ProtectedRoute><Testo /></ProtectedRoute>} />
+                            <Route path="/collection-manager" element={<ProtectedRoute><CollectionManager /></ProtectedRoute>} />
+                            <Route path="/collection-details" element={<ProtectedRoute><CollectionDetails /></ProtectedRoute>} />
                         </Routes>
                     </ContentContainer>
                 </AppContainer>
