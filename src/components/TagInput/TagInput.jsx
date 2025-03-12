@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import './tagInput.css';
+import './tagInput.scss';
 
 
 export default function TagInput({ onTagsChange }) {

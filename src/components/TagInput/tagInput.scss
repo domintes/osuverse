@@ -24,6 +24,17 @@
     gap: 5px;
 }
 
+.tag.disabled {
+    background: gray;
+    color: darkgray;
+    cursor: not-allowed;
+}
+
+.tag.disabled:hover {
+    background: darkgray;
+    color: gray;
+}
+
 .remove-tag {
     background: none;
     border: none;
