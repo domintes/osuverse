@@ -1,0 +1,128 @@
+@import '../../styles/variables';
+
+.tag-input-container {
+    @include void-container;
+    padding: $spacing-md;
+    margin-bottom: $spacing-lg;
+}
+
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+    min-height: 32px;
+    padding: $spacing-sm;
+    cursor: text;
+}
+
+.tag {
+    @include void-container;
+    @include hover-effect;
+    display: inline-flex;
+    align-items: center;
+    padding: $spacing-xs $spacing-sm;
+    background: $color-secondary;
+    font-family: $font-family-glitch;
+    font-size: $font-size-sm;
+    color: $color-text;
+    border-radius: $border-radius-sm;
+    transition: all $transition-normal;
+    cursor: default;
+
+    &.tag-exists {
+        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        background: rgba($color-error, 0.2);
+        border-color: $color-error;
+    }
+
+    .tag-text {
+        margin-right: $spacing-xs;
+    }
+
+    .remove-tag {
+        color: $color-text-secondary;
+        font-size: $font-size-xs;
+        padding: 2px;
+        border-radius: 50%;
+        transition: all $transition-fast;
+        opacity: 0.6;
+
+        &:hover {
+            color: $color-error;
+            background: rgba($color-error, 0.1);
+            opacity: 1;
+        }
+    }
+
+    &:hover {
+        background: lighten($color-secondary, 5%);
+        .remove-tag {
+            opacity: 1;
+        }
+    }
+}
+
+.tag-form {
+    display: flex;
+    gap: $spacing-sm;
+
+    .tag-input {
+        flex: 1;
+        background: rgba($color-void, 0.5);
+        border: 1px solid $color-border;
+        color: $color-text;
+        padding: $spacing-sm $spacing-md;
+        border-radius: $border-radius-md;
+        font-family: $font-family-glitch;
+        transition: all $transition-fast;
+
+        &:focus {
+            outline: none;
+            border-color: $color-primary;
+            box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
+        }
+
+        &::placeholder {
+            color: $color-text-secondary;
+            font-style: italic;
+            opacity: 0.6;
+        }
+    }
+
+    .add-tag-btn {
+        @include void-container;
+        @include hover-effect;
+        padding: $spacing-sm $spacing-md;
+        background: $color-primary;
+        color: $color-text;
+        font-family: $font-family-base;
+        font-weight: 500;
+        border-radius: $border-radius-md;
+        transition: all $transition-normal;
+        white-space: nowrap;
+
+        &:hover {
+            background: lighten($color-primary, 5%);
+        }
+
+        &:active {
+            background: darken($color-primary, 5%);
+        }
+    }
+}
+
+@keyframes shake {
+    10%, 90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+    20%, 80% {
+        transform: translate3d(2px, 0, 0);
+    }
+    30%, 50%, 70% {
+        transform: translate3d(-2px, 0, 0);
+    }
+    40%, 60% {
+        transform: translate3d(2px, 0, 0);
+    }
+}

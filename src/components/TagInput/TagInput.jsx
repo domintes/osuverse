@@ -1,20 +1,38 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import './tagInput.css';
+import './TagInput.scss';
 
+export default function TagInput({ onTagsChange, initialTags = [], placeholder = "Enter tag and press Enter" }) {
+    const { register, handleSubmit, reset, watch } = useForm();
+    const [tags, setTags] = useState(initialTags);
+    const inputRef = useRef(null);
+    const tagInputValue = watch("tagName", "");
 
-export default function TagInput({ onTagsChange }) {
-    const { register, handleSubmit, reset } = useForm();
-    const [tags, setTags] = useState([]);
+    // Synchronizacja z zewnętrznymi tagami
+    useEffect(() => {
+        const tagsAreDifferent = JSON.stringify(initialTags) !== JSON.stringify(tags);
+        if (tagsAreDifferent && initialTags.length > 0) {
+            setTags(initialTags);
+        }
+    }, [initialTags, tags]);
 
     const addTag = (data) => {
-        if (!data.tagName.trim()) return; // Nie dodawaj pustych tagów
-        if (tags.includes(data.tagName.trim())) return; // Nie dodawaj duplikatów
+        const tagName = data.tagName.trim();
+        if (!tagName) return;
+        if (tags.includes(tagName)) {
+            // Wizualne wskazanie, że tag już istnieje
+            const existingTag = document.querySelector(`.tag[data-tag="${tagName}"]`);
+            if (existingTag) {
+                existingTag.classList.add('tag-exists');
+                setTimeout(() => existingTag.classList.remove('tag-exists'), 1000);
+            }
+            return;
+        }
 
-        const newTags = [...tags, data.tagName.trim()];
+        const newTags = [...tags, tagName];
         setTags(newTags);
-        onTagsChange(newTags); // Przekazanie tagów do komponentu nadrzędnego
-        reset(); // Reset inputa
+        onTagsChange(newTags);
+        reset();
     };
 
     const removeTag = (tagToRemove) => {
@@ -23,12 +41,34 @@ export default function TagInput({ onTagsChange }) {
         onTagsChange(updatedTags);
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            handleSubmit(addTag)();
+        } else if (e.key === "Backspace" && !tagInputValue && tags.length > 0) {
+            // Usuwanie ostatniego tagu przy pustym inpucie
+            const lastTag = tags[tags.length - 1];
+            removeTag(lastTag);
+        }
+    };
+
     return (
         <div className="tag-input-container">
-            <ul className="tag-list">
+            <ul className="tag-list" onClick={() => inputRef.current?.focus()}>
                 {tags.map((tag, index) => (
-                    <li key={index} className="tag">
-                        {tag} <button type="button" className="remove-tag" onClick={() => removeTag(tag)}>✕</button>
+                    <li key={index} className="tag" data-tag={tag}>
+                        <span className="tag-text">{tag}</span>
+                        <button 
+                            type="button" 
+                            className="remove-tag" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                removeTag(tag);
+                            }}
+                            title="Remove tag"
+                        >
+                            ✕
+                        </button>
                     </li>
                 ))}
             </ul>
@@ -36,18 +76,19 @@ export default function TagInput({ onTagsChange }) {
             <form onSubmit={handleSubmit(addTag)} className="tag-form">
                 <input
                     {...register("tagName")}
+                    ref={(e) => {
+                        inputRef.current = e;
+                        register("tagName").ref(e);
+                    }}
                     type="text"
                     className="tag-input"
-                    placeholder="Wpisz tag i naciśnij Enter"
+                    placeholder={placeholder}
                     autoComplete="off"
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                            e.preventDefault(); // Zapobiega wysłaniu formularza domyślnie
-                            handleSubmit(addTag)();
-                        }
-                    }}
+                    onKeyDown={handleKeyDown}
                 />
-                <button type="submit" className="add-tag-btn">+ Add tag</button>
+                <button type="submit" className="add-tag-btn" title="Add tag">
+                    + Add tag
+                </button>
             </form>
         </div>
     );

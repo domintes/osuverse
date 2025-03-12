@@ -1,0 +1,260 @@
+@import '../../styles/variables';
+
+.beatmapset {
+    @include void-container;
+    margin-bottom: $spacing-md;
+    transition: all $transition-normal;
+    overflow: hidden;
+
+    &.hovered {
+        transform: translateY(-2px);
+        box-shadow: $shadow-hover;
+    }
+}
+
+.beatmapset-main {
+    display: grid;
+    grid-template-columns: 120px 1fr auto;
+    gap: $spacing-md;
+    padding: $spacing-md;
+}
+
+.beatmapset-cover {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: $border-radius-md;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform $transition-normal;
+
+        .beatmapset.hovered & {
+            transform: scale(1.05);
+        }
+    }
+
+    .status-badge {
+        position: absolute;
+        top: $spacing-xs;
+        right: $spacing-xs;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        @include flex-center;
+        font-size: $font-size-sm;
+        backdrop-filter: blur(4px);
+
+        &.ranked {
+            background: rgba($color-success, 0.2);
+            border: 1px solid $color-success;
+        }
+
+        &.loved {
+            background: rgba($color-primary, 0.2);
+            border: 1px solid $color-primary;
+        }
+
+        &.qualified {
+            background: rgba(#ffaa00, 0.2);
+            border: 1px solid #ffaa00;
+        }
+
+        &.pending {
+            background: rgba($color-text-secondary, 0.2);
+            border: 1px solid $color-text-secondary;
+        }
+
+        &.unranked {
+            background: rgba($color-text-secondary, 0.1);
+            border: 1px solid rgba($color-text-secondary, 0.3);
+        }
+    }
+}
+
+.beatmapset-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0; // Fix dla text-overflow
+}
+
+.beatmapset-header {
+    .title {
+        font-family: $font-family-heading;
+        font-size: $font-size-xl;
+        margin-bottom: $spacing-xs;
+        color: $color-text;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        .artist {
+            color: $color-text-secondary;
+            font-size: $font-size-lg;
+        }
+    }
+
+    .mapper {
+        font-size: $font-size-sm;
+        color: $color-text-secondary;
+
+        a {
+            color: $color-primary;
+            text-decoration: none;
+            transition: color $transition-fast;
+
+            &:hover {
+                color: lighten($color-primary, 10%);
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.beatmapset-stats {
+    display: flex;
+    gap: $spacing-lg;
+    margin-top: auto;
+
+    .stat {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+
+        .label {
+            color: $color-text-secondary;
+            font-size: $font-size-sm;
+        }
+
+        .value {
+            font-family: $font-family-glitch;
+            color: $color-text;
+        }
+    }
+}
+
+.beatmapset-actions {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+
+    .action-btn {
+        @include void-container;
+        @include hover-effect;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        @include flex-center;
+        font-size: $font-size-lg;
+        transition: all $transition-normal;
+
+        &.add {
+            background: $color-primary;
+            color: $color-text;
+
+            &:hover {
+                background: lighten($color-primary, 5%);
+            }
+        }
+
+        &.remove {
+            background: rgba($color-error, 0.1);
+            color: $color-error;
+
+            &:hover {
+                background: rgba($color-error, 0.2);
+            }
+        }
+
+        &.toggle-difficulties {
+            background: $color-secondary;
+            color: $color-text;
+
+            &.active {
+                transform: rotate(180deg);
+                background: lighten($color-secondary, 10%);
+            }
+
+            &:hover {
+                background: lighten($color-secondary, 5%);
+            }
+        }
+
+        &.small {
+            width: 24px;
+            height: 24px;
+            font-size: $font-size-sm;
+        }
+    }
+}
+
+.difficulties-list {
+    border-top: 1px solid $color-border;
+    padding: $spacing-md;
+    background: rgba($color-void, 0.5);
+    animation: slideDown $transition-normal forwards;
+}
+
+.difficulty-item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-sm;
+    border-radius: $border-radius-sm;
+    transition: background-color $transition-fast;
+
+    &:hover {
+        background: rgba($color-secondary, 0.1);
+    }
+
+    .difficulty-info {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+
+        .difficulty-name {
+            font-family: $font-family-glitch;
+            color: $color-text;
+        }
+
+        .difficulty-rating {
+            color: $color-primary;
+            font-family: $font-family-glitch;
+        }
+    }
+
+    .difficulty-stats {
+        display: flex;
+        gap: $spacing-md;
+        color: $color-text-secondary;
+        font-family: $font-family-glitch;
+        font-size: $font-size-sm;
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: $spacing-xs;
+        }
+    }
+
+    .difficulty-actions {
+        display: flex;
+        gap: $spacing-sm;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
