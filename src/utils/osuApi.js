@@ -3,49 +3,111 @@ import { API_CONFIG, createApiEndpoint } from './api.config';
 
 class OsuApiService {
     constructor() {
-        this.token = null;
-        this.tokenExpiry = null;
+        this.axiosInstance = axios.create({
+            baseURL: API_CONFIG.OSU_API.BASE_URL
+        });
+
+        // Interceptor do automatycznego dodawania tokenu
+        this.axiosInstance.interceptors.request.use(
+            (config) => {
+                const token = localStorage.getItem('osu_token');
+                if (token) {
+                    config.headers.Authorization = `Bearer ${token}`;
+                }
+                return config;
+            },
+            (error) => Promise.reject(error)
+        );
+
+        // Interceptor do automatycznego odświeżania tokenu
+        this.axiosInstance.interceptors.response.use(
+            (response) => response,
+            async (error) => {
+                const originalRequest = error.config;
+
+                if (error.response?.status === 401 && !originalRequest._retry) {
+                    originalRequest._retry = true;
+
+                    try {
+                        const refreshToken = localStorage.getItem('osu_refresh_token');
+                        if (!refreshToken) {
+                            throw new Error('No refresh token available');
+                        }
+
+                        const tokens = await this.refreshToken(refreshToken);
+                        localStorage.setItem('osu_token', tokens.access_token);
+                        localStorage.setItem('osu_refresh_token', tokens.refresh_token);
+
+                        originalRequest.headers.Authorization = `Bearer ${tokens.access_token}`;
+                        return this.axiosInstance(originalRequest);
+                    } catch (refreshError) {
+                        localStorage.removeItem('osu_token');
+                        localStorage.removeItem('osu_refresh_token');
+                        window.location.href = '/login';
+                        return Promise.reject(refreshError);
+                    }
+                }
+                return Promise.reject(error);
+            }
+        );
     }
 
-    async getToken() {
-        // Return existing token if it's still valid
-        if (this.token && this.tokenExpiry && Date.now() < this.tokenExpiry) {
-            return this.token;
-        }
-
+    async getTokenFromCode(code) {
         try {
             const response = await axios.post(
                 API_CONFIG.OSU_API.TOKEN_URL,
                 {
                     client_id: API_CONFIG.OSU_API.CLIENT_ID,
                     client_secret: API_CONFIG.OSU_API.CLIENT_SECRET,
-                    grant_type: 'client_credentials',
-                    scope: 'public'
+                    code,
+                    grant_type: 'authorization_code',
+                    redirect_uri: import.meta.env.VITE_OSU_REDIRECT_URI
                 }
             );
-
-            this.token = response.data.access_token;
-            this.tokenExpiry = Date.now() + (API_CONFIG.CACHE.TOKEN_EXPIRY * 1000);
-            return this.token;
+            return response.data;
         } catch (error) {
-            console.error('Error getting token:', error);
-            throw new Error('Failed to get access token');
+            console.error('Error getting token from code:', error);
+            throw error;
+        }
+    }
+
+    async refreshToken(refreshToken) {
+        try {
+            const response = await axios.post(
+                API_CONFIG.OSU_API.TOKEN_URL,
+                {
+                    client_id: API_CONFIG.OSU_API.CLIENT_ID,
+                    client_secret: API_CONFIG.OSU_API.CLIENT_SECRET,
+                    refresh_token: refreshToken,
+                    grant_type: 'refresh_token'
+                }
+            );
+            return response.data;
+        } catch (error) {
+            console.error('Error refreshing token:', error);
+            throw error;
+        }
+    }
+
+    async getCurrentUser() {
+        try {
+            const response = await this.axiosInstance.get('/me');
+            return response.data;
+        } catch (error) {
+            console.error('Error getting current user:', error);
+            throw error;
         }
     }
 
     async searchBeatmaps(query, page = 1, limit = 8) {
         try {
-            const token = await this.getToken();
-            const response = await axios.get(
-                createApiEndpoint(`beatmapsets/search`),
+            const response = await this.axiosInstance.get(
+                '/beatmapsets/search',
                 {
                     params: {
                         query,
                         limit,
                         offset: (page - 1) * limit
-                    },
-                    headers: {
-                        Authorization: `Bearer ${token}`
                     }
                 }
             );
@@ -58,15 +120,7 @@ class OsuApiService {
 
     async getBeatmapDetails(beatmapId) {
         try {
-            const token = await this.getToken();
-            const response = await axios.get(
-                createApiEndpoint(`beatmapsets/${beatmapId}`),
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
+            const response = await this.axiosInstance.get(`/beatmapsets/${beatmapId}`);
             return response.data;
         } catch (error) {
             console.error('Error getting beatmap details:', error);
