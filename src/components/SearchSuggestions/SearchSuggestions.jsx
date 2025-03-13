@@ -1,89 +1,93 @@
-import { useEffect, useRef } from 'react';
+import React from 'react';
+import './SearchSuggestions.scss';
 
-export default function SearchSuggestions({ 
-    suggestions, 
-    query, 
-    onSelect, 
-    activeIndex,
-    setActiveIndex,
-    visible 
-}) {
-    const containerRef = useRef(null);
+const SuggestionCategory = ({ title, suggestions, query, onSelect, activeIndex, baseIndex }) => {
+  if (!suggestions || suggestions.length === 0) return null;
 
-    // Grupowanie sugestii
-    const allSuggestions = [
-        ...suggestions.tags.map(tag => ({ type: 'tag', value: `#${tag}` })),
-        ...suggestions.collections.map(collection => ({ type: 'collection', value: `collection:${collection}` })),
-        ...suggestions.mappers.map(mapper => ({ type: 'mapper', value: `@${mapper}` })),
-        ...suggestions.filters.map(filter => ({ type: 'filter', value: `filter:${filter}` }))
-    ];
+  return (
+    <div className="suggestion-category">
+      <div className="suggestion-category__title">{title}</div>
+      <div className="suggestion-category__items">
+        {suggestions.map((suggestion, index) => {
+          const absoluteIndex = baseIndex + index;
+          const isActive = absoluteIndex === activeIndex;
+          
+          return (
+            <div
+              key={suggestion.value}
+              className={`suggestion-item ${isActive ? 'suggestion-item--active' : ''}`}
+              onClick={() => onSelect(suggestion)}
+              onMouseEnter={() => {}} // Możesz dodać aktualizację aktywnego indeksu po najechaniu
+            >
+              <span className="suggestion-item__value">{suggestion.value}</span>
+              {suggestion.description && (
+                <span className="suggestion-item__description">{suggestion.description}</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
-    // Przewijanie do aktywnej sugestii
-    useEffect(() => {
-        if (!containerRef.current || activeIndex === -1) return;
+const SearchSuggestions = ({ suggestions, query, onSelect, activeIndex, setActiveIndex, visible }) => {
+  if (!visible) return null;
+  
+  const { tags, collections, mappers, filters } = suggestions;
+  const hasAnySuggestions = 
+    (tags && tags.length > 0) || 
+    (collections && collections.length > 0) || 
+    (mappers && mappers.length > 0) || 
+    (filters && filters.length > 0);
+  
+  if (!hasAnySuggestions) return null;
+  
+  // Obliczanie indeksu bazowego dla każdej kategorii
+  let baseIndices = { tags: 0 };
+  baseIndices.collections = baseIndices.tags + (tags ? tags.length : 0);
+  baseIndices.mappers = baseIndices.collections + (collections ? collections.length : 0);
+  baseIndices.filters = baseIndices.mappers + (mappers ? mappers.length : 0);
 
-        const activeElement = containerRef.current.children[activeIndex];
-        if (activeElement) {
-            activeElement.scrollIntoView({
-                block: 'nearest',
-                behavior: 'smooth'
-            });
-        }
-    }, [activeIndex]);
+  return (
+    <div className="search-suggestions">
+      <SuggestionCategory 
+        title="Tagi" 
+        suggestions={tags} 
+        query={query} 
+        onSelect={onSelect} 
+        activeIndex={activeIndex} 
+        baseIndex={baseIndices.tags} 
+      />
+      
+      <SuggestionCategory 
+        title="Kolekcje" 
+        suggestions={collections} 
+        query={query} 
+        onSelect={onSelect} 
+        activeIndex={activeIndex} 
+        baseIndex={baseIndices.collections} 
+      />
+      
+      <SuggestionCategory 
+        title="Mapperzy" 
+        suggestions={mappers} 
+        query={query} 
+        onSelect={onSelect} 
+        activeIndex={activeIndex} 
+        baseIndex={baseIndices.mappers} 
+      />
+      
+      <SuggestionCategory 
+        title="Filtry" 
+        suggestions={filters} 
+        query={query} 
+        onSelect={onSelect} 
+        activeIndex={activeIndex} 
+        baseIndex={baseIndices.filters} 
+      />
+    </div>
+  );
+};
 
-    if (!visible || allSuggestions.length === 0) return null;
-
-    // Funkcja pomocnicza do wyświetlania ikony
-    const getIcon = (type) => {
-        switch (type) {
-            case 'tag':
-                return '🏷️';
-            case 'collection':
-                return '📁';
-            case 'mapper':
-                return '👤';
-            case 'filter':
-                return '🔍';
-            default:
-                return '•';
-        }
-    };
-
-    // Funkcja pomocnicza do podświetlania dopasowanego tekstu
-    const highlightMatch = (text, searchQuery) => {
-        if (!searchQuery) return text;
-
-        const parts = text.split(new RegExp(`(${searchQuery})`, 'gi'));
-        return parts.map((part, i) => 
-            part.toLowerCase() === searchQuery.toLowerCase() ? 
-                <span key={i} className="highlight">{part}</span> : 
-                part
-        );
-    };
-
-    return (
-        <div className="search-suggestions void-container" ref={containerRef}>
-            {allSuggestions.map((suggestion, index) => (
-                <div
-                    key={`${suggestion.type}-${suggestion.value}`}
-                    className={`suggestion-item ${index === activeIndex ? 'active' : ''}`}
-                    onClick={() => onSelect(suggestion)}
-                    onMouseEnter={() => setActiveIndex(index)}
-                >
-                    <span className="suggestion-icon">
-                        {getIcon(suggestion.type)}
-                    </span>
-                    <span className="suggestion-content">
-                        <span className="suggestion-type">{suggestion.type}</span>
-                        <span className="suggestion-value">
-                            {highlightMatch(suggestion.value, query)}
-                        </span>
-                    </span>
-                    <span className="suggestion-shortcut">
-                        {index < 9 ? `⌘${index + 1}` : ''}
-                    </span>
-                </div>
-            ))}
-        </div>
-    );
-}
+export default SearchSuggestions;

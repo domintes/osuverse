@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { debounce } from 'lodash';
 import useBeatmapSearch from '../../hooks/useBeatmapSearch';
-import SearchSuggestions from '../SearchSuggestions/SearchSuggestions';1
+import SearchSuggestions from '../SearchSuggestions/SearchSuggestions';
 import './OsuverseSearch.scss';
 
 const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
@@ -142,19 +142,19 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
     };
 
     return (
-        <div className={searchBarClass} ref={inputRef}>
+        <div className="osuverse-search" ref={inputRef}>
             <form onSubmit={handleSearchSubmit}>
                 <input
                     type="text"
-                    className={searchInputClass}
+                    className="osuverse-search__input"
                     placeholder={placeholder}
                     value={query}
                     onChange={handleInputChange}
                     onKeyDown={handleKeyDown}
                     onFocus={() => setShowSuggestions(true)}
                 />
-                <button type="submit" className={searchButtonClass}>
-                    <FaSearch className={searchIconClass} />
+                <button type="submit" className="osuverse-search__button">
+                    <FaSearch className="osuverse-search__icon" />
                 </button>
             </form>
 
@@ -172,17 +172,17 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
             )}
 
             {isExpanded && (
-                <div className={resultsContainerClass}>
-                    <div className={resultItemClass}>
-                        <SearchDropdown>
-                            <SearchDropdownHeader>
-                                <SearchTitle>Advanced Filters</SearchTitle>
-                                <SearchCloseButton onClick={() => setIsExpanded(false)}>×</SearchCloseButton>
-                            </SearchDropdownHeader>
+                <div className="osuverse-search__results">
+                    <div className="osuverse-search__result-item">
+                        <div className="search-dropdown">
+                            <div className="search-dropdown__header">
+                                <div className="search-dropdown__title">Zaawansowane filtry</div>
+                                <button className="search-dropdown__close-button" onClick={() => setIsExpanded(false)}>×</button>
+                            </div>
                             
-                            <SearchFilters>
-                                <FilterGroup>
-                                    <FilterLabel>Search in:</FilterLabel>
+                            <div className="search-filters">
+                                <div className="filter-group">
+                                    <div className="filter-label">Szukaj w:</div>
                                     <div style={{ display: 'flex', gap: '10px' }}>
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                                             <input
@@ -196,7 +196,7 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
                                                     handleSearch(query);
                                                 }}
                                             />
-                                            My Collections
+                                            Moje kolekcje
                                         </label>
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                                             <input
@@ -210,13 +210,13 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
                                                     handleSearch(query);
                                                 }}
                                             />
-                                            All Beatmaps
+                                            Wszystkie Beatmapy
                                         </label>
                                     </div>
-                                </FilterGroup>
+                                </div>
 
-                                <FilterGroup>
-                                    <FilterLabel>Status:</FilterLabel>
+                                <div className="filter-group">
+                                    <div className="filter-label">Status:</div>
                                     <div style={{ display: 'flex', gap: '10px' }}>
                                         <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                                             <input
@@ -261,12 +261,13 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
                                             Unranked
                                         </label>
                                     </div>
-                                </FilterGroup>
+                                </div>
 
-                                <FilterGroup>
-                                    <FilterLabel>Star Rating:</FilterLabel>
+                                <div className="filter-group">
+                                    <div className="filter-label">Gwiazdki:</div>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                        <FilterInput
+                                        <input
+                                            className="filter-input"
                                             type="number"
                                             placeholder="Min"
                                             value={filters.minStars}
@@ -281,8 +282,9 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
                                             max="12"
                                             step="0.1"
                                         />
-                                        <span>to</span>
-                                        <FilterInput
+                                        <span>do</span>
+                                        <input
+                                            className="filter-input"
                                             type="number"
                                             placeholder="Max"
                                             value={filters.maxStars}
@@ -298,23 +300,18 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
                                             step="0.1"
                                         />
                                     </div>
-                                </FilterGroup>
-                            </SearchFilters>
-                        </SearchDropdown>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
 
-            {isLoading && <LoadingIndicator>Searching...</LoadingIndicator>}
+            {isLoading && <div className="loading-indicator">Szukanie...</div>}
             
             {error && (
-                <div style={{ 
-                    padding: '10px',
-                    color: '#ff6b6b',
-                    marginTop: '10px',
-                    textAlign: 'center'
-                }}>
-                    Error: {error}
+                <div className="error-message">
+                    Błąd: {error}
                 </div>
             )}
         </div>
