@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import useStore from '../../store';
+import styled from 'styled-components';
 
 // Design constants matching our void/space theme
 const COLORS = {
@@ -82,6 +83,21 @@ const TagButton = styled.button`
     }
 `;
 
+const BigHeader = styled.header`
+    .spinning-gem {
+        animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+`;
+
 export default function CustomTags({ items = [] }) {
     const [selectedTags, setSelectedTags] = useState([]);
     const [uniqueTags, setUniqueTags] = useState([]);
@@ -119,6 +135,10 @@ export default function CustomTags({ items = [] }) {
 
     return (
         <Container>
+            <BigHeader className="big-header">
+                <span className="spinning-gem">💎</span>
+                <h1>Welcome to Osuverse!</h1>
+            </BigHeader>
             <Title>Custom Tags</Title>
             <TagsList>
                 {uniqueTags.map((tag, index) => {

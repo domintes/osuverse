@@ -1,23 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { FaSearch } from 'react-icons/fa';
 import { debounce } from 'lodash';
 import useBeatmapSearch from '../../hooks/useBeatmapSearch';
-import SearchSuggestions from '../SearchSuggestions/SearchSuggestions';
-import {
-    SearchContainer,
-    SearchInput,
-    SearchIcon,
-    SearchDropdown,
-    SearchDropdownHeader,
-    SearchTitle,
-    SearchCloseButton,
-    SearchFilters,
-    FilterGroup,
-    FilterLabel,
-    FilterInput,
-    LoadingIndicator
-} from './OsuverseSearch.styled';
+import SearchSuggestions from '../SearchSuggestions/SearchSuggestions';1
+import './OsuverseSearch.scss';
 
-export default function OsuverseSearch({ onSearch }) {
+const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
     const [query, setQuery] = useState('');
     const [isExpanded, setIsExpanded] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -146,23 +134,29 @@ export default function OsuverseSearch({ onSearch }) {
         };
     }, []);
 
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        if (onSearch && query.trim()) {
+            onSearch(results);
+        }
+    };
+
     return (
-        <SearchContainer>
-            <SearchInput
-                ref={inputRef}
-                type="text"
-                value={query}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                onFocus={() => setShowSuggestions(true)}
-                placeholder="Search beatmaps, collections, or use #tags..."
-            />
-            <SearchIcon 
-                onClick={() => setIsExpanded(!isExpanded)}
-                title={isExpanded ? "Hide filters" : "Show filters"}
-            >
-                <span style={{ transform: isExpanded ? 'rotate(180deg)' : 'none', display: 'inline-block' }}>▼</span>
-            </SearchIcon>
+        <div className={searchBarClass} ref={inputRef}>
+            <form onSubmit={handleSearchSubmit}>
+                <input
+                    type="text"
+                    className={searchInputClass}
+                    placeholder={placeholder}
+                    value={query}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    onFocus={() => setShowSuggestions(true)}
+                />
+                <button type="submit" className={searchButtonClass}>
+                    <FaSearch className={searchIconClass} />
+                </button>
+            </form>
 
             {showSuggestions && (
                 <div ref={dropdownRef}>
@@ -178,133 +172,137 @@ export default function OsuverseSearch({ onSearch }) {
             )}
 
             {isExpanded && (
-                <SearchDropdown>
-                    <SearchDropdownHeader>
-                        <SearchTitle>Advanced Filters</SearchTitle>
-                        <SearchCloseButton onClick={() => setIsExpanded(false)}>×</SearchCloseButton>
-                    </SearchDropdownHeader>
-                    
-                    <SearchFilters>
-                        <FilterGroup>
-                            <FilterLabel>Search in:</FilterLabel>
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={filters.collections}
-                                        onChange={(e) => {
-                                            setFilters(prev => ({
-                                                ...prev,
-                                                collections: e.target.checked
-                                            }));
-                                            handleSearch(query);
-                                        }}
-                                    />
-                                    My Collections
-                                </label>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={filters.allBeatmaps}
-                                        onChange={(e) => {
-                                            setFilters(prev => ({
-                                                ...prev,
-                                                allBeatmaps: e.target.checked
-                                            }));
-                                            handleSearch(query);
-                                        }}
-                                    />
-                                    All Beatmaps
-                                </label>
-                            </div>
-                        </FilterGroup>
+                <div className={resultsContainerClass}>
+                    <div className={resultItemClass}>
+                        <SearchDropdown>
+                            <SearchDropdownHeader>
+                                <SearchTitle>Advanced Filters</SearchTitle>
+                                <SearchCloseButton onClick={() => setIsExpanded(false)}>×</SearchCloseButton>
+                            </SearchDropdownHeader>
+                            
+                            <SearchFilters>
+                                <FilterGroup>
+                                    <FilterLabel>Search in:</FilterLabel>
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={filters.collections}
+                                                onChange={(e) => {
+                                                    setFilters(prev => ({
+                                                        ...prev,
+                                                        collections: e.target.checked
+                                                    }));
+                                                    handleSearch(query);
+                                                }}
+                                            />
+                                            My Collections
+                                        </label>
+                                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={filters.allBeatmaps}
+                                                onChange={(e) => {
+                                                    setFilters(prev => ({
+                                                        ...prev,
+                                                        allBeatmaps: e.target.checked
+                                                    }));
+                                                    handleSearch(query);
+                                                }}
+                                            />
+                                            All Beatmaps
+                                        </label>
+                                    </div>
+                                </FilterGroup>
 
-                        <FilterGroup>
-                            <FilterLabel>Status:</FilterLabel>
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={filters.ranked}
-                                        onChange={(e) => {
-                                            setFilters(prev => ({
-                                                ...prev,
-                                                ranked: e.target.checked
-                                            }));
-                                            handleSearch(query);
-                                        }}
-                                    />
-                                    Ranked
-                                </label>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={filters.loved}
-                                        onChange={(e) => {
-                                            setFilters(prev => ({
-                                                ...prev,
-                                                loved: e.target.checked
-                                            }));
-                                            handleSearch(query);
-                                        }}
-                                    />
-                                    Loved
-                                </label>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={filters.unranked}
-                                        onChange={(e) => {
-                                            setFilters(prev => ({
-                                                ...prev,
-                                                unranked: e.target.checked
-                                            }));
-                                            handleSearch(query);
-                                        }}
-                                    />
-                                    Unranked
-                                </label>
-                            </div>
-                        </FilterGroup>
+                                <FilterGroup>
+                                    <FilterLabel>Status:</FilterLabel>
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={filters.ranked}
+                                                onChange={(e) => {
+                                                    setFilters(prev => ({
+                                                        ...prev,
+                                                        ranked: e.target.checked
+                                                    }));
+                                                    handleSearch(query);
+                                                }}
+                                            />
+                                            Ranked
+                                        </label>
+                                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={filters.loved}
+                                                onChange={(e) => {
+                                                    setFilters(prev => ({
+                                                        ...prev,
+                                                        loved: e.target.checked
+                                                    }));
+                                                    handleSearch(query);
+                                                }}
+                                            />
+                                            Loved
+                                        </label>
+                                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={filters.unranked}
+                                                onChange={(e) => {
+                                                    setFilters(prev => ({
+                                                        ...prev,
+                                                        unranked: e.target.checked
+                                                    }));
+                                                    handleSearch(query);
+                                                }}
+                                            />
+                                            Unranked
+                                        </label>
+                                    </div>
+                                </FilterGroup>
 
-                        <FilterGroup>
-                            <FilterLabel>Star Rating:</FilterLabel>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <FilterInput
-                                    type="number"
-                                    placeholder="Min"
-                                    value={filters.minStars}
-                                    onChange={(e) => {
-                                        setFilters(prev => ({
-                                            ...prev,
-                                            minStars: e.target.value
-                                        }));
-                                        handleSearch(query);
-                                    }}
-                                    min="0"
-                                    max="12"
-                                    step="0.1"
-                                />
-                                <span>to</span>
-                                <FilterInput
-                                    type="number"
-                                    placeholder="Max"
-                                    value={filters.maxStars}
-                                    onChange={(e) => {
-                                        setFilters(prev => ({
-                                            ...prev,
-                                            maxStars: e.target.value
-                                        }));
-                                        handleSearch(query);
-                                    }}
-                                    min="0"
-                                    max="12"
-                                    step="0.1"
-                                />
-                            </div>
-                        </FilterGroup>
-                    </SearchFilters>
-                </SearchDropdown>
+                                <FilterGroup>
+                                    <FilterLabel>Star Rating:</FilterLabel>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <FilterInput
+                                            type="number"
+                                            placeholder="Min"
+                                            value={filters.minStars}
+                                            onChange={(e) => {
+                                                setFilters(prev => ({
+                                                    ...prev,
+                                                    minStars: e.target.value
+                                                }));
+                                                handleSearch(query);
+                                            }}
+                                            min="0"
+                                            max="12"
+                                            step="0.1"
+                                        />
+                                        <span>to</span>
+                                        <FilterInput
+                                            type="number"
+                                            placeholder="Max"
+                                            value={filters.maxStars}
+                                            onChange={(e) => {
+                                                setFilters(prev => ({
+                                                    ...prev,
+                                                    maxStars: e.target.value
+                                                }));
+                                                handleSearch(query);
+                                            }}
+                                            min="0"
+                                            max="12"
+                                            step="0.1"
+                                        />
+                                    </div>
+                                </FilterGroup>
+                            </SearchFilters>
+                        </SearchDropdown>
+                    </div>
+                </div>
             )}
 
             {isLoading && <LoadingIndicator>Searching...</LoadingIndicator>}
@@ -319,6 +317,8 @@ export default function OsuverseSearch({ onSearch }) {
                     Error: {error}
                 </div>
             )}
-        </SearchContainer>
+        </div>
     );
-}
+};
+
+export default OsuverseSearch;

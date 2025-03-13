@@ -1,8 +1,12 @@
-export default function AppContainer(props) {
+import React from 'react';
+
+const AppContainer = ({ children }) => {
     return (
-        <div className="osuverse-main-container">
-            {props.children}
+        <div className="app-container">
+            {children}
         </div>
     );
-}
+};
+
+export default AppContainer;
 

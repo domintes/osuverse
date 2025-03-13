@@ -1,0 +1,70 @@
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  padding: 20px;
+}
+
+.login-box {
+  background-color: rgba(20, 20, 30, 0.8);
+  border-radius: 10px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeIn 1s ease-out;
+  max-width: 400px;
+  width: 100%;
+}
+
+.login-logo {
+  margin-bottom: 30px;
+  
+  h1 {
+    font-size: 2.5rem;
+    color: #ff66aa;
+    text-shadow: 0 0 10px rgba(255, 102, 170, 0.6);
+    margin-bottom: 10px;
+  }
+}
+
+.login-tagline {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.login-button {
+  background-color: #ff66aa;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.3s;
+  
+  &:hover {
+    background-color: #ff4499;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 102, 170, 0.4);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 

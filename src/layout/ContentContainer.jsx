@@ -1,8 +1,11 @@
-export default function ContentContainer(props) {
+import React from 'react';
 
+const ContentContainer = ({ children }) => {
     return (
-        <div className='osuverse-content-container'>
-            {props.children}
+        <div className="content-container">
+            {children}
         </div>
     );
-}
+};
+
+export default ContentContainer;
