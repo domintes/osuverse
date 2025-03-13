@@ -1,0 +1,134 @@
+.collection-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.collection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.collection-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  background-color: rgba(30, 30, 40, 0.7);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.collection-item:hover {
+  background-color: rgba(40, 40, 50, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.collection-item--active {
+  border-color: #ff66aa;
+  background-color: rgba(255, 102, 170, 0.1);
+}
+
+.collection-item__title {
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: white;
+}
+
+.collection-item__count {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-left: 10px;
+}
+
+.collection-item__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.collection-item__button {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collection-item__button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.collection-item__button--delete:hover {
+  background-color: rgba(255, 70, 70, 0.2);
+  color: #ff4646;
+}
+
+.collection-item__button--edit:hover {
+  background-color: rgba(70, 130, 255, 0.2);
+  color: #4682ff;
+}
+
+.collection-item__button--view:hover {
+  background-color: rgba(70, 200, 120, 0.2);
+  color: #46c878;
+}
+
+.collection-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.collection-form__input {
+  flex: 1;
+  padding: 10px 15px;
+  background-color: rgba(20, 20, 30, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  color: white;
+  font-size: 1rem;
+}
+
+.collection-form__input:focus {
+  outline: none;
+  border-color: #ff66aa;
+  box-shadow: 0 0 5px rgba(255, 102, 170, 0.3);
+}
+
+.collection-form__button {
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.collection-form__button--cancel {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.collection-form__button--cancel:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.collection-form__button--submit {
+  background-color: #ff66aa;
+  color: white;
+}
+
+.collection-form__button--submit:hover {
+  background-color: #ff4499;
+} 

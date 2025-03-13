@@ -1,10 +1,32 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
+import { FaTrash, FaEdit, FaEye, FaPlus } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import useBeatmapStore from '../../stores/beatmapStore';
 import OsuverseSearch from '../OsuverseSearch/OsuverseSearch';
 import BeatmapSet from '../BeatmapSet/BeatmapSet';
 import CollectionExport from './CollectionExport';
+import {
+  collectionManagerClass,
+  collectionListClass,
+  collectionItemClass,
+  collectionItemActiveClass,
+  collectionItemTitleClass,
+  collectionItemCountClass,
+  collectionItemActionsClass,
+  collectionItemButtonClass,
+  collectionItemButtonDeleteClass,
+  collectionItemButtonEditClass,
+  collectionItemButtonViewClass,
+  collectionFormClass,
+  collectionFormInputClass,
+  collectionFormButtonClass,
+  collectionFormButtonCancelClass,
+  collectionFormButtonSubmitClass
+} from './components';
+import './CollectionManager.css';
 
-export default function CollectionManager() {
+const CollectionManager = () => {
+    const navigate = useNavigate();
     const [selectedCollection, setSelectedCollection] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
     const [isAddingNew, setIsAddingNew] = useState(false);
@@ -13,13 +35,18 @@ export default function CollectionManager() {
     const [collectionFilter, setCollectionFilter] = useState('');
     const [filterType, setFilterType] = useState('all');
     const [sortType, setSortType] = useState('updated'); // updated, name, size, created
+    const [editingCollection, setEditingCollection] = useState(null);
+    const [editName, setEditName] = useState('');
 
     const {
         collections,
         createCollection,
         addBeatmapToCollection,
         toggleFavorite,
-        favorites
+        favorites,
+        addCollection,
+        removeCollection,
+        updateCollection
     } = useBeatmapStore();
 
     // Filtrowanie i sortowanie kolekcji
@@ -93,98 +120,123 @@ export default function CollectionManager() {
         setNewCollectionName('');
     };
 
+    const handleAddCollection = (e) => {
+        e.preventDefault();
+        if (newCollectionName.trim()) {
+            addCollection({ name: newCollectionName.trim(), beatmaps: [] });
+            setNewCollectionName('');
+        }
+    };
+
+    const handleEditCollection = (e) => {
+        e.preventDefault();
+        if (editName.trim() && editingCollection) {
+            updateCollection(editingCollection.id, { ...editingCollection, name: editName.trim() });
+            setEditingCollection(null);
+            setEditName('');
+        }
+    };
+
+    const startEditing = (collection) => {
+        setEditingCollection(collection);
+        setEditName(collection.name);
+    };
+
+    const cancelEditing = () => {
+        setEditingCollection(null);
+        setEditName('');
+    };
+
+    const viewCollection = (collection) => {
+        navigate('/collection-details', { state: { collection } });
+    };
+
     return (
-        <div className="collection-manager">
-            <div className="collections-sidebar void-container">
-                <div className="collections-header">
-                    <h2>Collections</h2>
-                    <div className="header-actions">
-                        <button 
-                            className="export-btn"
-                            onClick={() => setIsExporting(true)}
-                            title="Export/Import collections"
-                        >
-                            ↔️
-                        </button>
-                        <button 
-                            className="add-collection-btn"
-                            onClick={() => setIsAddingNew(true)}
-                            title="Create new collection"
-                        >
-                            +
-                        </button>
+        <div className={collectionManagerClass}>
+            <h2>Twoje kolekcje</h2>
+            
+            <div className={collectionListClass}>
+                {filteredCollections.map(collection => (
+                    <div 
+                        key={collection.id} 
+                        className={`${collectionItemClass} ${editingCollection?.id === collection.id ? collectionItemActiveClass : ''}`}
+                    >
+                        {editingCollection?.id === collection.id ? (
+                            <form className={collectionFormClass} onSubmit={handleEditCollection}>
+                                <input
+                                    type="text"
+                                    className={collectionFormInputClass}
+                                    value={editName}
+                                    onChange={(e) => setEditName(e.target.value)}
+                                    autoFocus
+                                />
+                                <button 
+                                    type="button" 
+                                    className={`${collectionFormButtonClass} ${collectionFormButtonCancelClass}`}
+                                    onClick={cancelEditing}
+                                >
+                                    Anuluj
+                                </button>
+                                <button 
+                                    type="submit" 
+                                    className={`${collectionFormButtonClass} ${collectionFormButtonSubmitClass}`}
+                                >
+                                    Zapisz
+                                </button>
+                            </form>
+                        ) : (
+                            <>
+                                <div>
+                                    <span className={collectionItemTitleClass}>{collection.name}</span>
+                                    <span className={collectionItemCountClass}>
+                                        ({collection.beatmaps.size} beatmap)
+                                    </span>
+                                </div>
+                                <div className={collectionItemActionsClass}>
+                                    <button 
+                                        className={`${collectionItemButtonClass} ${collectionItemButtonViewClass}`}
+                                        onClick={() => viewCollection(collection)}
+                                        title="Zobacz kolekcję"
+                                    >
+                                        <FaEye />
+                                    </button>
+                                    <button 
+                                        className={`${collectionItemButtonClass} ${collectionItemButtonEditClass}`}
+                                        onClick={() => startEditing(collection)}
+                                        title="Edytuj nazwę"
+                                    >
+                                        <FaEdit />
+                                    </button>
+                                    <button 
+                                        className={`${collectionItemButtonClass} ${collectionItemButtonDeleteClass}`}
+                                        onClick={() => removeCollection(collection.id)}
+                                        title="Usuń kolekcję"
+                                    >
+                                        <FaTrash />
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
-                </div>
-
-                <div className="collections-filter">
-                    <input
-                        type="text"
-                        value={collectionFilter}
-                        onChange={(e) => setCollectionFilter(e.target.value)}
-                        placeholder="Search collections..."
-                        className="filter-input"
-                    />
-                    <div className="filter-types">
-                        <button
-                            className={filterType === 'all' ? 'active' : ''}
-                            onClick={() => setFilterType('all')}
-                        >
-                            All
-                        </button>
-                        <button
-                            className={filterType === 'favorites' ? 'active' : ''}
-                            onClick={() => setFilterType('favorites')}
-                        >
-                            Favorites
-                        </button>
-                        <button
-                            className={filterType === 'recent' ? 'active' : ''}
-                            onClick={() => setFilterType('recent')}
-                        >
-                            Recent
-                        </button>
-                    </div>
-                    <div className="sort-types">
-                        <select
-                            value={sortType}
-                            onChange={(e) => setSortType(e.target.value)}
-                            className="sort-select"
-                        >
-                            <option value="updated">Last Updated</option>
-                            <option value="created">Date Created</option>
-                            <option value="name">Name</option>
-                            <option value="size">Size</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div className="collections-list">
-                    {filteredCollections.map(collection => (
-                        <div 
-                            key={collection.id}
-                            className={`collection-item ${selectedCollection?.id === collection.id ? 'active' : ''}`}
-                            onClick={() => setSelectedCollection(collection)}
-                        >
-                            <div className="collection-info">
-                                <span className="collection-name">{collection.name}</span>
-                                <span className="beatmap-count">
-                                    {collection.beatmaps.size} beatmaps
-                                </span>
-                            </div>
-                            <button
-                                className={`favorite-btn ${favorites.collections.has(collection.id) ? 'active' : ''}`}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleFavorite('collections', collection.id);
-                                }}
-                                title={favorites.collections.has(collection.id) ? 'Remove from favorites' : 'Add to favorites'}
-                            >
-                                ★
-                            </button>
-                        </div>
-                    ))}
-                </div>
+                ))}
             </div>
+            
+            <form className={collectionFormClass} onSubmit={handleAddCollection}>
+                <input
+                    type="text"
+                    className={collectionFormInputClass}
+                    placeholder="Nazwa nowej kolekcji..."
+                    value={newCollectionName}
+                    onChange={(e) => setNewCollectionName(e.target.value)}
+                />
+                <button 
+                    type="submit" 
+                    className={`${collectionFormButtonClass} ${collectionFormButtonSubmitClass}`}
+                    disabled={!newCollectionName.trim()}
+                >
+                    <FaPlus style={{ marginRight: '5px' }} /> Dodaj kolekcję
+                </button>
+            </form>
 
             <div className="collection-content">
                 <div className="search-container">
@@ -248,4 +300,6 @@ export default function CollectionManager() {
             )}
         </div>
     );
-}
+};
+
+export default CollectionManager;

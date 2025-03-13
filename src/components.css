@@ -1,0 +1,119 @@
+/* Główne klasy komponentów */
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-size: 1rem;
+}
+
+.button--primary {
+  background-color: #ff66aa;
+  color: white;
+}
+
+.button--primary:hover {
+  background-color: #ff4499;
+}
+
+.button--secondary {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.button--secondary:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.button--danger {
+  background-color: rgba(255, 70, 70, 0.2);
+  color: #ff4646;
+}
+
+.button--danger:hover {
+  background-color: rgba(255, 70, 70, 0.3);
+}
+
+.input {
+  padding: 10px 15px;
+  background-color: rgba(20, 20, 30, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  color: white;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #ff66aa;
+  box-shadow: 0 0 5px rgba(255, 102, 170, 0.3);
+}
+
+.card {
+  background-color: rgba(30, 30, 40, 0.7);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.flex {
+  display: flex;
+}
+
+.flex--column {
+  flex-direction: column;
+}
+
+.flex--row {
+  flex-direction: row;
+}
+
+.grid {
+  display: grid;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.margin-top {
+  margin-top: 20px;
+}
+
+.margin-bottom {
+  margin-bottom: 20px;
+}
+
+.margin-left {
+  margin-left: 20px;
+}
+
+.margin-right {
+  margin-right: 20px;
+}
+
+.padding {
+  padding: 20px;
+} 

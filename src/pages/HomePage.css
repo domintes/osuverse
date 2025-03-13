@@ -1,0 +1,65 @@
+.home-page {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.home-page__welcome {
+  background-color: rgba(30, 30, 40, 0.7);
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.home-page__title {
+  font-size: 2rem;
+  color: #ff66aa;
+  margin-bottom: 15px;
+}
+
+.home-page__description {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.home-page__features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.feature-card {
+  background-color: rgba(30, 30, 40, 0.7);
+  border-radius: 10px;
+  padding: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 102, 170, 0.3);
+}
+
+.feature-card__title {
+  font-size: 1.4rem;
+  color: #ff66aa;
+  margin-bottom: 15px;
+}
+
+.feature-card__description {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .home-page__features {
+    grid-template-columns: 1fr;
+  }
+} 

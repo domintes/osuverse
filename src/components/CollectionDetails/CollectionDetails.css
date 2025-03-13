@@ -1,0 +1,144 @@
+.collection-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.collection-details__header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.collection-details__title {
+  font-size: 1.8rem;
+  color: #ff66aa;
+  margin: 10px 0;
+}
+
+.collection-details__count {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.collection-details__back-button {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.collection-details__back-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.collection-details__error,
+.collection-details__empty {
+  padding: 30px;
+  text-align: center;
+  background-color: rgba(30, 30, 40, 0.7);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.1rem;
+}
+
+.beatmap-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.beatmap-item {
+  display: flex;
+  background-color: rgba(30, 30, 40, 0.7);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.beatmap-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.beatmap-item__cover {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+.beatmap-item__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.beatmap-item__info {
+  flex: 1;
+  padding: 10px 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.beatmap-item__title {
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: white;
+  margin-bottom: 3px;
+}
+
+.beatmap-item__artist {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 3px;
+}
+
+.beatmap-item__mapper {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 5px;
+}
+
+.beatmap-item__stats {
+  display: flex;
+  gap: 10px;
+}
+
+.beatmap-item__stat {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.beatmap-item__actions {
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+}
+
+.beatmap-item__remove-button {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.beatmap-item__remove-button:hover {
+  background-color: rgba(255, 70, 70, 0.2);
+  color: #ff4646;
+} 

@@ -19,6 +19,7 @@ import CollectionManager from './components/CollectionManager/CollectionManager'
 import CollectionDetails from './components/CollectionDetails/CollectionDetails';
 import useBeatmapStore from './stores/beatmapStore';
 import './styles/main.css';
+import './components.css';
 
 // Komponent ochrony trasy - przekieruje na login jeśli użytkownik nie jest zalogowany
 const ProtectedRoute = ({ children }) => {

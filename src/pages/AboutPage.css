@@ -1,0 +1,87 @@
+.about-page {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about-section {
+  background-color: rgba(30, 30, 40, 0.7);
+  border-radius: 10px;
+  padding: 25px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.about-title {
+  font-size: 2rem;
+  color: #ff66aa;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.about-subtitle {
+  font-size: 1.5rem;
+  color: #ff66aa;
+  margin-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 102, 170, 0.3);
+  padding-bottom: 10px;
+}
+
+.about-description {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.about-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.about-list-item {
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+}
+
+.about-list-item::before {
+  content: "•";
+  position: absolute;
+  left: 5px;
+  color: #ff66aa;
+  font-size: 1.2rem;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.contact-label {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  min-width: 70px;
+}
+
+.contact-link {
+  color: #ff66aa;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.contact-link:hover {
+  color: #ff99cc;
+  text-decoration: underline;
+} 
