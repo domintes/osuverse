@@ -1,0 +1,246 @@
+.beatmap-set-container {
+  margin-bottom: var(--space-md);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+}
+
+.beatmap-set-container.hovered {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.beatmap-set-main {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: linear-gradient(135deg, var(--color-void) 0%, var(--color-void-dark) 100%);
+}
+
+.cover-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.cover-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+.hovered .cover-container img {
+  transform: scale(1.05);
+}
+
+.status-badge {
+  position: absolute;
+  top: var(--space-xs);
+  right: var(--space-xs);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  backdrop-filter: blur(4px);
+}
+
+.status-badge.ranked {
+  background: rgba(var(--color-success-rgb), 0.2);
+  border: 1px solid var(--color-success);
+}
+
+.status-badge.loved {
+  background: rgba(var(--color-primary-rgb), 0.2);
+  border: 1px solid var(--color-primary);
+}
+
+.status-badge.qualified {
+  background: rgba(255, 170, 0, 0.2);
+  border: 1px solid #ffaa00;
+}
+
+.status-badge.pending {
+  background: rgba(var(--color-text-secondary-rgb), 0.2);
+  border: 1px solid var(--color-text-secondary);
+}
+
+.status-badge.unranked {
+  background: rgba(var(--color-text-secondary-rgb), 0.1);
+  border: 1px solid rgba(var(--color-text-secondary-rgb), 0.3);
+}
+
+.beatmap-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.beatmap-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--space-xs);
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.beatmap-artist {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-lg);
+}
+
+.beatmap-mapper {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.beatmap-mapper a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.beatmap-mapper a:hover {
+  color: var(--color-primary-light);
+  text-decoration: underline;
+}
+
+.beatmap-stats {
+  display: flex;
+  gap: var(--space-lg);
+  margin-top: auto;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.stat-label {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.stat-value {
+  font-family: var(--font-glitch);
+  color: var(--color-text);
+}
+
+.beatmap-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.action-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-lg);
+  transition: all var(--transition-normal);
+  border: none;
+  cursor: pointer;
+}
+
+.action-button.add {
+  background: var(--color-primary);
+  color: var(--color-text);
+}
+
+.action-button.add:hover {
+  background: var(--color-primary-light);
+}
+
+.action-button.remove {
+  background: rgba(var(--color-error-rgb), 0.1);
+  color: var(--color-error);
+}
+
+.action-button.remove:hover {
+  background: rgba(var(--color-error-rgb), 0.2);
+}
+
+.action-button.toggle-difficulties {
+  background: var(--color-secondary);
+  color: var(--color-text);
+}
+
+.action-button.toggle-difficulties.active {
+  transform: rotate(180deg);
+  background: var(--color-secondary-light);
+}
+
+.action-button.toggle-difficulties:hover {
+  background: var(--color-secondary-hover);
+}
+
+.action-button.small {
+  width: 24px;
+  height: 24px;
+  font-size: var(--font-size-sm);
+}
+
+.difficulties-list {
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-md);
+  background: rgba(var(--color-void-rgb), 0.5);
+  animation: slideDown var(--transition-normal) forwards;
+}
+
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 1000px;
+    opacity: 1;
+  }
+}
+
+.difficulty-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: rgba(var(--color-secondary-dark-rgb), 0.1);
+  margin-bottom: var(--space-sm);
+}
+
+.difficulty-item:last-child {
+  margin-bottom: 0;
+}
+
+.difficulty-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.difficulty-name {
+  color: var(--color-text);
+  font-weight: bold;
+}
+
+.difficulty-rating {
+  color: var(--color-primary);
+  font-family: var(--font-glitch);
+}
+
+.difficulty-stats {
+  display: flex;
+  gap: var(--space-md);
+}
