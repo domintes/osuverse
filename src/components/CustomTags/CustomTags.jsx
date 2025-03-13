@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { FaTimes } from 'react-icons/fa';
-import './CustomTags.scss';
+import './CustomTags.css';
 
 const CustomTags = ({ tags = [], onAddTag, onRemoveTag, placeholder = 'Dodaj tag...' }) => {
   const [inputValue, setInputValue] = useState('');

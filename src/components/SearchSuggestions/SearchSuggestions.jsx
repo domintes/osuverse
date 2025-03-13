@@ -1,5 +1,5 @@
 import React from 'react';
-import './SearchSuggestions.scss';
+import './SearchSuggestions.css';
 
 const SuggestionCategory = ({ title, suggestions, query, onSelect, activeIndex, baseIndex }) => {
   if (!suggestions || suggestions.length === 0) return null;

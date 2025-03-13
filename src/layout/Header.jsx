@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../auth/AuthContext';
 import OsuverseSearch from '../components/OsuverseSearch/OsuverseSearch';
-import './Header.scss';
+import './Header.css';
 
 const Header = () => {
   const { user, logout } = useAuth();

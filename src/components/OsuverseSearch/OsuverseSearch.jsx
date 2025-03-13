@@ -3,7 +3,7 @@ import { FaSearch } from 'react-icons/fa';
 import { debounce } from 'lodash';
 import useBeatmapSearch from '../../hooks/useBeatmapSearch';
 import SearchSuggestions from '../SearchSuggestions/SearchSuggestions';
-import './OsuverseSearch.scss';
+import './OsuverseSearch.css';
 
 const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
     const [query, setQuery] = useState('');
@@ -183,8 +183,8 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
                             <div className="search-filters">
                                 <div className="filter-group">
                                     <div className="filter-label">Szukaj w:</div>
-                                    <div style={{ display: 'flex', gap: '10px' }}>
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                    <div className="filter-options">
+                                        <label className="filter-option">
                                             <input
                                                 type="checkbox"
                                                 checked={filters.collections}
@@ -198,7 +198,7 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
                                             />
                                             Moje kolekcje
                                         </label>
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                        <label className="filter-option">
                                             <input
                                                 type="checkbox"
                                                 checked={filters.allBeatmaps}
@@ -217,8 +217,8 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
 
                                 <div className="filter-group">
                                     <div className="filter-label">Status:</div>
-                                    <div style={{ display: 'flex', gap: '10px' }}>
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                    <div className="filter-options">
+                                        <label className="filter-option">
                                             <input
                                                 type="checkbox"
                                                 checked={filters.ranked}
@@ -232,7 +232,7 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
                                             />
                                             Ranked
                                         </label>
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                        <label className="filter-option">
                                             <input
                                                 type="checkbox"
                                                 checked={filters.loved}
@@ -246,7 +246,7 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
                                             />
                                             Loved
                                         </label>
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                        <label className="filter-option">
                                             <input
                                                 type="checkbox"
                                                 checked={filters.unranked}
@@ -265,7 +265,7 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
 
                                 <div className="filter-group">
                                     <div className="filter-label">Gwiazdki:</div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <div className="filter-range">
                                         <input
                                             className="filter-input"
                                             type="number"
