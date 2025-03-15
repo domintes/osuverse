@@ -1,7 +1,7 @@
 export const testData = [
   {
     name: 'Camellia - KillerToy',
-    Link: "https://osu.ppy.sh/beatmapsets/1669715#osu/3410035",
+    Link: "https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/beatmapsets/1669715#osu/3410035",
     tags: [
       "ToPass",
       "Hi-tech",
@@ -13,7 +13,7 @@ export const testData = [
   },
   {
     name: 'Camellia - Exit This Earth’s Atomosphere',
-    Link: "https://osu.ppy.sh/beatmapsets/517474#osu/1114721",
+    Link: "https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/beatmapsets/517474#osu/1114721",
     tags: [
       "ToPass",
       "Cool Tech Drop",

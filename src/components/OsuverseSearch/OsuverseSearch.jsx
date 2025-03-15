@@ -5,7 +5,7 @@ import useBeatmapSearch from '../../hooks/useBeatmapSearch';
 import SearchSuggestions from '../SearchSuggestions/SearchSuggestions';
 import './OsuverseSearch.css';
 
-const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
+const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch = () => {} }) => {
     const [query, setQuery] = useState('');
     const [isExpanded, setIsExpanded] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -39,7 +39,11 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
 
         const fullQuery = [searchQuery, ...filterQuery].join(' ').trim();
         search(fullQuery);
-        onSearch(results);
+        
+        // Sprawdź czy onSearch jest funkcją przed wywołaniem
+        if (typeof onSearch === 'function') {
+            onSearch(results);
+        }
     }, 300);
 
     // Obsługa zmiany inputa
@@ -63,12 +67,13 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
 
     // Obsługa klawiszy
     const handleKeyDown = (e) => {
-        const suggestionsList = [
-            ...suggestions.tags,
-            ...suggestions.collections,
-            ...suggestions.mappers,
-            ...suggestions.filters
-        ];
+        // Zabezpieczenie przed błędem undefined is not iterable
+        const suggestionsList = suggestions ? [
+            ...(suggestions.tags || []),
+            ...(suggestions.collections || []),
+            ...(suggestions.mappers || []),
+            ...(suggestions.filters || [])
+        ] : [];
 
         switch (e.key) {
             case 'ArrowDown':
@@ -136,8 +141,12 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
-        if (onSearch && query.trim()) {
-            onSearch(results);
+        if (query.trim()) {
+            handleSearch(query);
+            // Sprawdź czy onSearch jest funkcją przed wywołaniem
+            if (typeof onSearch === 'function') {
+                onSearch(results);
+            }
         }
     };
 
@@ -161,7 +170,7 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch }) => {
             {showSuggestions && (
                 <div ref={dropdownRef}>
                     <SearchSuggestions
-                        suggestions={suggestions}
+                        suggestions={suggestions || {tags: [], collections: [], mappers: [], filters: []}}
                         query={query.split(' ').pop() || ''}
                         onSelect={handleSuggestionSelect}
                         activeIndex={activeIndex}

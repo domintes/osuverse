@@ -1,7 +1,7 @@
 import React from 'react';
 import './SearchSuggestions.css';
 
-const SuggestionCategory = ({ title, suggestions, query, onSelect, activeIndex, baseIndex }) => {
+const SuggestionCategory = ({ title, suggestions, onSelect, activeIndex, baseIndex }) => {
   if (!suggestions || suggestions.length === 0) return null;
 
   return (
@@ -31,7 +31,7 @@ const SuggestionCategory = ({ title, suggestions, query, onSelect, activeIndex, 
   );
 };
 
-const SearchSuggestions = ({ suggestions, query, onSelect, activeIndex, setActiveIndex, visible }) => {
+const SearchSuggestions = ({ suggestions, onSelect, activeIndex, visible }) => {
   if (!visible) return null;
   
   const { tags, collections, mappers, filters } = suggestions;
@@ -44,7 +44,7 @@ const SearchSuggestions = ({ suggestions, query, onSelect, activeIndex, setActiv
   if (!hasAnySuggestions) return null;
   
   // Obliczanie indeksu bazowego dla każdej kategorii
-  let baseIndices = { tags: 0 };
+  const baseIndices = { tags: 0 };
   baseIndices.collections = baseIndices.tags + (tags ? tags.length : 0);
   baseIndices.mappers = baseIndices.collections + (collections ? collections.length : 0);
   baseIndices.filters = baseIndices.mappers + (mappers ? mappers.length : 0);
@@ -54,7 +54,6 @@ const SearchSuggestions = ({ suggestions, query, onSelect, activeIndex, setActiv
       <SuggestionCategory 
         title="Tagi" 
         suggestions={tags} 
-        query={query} 
         onSelect={onSelect} 
         activeIndex={activeIndex} 
         baseIndex={baseIndices.tags} 
@@ -63,7 +62,6 @@ const SearchSuggestions = ({ suggestions, query, onSelect, activeIndex, setActiv
       <SuggestionCategory 
         title="Kolekcje" 
         suggestions={collections} 
-        query={query} 
         onSelect={onSelect} 
         activeIndex={activeIndex} 
         baseIndex={baseIndices.collections} 
@@ -72,7 +70,6 @@ const SearchSuggestions = ({ suggestions, query, onSelect, activeIndex, setActiv
       <SuggestionCategory 
         title="Mapperzy" 
         suggestions={mappers} 
-        query={query} 
         onSelect={onSelect} 
         activeIndex={activeIndex} 
         baseIndex={baseIndices.mappers} 
@@ -81,7 +78,6 @@ const SearchSuggestions = ({ suggestions, query, onSelect, activeIndex, setActiv
       <SuggestionCategory 
         title="Filtry" 
         suggestions={filters} 
-        query={query} 
         onSelect={onSelect} 
         activeIndex={activeIndex} 
         baseIndex={baseIndices.filters} 

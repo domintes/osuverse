@@ -35,13 +35,13 @@ export default function CollectionsView() {
                                     <div className="beatmap-data">
                                         <span className="beatmap-name">
                                             {beatmap.beatmapset.artist} - {beatmap.title} 
-                                            [<a href={`https://osu.ppy.sh/users/${beatmap.beatmapset.user_id}`} target="_blank" rel="noopener noreferrer">
+                                            [<a href={`https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/users/${beatmap.beatmapset.user_id}`} target="_blank" rel="noopener noreferrer">
                                                 {beatmap.beatmapset.creator}
                                             </a>]
                                         </span>
 
                                         <span className="beatmap-difficulty">
-                                            <a href={`https://osu.ppy.sh/beatmapsets/${beatmap.beatmapset_id}#osu/${beatmap.id}`} target="_blank" rel="noopener noreferrer">
+                                            <a href={`https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/beatmapsets/${beatmap.beatmapset_id}#osu/${beatmap.id}`} target="_blank" rel="noopener noreferrer">
                                                 {beatmap.version} ({beatmap.difficulty_rating.toFixed(2)} ★)
                                             </a>
                                         </span>

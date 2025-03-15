@@ -63,7 +63,7 @@ export default function BeatmapSet({ beatmapset, onAddToCollection, onRemoveFrom
                             )}
                         </h3>
                         <div className="beatmap-mapper">
-                            mapped by <a href={`https://osu.ppy.sh/users/${beatmapset.user_id}`} target="_blank" rel="noopener noreferrer">
+                            mapped by <a href={`https://cors-anywhere.herokuapp.com/https://osu.ppy.sh/users/${beatmapset.user_id}`} target="_blank" rel="noopener noreferrer">
                                 {beatmapset.creator}
                             </a>
                         </div>

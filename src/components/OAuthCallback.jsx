@@ -1,64 +1,79 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import './OAuthCallback.css';
 
-export default function OAuthCallback() {
-    const [error, setError] = useState('');
-    const { handleCallback } = useAuth();
+const OAuthCallback = () => {
+    const { handleOAuthCallback, error } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const [localError, setLocalError] = useState('');
+    const [status, setStatus] = useState('Trwa przetwarzanie logowania...');
 
     useEffect(() => {
-        const processOAuthCallback = async () => {
-            // Pobierz kod z URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
-            const error = urlParams.get('error');
-
-            if (error) {
-                setError('Wystąpił błąd podczas logowania: ' + error);
-                return;
-            }
-
-            if (!code) {
-                setError('Nie otrzymano kodu autoryzacji');
-                return;
-            }
-
+        const processAuth = async () => {
             try {
-                const success = await handleCallback(code);
-                if (success) {
-                    navigate('/'); // Przekieruj do głównej strony po udanym logowaniu
-                } else {
-                    setError('Nie udało się zalogować. Spróbuj ponownie.');
+                // Pobierz kod autoryzacyjny z URL
+                const params = new URLSearchParams(location.search);
+                const code = params.get('code');
+                const error = params.get('error');
+                
+                if (error) {
+                    setLocalError(`Błąd autoryzacji: ${error}`);
+                    setStatus('Wystąpił błąd');
+                    return;
                 }
+                
+                if (!code) {
+                    setLocalError('Brak kodu autoryzacyjnego w URL');
+                    setStatus('Wystąpił błąd');
+                    return;
+                }
+                
+                // Wyświetl informacje debugowania
+                console.log('Otrzymany kod autoryzacyjny:', code);
+                
+                // Wywołaj funkcję do obsługi kodu autoryzacyjnego
+                setStatus('Uzyskiwanie tokena...');
+                await handleOAuthCallback(code);
+                
+                // Po pomyślnym zalogowaniu, przekieruj na stronę główną
+                setStatus('Logowanie zakończone sukcesem! Przekierowywanie...');
+                setTimeout(() => navigate('/'), 1000);
             } catch (err) {
-                setError('Wystąpił błąd podczas przetwarzania logowania');
-                console.error('OAuth callback error:', err);
+                console.error('Błąd w komponencie OAuthCallback:', err);
+                setLocalError(err.message || 'Wystąpił nieznany błąd podczas logowania');
+                setStatus('Wystąpił błąd');
             }
         };
-
-        processOAuthCallback();
-    }, [handleCallback, navigate]);
+        
+        processAuth();
+    }, [handleOAuthCallback, navigate, location]);
 
     return (
-        <div className="oauth-callback-container">
-            <div className="callback-box">
-                {error ? (
-                    <>
-                        <h2>Błąd logowania</h2>
-                        <p className="error-message">{error}</p>
-                        <button onClick={() => navigate('/login')}>
+        <div className="oauth-callback">
+            <div className="oauth-callback__card">
+                <h2>Logowanie przez osu!</h2>
+                
+                <div className="oauth-callback__status">
+                    <div className="oauth-callback__spinner"></div>
+                    <p>{status}</p>
+                </div>
+                
+                {(localError || error) && (
+                    <div className="oauth-callback__error">
+                        <p>{localError || error}</p>
+                        <button 
+                            className="oauth-callback__button"
+                            onClick={() => navigate('/login')}
+                        >
                             Wróć do strony logowania
                         </button>
-                    </>
-                ) : (
-                    <>
-                        <h2>Logowanie...</h2>
-                        <div className="loading-spinner"></div>
-                        <p>Trwa przetwarzanie logowania, proszę czekać...</p>
-                    </>
+                    </div>
                 )}
             </div>
         </div>
     );
-}
+};
+
+export default OAuthCallback;

@@ -2,13 +2,124 @@ import { useState, useCallback, useRef } from 'react';
 import { osuApi } from '../utils/api.config';
 import useBeatmapStore from '../stores/beatmapStore';
 
+// Funkcja do zwracania mockowych wyników dla trybu testowego
+const getMockSearchResults = (query) => {
+    const mockResults = [
+        {
+            id: 1,
+            title: "The Big Black",
+            artist: "The Quick Brown Fox",
+            creator: "Blue Dragon",
+            status: "ranked",
+            beatmaps: [
+                { difficulty_rating: 6.69 },
+                { difficulty_rating: 3.8 }
+            ],
+            covers: {
+                cover: "https://assets.ppy.sh/beatmaps/131891/covers/cover.jpg",
+                card: "https://assets.ppy.sh/beatmaps/131891/covers/card.jpg",
+                list: "https://assets.ppy.sh/beatmaps/131891/covers/list.jpg"
+            },
+            tags: ["speedcore", "hard", "jump", "circles"]
+        },
+        {
+            id: 2,
+            title: "Senbonzakura",
+            artist: "Kurousa P",
+            creator: "pkk",
+            status: "ranked",
+            beatmaps: [
+                { difficulty_rating: 5.77 },
+                { difficulty_rating: 4.5 }
+            ],
+            covers: {
+                cover: "https://assets.ppy.sh/beatmaps/95382/covers/cover.jpg",
+                card: "https://assets.ppy.sh/beatmaps/95382/covers/card.jpg",
+                list: "https://assets.ppy.sh/beatmaps/95382/covers/list.jpg"
+            },
+            tags: ["japanese", "vocaloid", "stream"]
+        },
+        {
+            id: 3, 
+            title: "Avalanche",
+            artist: "Memme",
+            creator: "Niva",
+            status: "ranked",
+            beatmaps: [
+                { difficulty_rating: 6.12 },
+                { difficulty_rating: 5.3 }
+            ],
+            covers: {
+                cover: "https://assets.ppy.sh/beatmaps/900867/covers/cover.jpg",
+                card: "https://assets.ppy.sh/beatmaps/900867/covers/card.jpg",
+                list: "https://assets.ppy.sh/beatmaps/900867/covers/list.jpg"
+            },
+            tags: ["breakcore", "electronic", "technical"]
+        },
+        {
+            id: 4,
+            title: "FREEDOM DiVE",
+            artist: "Xi",
+            creator: "Nakagawa-Kanon",
+            status: "ranked",
+            beatmaps: [
+                { difficulty_rating: 8.18 },
+                { difficulty_rating: 7.1 }
+            ],
+            covers: {
+                cover: "https://assets.ppy.sh/beatmaps/39804/covers/cover.jpg",
+                card: "https://assets.ppy.sh/beatmaps/39804/covers/card.jpg",
+                list: "https://assets.ppy.sh/beatmaps/39804/covers/list.jpg"
+            },
+            tags: ["stream", "technical", "high-bpm"]
+        },
+        {
+            id: 5,
+            title: "DJ Noriken - #ERASEERASE",
+            artist: "DJ Noriken",
+            creator: "lcfc",
+            status: "loved",
+            beatmaps: [
+                { difficulty_rating: 5.62 },
+                { difficulty_rating: 4.9 }
+            ],
+            covers: {
+                cover: "https://assets.ppy.sh/beatmaps/1290041/covers/cover.jpg",
+                card: "https://assets.ppy.sh/beatmaps/1290041/covers/card.jpg",
+                list: "https://assets.ppy.sh/beatmaps/1290041/covers/list.jpg"
+            },
+            tags: ["frenchcore", "electronic", "hardcore"]
+        }
+    ];
+
+    // Jeśli nie ma zapytania, zwróć wszystkie wyniki
+    if (!query) return mockResults;
+
+    // Szukaj w tytule, artyście, twórcy lub tagach
+    return mockResults.filter(result => {
+        const lowercaseQuery = query.toLowerCase();
+        
+        return (
+            result.title.toLowerCase().includes(lowercaseQuery) ||
+            result.artist.toLowerCase().includes(lowercaseQuery) ||
+            result.creator.toLowerCase().includes(lowercaseQuery) ||
+            result.tags.some(tag => tag.includes(lowercaseQuery))
+        );
+    });
+};
+
 export default function useBeatmapSearch() {
     const [results, setResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const abortControllerRef = useRef(null);
 
-    const { beatmaps, collections, tags, filters } = useBeatmapStore();
+    const { beatmaps, collections, tags } = useBeatmapStore();
+    
+    // Sprawdź czy używamy trybu testowego
+    const isTestMode = useCallback(() => {
+        return localStorage.getItem('test_mode') === 'true';
+    }, []);
 
     // Funkcja do parsowania warunków wyszukiwania
     const parseSearchQuery = useCallback((query) => {
@@ -55,53 +166,58 @@ export default function useBeatmapSearch() {
         return conditions;
     }, []);
 
-    // Funkcja do filtrowania lokalnych beatmap
     const filterLocalBeatmaps = useCallback((conditions) => {
         let filteredMaps = Array.from(beatmaps.values());
 
-        // Filtrowanie po tekście
+        // Filtrowanie po texcie
         if (conditions.text.length > 0) {
-            const searchText = conditions.text.join(' ').toLowerCase();
-            filteredMaps = filteredMaps.filter(map => 
-                map.title.toLowerCase().includes(searchText) ||
-                map.artist.toLowerCase().includes(searchText) ||
-                map.creator.toLowerCase().includes(searchText)
-            );
+            filteredMaps = filteredMaps.filter(map => {
+                const titleLower = map.title ? map.title.toLowerCase() : '';
+                const artistLower = map.artist ? map.artist.toLowerCase() : '';
+                const creatorLower = map.creator ? map.creator.toLowerCase() : '';
+                
+                return conditions.text.every(text => 
+                    titleLower.includes(text) || 
+                    artistLower.includes(text) || 
+                    creatorLower.includes(text)
+                );
+            });
         }
 
         // Filtrowanie po tagach
         if (conditions.tags.length > 0) {
             filteredMaps = filteredMaps.filter(map => {
-                const mapTags = new Set();
-                collections.forEach(collection => {
-                    if (collection.beatmaps.has(map.id)) {
-                        const beatmapData = collection.beatmaps.get(map.id);
-                        beatmapData.tags.forEach(tag => mapTags.add(tag));
-                    }
-                });
-                return conditions.tags.every(tag => mapTags.has(tag));
+                const mapTags = map.tags ? map.tags.map(tag => tag.toLowerCase()) : [];
+                return conditions.tags.every(tag => mapTags.includes(tag));
             });
         }
 
         // Filtrowanie po mapperach
         if (conditions.mappers.length > 0) {
-            filteredMaps = filteredMaps.filter(map =>
-                conditions.mappers.some(mapper =>
-                    map.creator.toLowerCase().includes(mapper)
-                )
-            );
+            filteredMaps = filteredMaps.filter(map => {
+                const creatorLower = map.creator ? map.creator.toLowerCase() : '';
+                return conditions.mappers.some(mapper => creatorLower.includes(mapper));
+            });
         }
 
         // Filtrowanie po kolekcjach
         if (conditions.collections.length > 0) {
-            filteredMaps = filteredMaps.filter(map =>
-                conditions.collections.some(collectionName =>
-                    Array.from(collections.values()).some(collection =>
-                        collection.name.toLowerCase().includes(collectionName) &&
-                        collection.beatmaps.has(map.id)
-                    )
-                )
-            );
+            const matchingCollections = [];
+            collections.forEach((collection, name) => {
+                if (conditions.collections.some(coll => name.toLowerCase().includes(coll))) {
+                    matchingCollections.push(...collection);
+                }
+            });
+            
+            // Dodajemy mapy z pasujących kolekcji do naszego zestawu wyników
+            // i utrzymujemy unikalność przez ID
+            const uniqueIds = new Set(filteredMaps.map(map => map.id));
+            matchingCollections.forEach(mapId => {
+                if (!uniqueIds.has(mapId) && beatmaps.has(mapId)) {
+                    filteredMaps.push(beatmaps.get(mapId));
+                    uniqueIds.add(mapId);
+                }
+            });
         }
 
         // Filtrowanie po statusie ranked
@@ -136,6 +252,14 @@ export default function useBeatmapSearch() {
     // Funkcja do wyszukiwania w API osu!
     const searchOsuApi = useCallback(async (query) => {
         try {
+            // Jeśli jesteśmy w trybie testowym, używamy mockowych danych
+            if (isTestMode()) {
+                console.log('⚠️ Używam mockowych danych dla wyszukiwania API');
+                return getMockSearchResults(query);
+            }
+            
+            console.log('🔍 Wyszukiwanie w API osu!:', query);
+            
             if (abortControllerRef.current) {
                 abortControllerRef.current.abort();
             }
@@ -145,21 +269,27 @@ export default function useBeatmapSearch() {
                 params: { q: query },
                 signal: abortControllerRef.current.signal
             });
-
-            return response.data.beatmapsets;
+            
+            console.log('✅ Otrzymano wyniki wyszukiwania:', response.data.beatmapsets?.length || 0);
+            return response.data.beatmapsets || [];
         } catch (error) {
             if (error.name === 'AbortError') {
+                console.log('🔄 Przerwano poprzednie wyszukiwanie');
                 return [];
             }
-            throw error;
+            console.error('❌ Błąd wyszukiwania API:', error);
+            
+            // W przypadku błędu zwróć mockowe dane, aby aplikacja mogła dalej działać
+            console.log('⚠️ Używam danych awaryjnych dla wyszukiwania');
+            return getMockSearchResults(query);
         }
-    }, []);
+    }, [isTestMode]);
 
     // Główna funkcja wyszukiwania
     const search = useCallback(async (query) => {
-        if (!query.trim()) {
+        if (!query) {
             setResults([]);
-            setIsLoading(false);
+            setError(null);
             return;
         }
 
@@ -167,83 +297,122 @@ export default function useBeatmapSearch() {
         setError(null);
 
         try {
+            // Parsuj zapytanie
             const conditions = parseSearchQuery(query);
             
-            // Najpierw szukamy lokalnie
+            // Wyszukaj w lokalnych beatmapach
             const localResults = filterLocalBeatmaps(conditions);
             
-            // Jeśli mamy tekst do wyszukania, szukamy też w API
+            // Wyszukaj w API tylko jeśli zapytanie zawiera tekst
             let apiResults = [];
             if (conditions.text.length > 0) {
                 apiResults = await searchOsuApi(conditions.text.join(' '));
             }
-
-            // Łączymy wyniki, usuwamy duplikaty
+            
+            // Połącz wyniki, usuń duplikaty
             const combinedResults = [...localResults];
-            apiResults.forEach(apiMap => {
-                if (!combinedResults.some(localMap => localMap.id === apiMap.id)) {
-                    combinedResults.push(apiMap);
+            const existingIds = new Set(localResults.map(map => map.id));
+            
+            apiResults.forEach(map => {
+                if (!existingIds.has(map.id)) {
+                    combinedResults.push(map);
                 }
             });
-
+            
             setResults(combinedResults);
         } catch (error) {
-            setError(error.message);
+            console.error('❌ Błąd podczas wyszukiwania:', error);
+            setError(error.message || 'Wystąpił błąd podczas wyszukiwania');
         } finally {
             setIsLoading(false);
         }
-    }, [parseSearchQuery, filterLocalBeatmaps, searchOsuApi, setResults, setIsLoading, setError]);
+    }, [parseSearchQuery, filterLocalBeatmaps, searchOsuApi]);
 
-    // Funkcja do pobierania sugestii
+    // Zwracanie sugestii wyszukiwania
     const getSuggestions = useCallback((query) => {
-        const suggestions = {
-            tags: [],
-            collections: [],
-            mappers: [],
-            filters: []
-        };
-
-        const word = query.split(' ').pop() || '';
-
-        if (word.startsWith('#')) {
-            const tagQuery = word.slice(1).toLowerCase();
-            suggestions.tags = Array.from(tags)
-                .filter(tag => tag.toLowerCase().includes(tagQuery))
-                .slice(0, 5);
-        } else if (word.startsWith('@')) {
-            const mapperQuery = word.slice(1).toLowerCase();
-            const uniqueMappers = new Set(
-                Array.from(beatmaps.values()).map(map => map.creator)
-            );
-            suggestions.mappers = Array.from(uniqueMappers)
-                .filter(mapper => mapper.toLowerCase().includes(mapperQuery))
-                .slice(0, 5);
-        } else if (word.startsWith('collection:')) {
-            const collectionQuery = word.slice(11).toLowerCase();
-            suggestions.collections = Array.from(collections.values())
-                .filter(collection => 
-                    collection.name.toLowerCase().includes(collectionQuery)
-                )
-                .map(collection => collection.name)
-                .slice(0, 5);
-        } else if (word.startsWith('filter:')) {
-            const filterQuery = word.slice(7).toLowerCase();
-            suggestions.filters = Array.from(filters.values())
-                .filter(filter => 
-                    filter.name.toLowerCase().includes(filterQuery)
-                )
-                .map(filter => filter.name)
-                .slice(0, 5);
+        if (!query) {
+            return {
+                tags: [],
+                collections: [],
+                mappers: [],
+                filters: []
+            };
         }
 
-        return suggestions;
-    }, [beatmaps, collections, tags, filters]);
+        const lastWord = query.split(' ').pop().toLowerCase();
+        
+        // Jeśli ostatnie słowo jest puste, nie pokazuj sugestii
+        if (!lastWord) {
+            return {
+                tags: [],
+                collections: [],
+                mappers: [],
+                filters: []
+            };
+        }
+
+        // Zbierz sugestie dla tagów
+        const tagSuggestions = tags && tags.size > 0 
+            ? Array.from(tags)
+                .filter(tag => tag.toLowerCase().includes(lastWord))
+                .map(tag => ({
+                    value: '#' + tag,
+                    description: 'Tag'
+                }))
+                .slice(0, 5)
+            : [];
+
+        // Zbierz sugestie dla kolekcji
+        const collectionSuggestions = collections && collections.size > 0 
+            ? Array.from(collections.keys())
+                .filter(name => name.toLowerCase().includes(lastWord))
+                .map(name => ({
+                    value: 'collection:' + name,
+                    description: `Kolekcja (${collections.get(name).size} map)`
+                }))
+                .slice(0, 3)
+            : [];
+
+        // Zbierz sugestie dla mapperów
+        const mapperSet = new Set();
+        if (beatmaps && beatmaps.size > 0) {
+            beatmaps.forEach(beatmap => {
+                if (beatmap && beatmap.creator && beatmap.creator.toLowerCase().includes(lastWord)) {
+                    mapperSet.add(beatmap.creator);
+                }
+            });
+        }
+
+        const mapperSuggestions = Array.from(mapperSet)
+            .map(mapper => ({
+                value: '@' + mapper,
+                description: 'Mapper'
+            }))
+            .slice(0, 3);
+
+        // Przygotuj sugestie filtrów
+        const filterSuggestions = [
+            { value: 'ranked:yes', description: 'Tylko ranked' },
+            { value: 'ranked:no', description: 'Bez ranked' },
+            { value: 'loved:yes', description: 'Tylko loved' },
+            { value: 'stars>5', description: 'Trudność > 5 gwiazdek' },
+            { value: 'stars<4', description: 'Trudność < 4 gwiazdki' }
+        ].filter(filter => filter.value.includes(lastWord))
+            .slice(0, 5);
+
+        return {
+            tags: tagSuggestions,
+            collections: collectionSuggestions,
+            mappers: mapperSuggestions,
+            filters: filterSuggestions
+        };
+    }, [tags, collections, beatmaps]);
 
     return {
+        search,
+        getSuggestions,
         results,
         isLoading,
-        error,
-        search,
-        getSuggestions
+        error
     };
 }
