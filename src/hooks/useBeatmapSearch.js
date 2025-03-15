@@ -286,7 +286,7 @@ export default function useBeatmapSearch() {
     }, [isTestMode]);
 
     // Główna funkcja wyszukiwania
-    const search = useCallback(async (query) => {
+    const search = useCallback(async (query, searchInCollectionOnly = false) => {
         if (!query) {
             setResults([]);
             setError(null);
@@ -300,33 +300,35 @@ export default function useBeatmapSearch() {
             // Parsuj zapytanie
             const conditions = parseSearchQuery(query);
             
-            // Wyszukaj w lokalnych beatmapach
-            const localResults = filterLocalBeatmaps(conditions);
-            
-            // Wyszukaj w API tylko jeśli zapytanie zawiera tekst
-            let apiResults = [];
-            if (conditions.text.length > 0) {
-                apiResults = await searchOsuApi(conditions.text.join(' '));
+            // Wyszukaj w lokalnych beatmapach jeśli szukamy tylko w kolekcji
+            let results = [];
+            if (searchInCollectionOnly) {
+                results = filterLocalBeatmaps(conditions);
+            } else {
+                // Wyszukaj w API
+                try {
+                    results = await searchOsuApi(query);
+                } catch (error) {
+                    console.error('❌ Błąd podczas wyszukiwania w API:', error);
+                    setError('Nie udało się pobrać wyników z osu!api v2');
+                    results = [];
+                }
             }
             
-            // Połącz wyniki, usuń duplikaty
-            const combinedResults = [...localResults];
-            const existingIds = new Set(localResults.map(map => map.id));
+            // Dodaj informację o tym, czy beatmapa jest w kolekcji
+            results = results.map(beatmap => ({
+                ...beatmap,
+                isInCollection: beatmaps.has(beatmap.id)
+            }));
             
-            apiResults.forEach(map => {
-                if (!existingIds.has(map.id)) {
-                    combinedResults.push(map);
-                }
-            });
-            
-            setResults(combinedResults);
+            setResults(results.slice(0, 8)); // Limitujemy do 8 wyników
         } catch (error) {
             console.error('❌ Błąd podczas wyszukiwania:', error);
             setError(error.message || 'Wystąpił błąd podczas wyszukiwania');
         } finally {
             setIsLoading(false);
         }
-    }, [parseSearchQuery, filterLocalBeatmaps, searchOsuApi]);
+    }, [parseSearchQuery, filterLocalBeatmaps, searchOsuApi, beatmaps]);
 
     // Zwracanie sugestii wyszukiwania
     const getSuggestions = useCallback((query) => {

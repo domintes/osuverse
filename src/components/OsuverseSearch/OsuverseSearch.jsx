@@ -1,46 +1,50 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaChevronDown, FaChevronUp, FaPlus, FaUserPlus } from 'react-icons/fa';
 import { debounce } from 'lodash';
 import useBeatmapSearch from '../../hooks/useBeatmapSearch';
+import useUserSearch from '../../hooks/useUserSearch';
 import SearchSuggestions from '../SearchSuggestions/SearchSuggestions';
 import './OsuverseSearch.css';
 
 const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch = () => {} }) => {
     const [query, setQuery] = useState('');
-    const [isExpanded, setIsExpanded] = useState(false);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
-    const [filters, setFilters] = useState({
-        collections: true,
-        allBeatmaps: true,
-        ranked: false,
-        loved: false,
-        unranked: false,
-        minStars: '',
-        maxStars: ''
-    });
+    const [searchSection, setSearchSection] = useState('everything'); // 'everything', 'collection', 'users'
+    const [expandedBeatmapsets, setExpandedBeatmapsets] = useState(new Set());
+    const [userResults, setUserResults] = useState([]);
 
     const inputRef = useRef(null);
     const dropdownRef = useRef(null);
-    const { search, getSuggestions, results, isLoading, error } = useBeatmapSearch();
+    const { search, getSuggestions, results, isLoading: isBeatmapLoading, error: beatmapError } = useBeatmapSearch();
+    const { searchUsers, isLoading: isUserLoading, error: userError } = useUserSearch();
 
     // Pobierz sugestie na podstawie aktualnego zapytania
     const suggestions = getSuggestions(query);
 
-    // Obsługa wyszukiwania
-    const handleSearch = debounce((searchQuery) => {
-        const filterQuery = [];
-        
-        if (filters.ranked) filterQuery.push('ranked:yes');
-        if (filters.loved) filterQuery.push('loved:yes');
-        if (filters.unranked) filterQuery.push('ranked:no');
-        if (filters.minStars) filterQuery.push(`stars>${filters.minStars}`);
-        if (filters.maxStars) filterQuery.push(`stars<${filters.maxStars}`);
+    const toggleBeatmapsetExpansion = (beatmapsetId) => {
+        setExpandedBeatmapsets(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(beatmapsetId)) {
+                newSet.delete(beatmapsetId);
+            } else {
+                newSet.add(beatmapsetId);
+            }
+            return newSet;
+        });
+    };
 
-        const fullQuery = [searchQuery, ...filterQuery].join(' ').trim();
-        search(fullQuery);
+    // Modyfikacja handleSearch aby obsługiwać różne sekcje
+    const handleSearch = debounce(async (searchQuery) => {
+        if (!searchQuery.trim()) return;
+
+        if (searchSection === 'users') {
+            const users = await searchUsers(searchQuery);
+            setUserResults(users.slice(0, 8));
+        } else {
+            search(searchQuery, searchSection === 'collection');
+        }
         
-        // Sprawdź czy onSearch jest funkcją przed wywołaniem
         if (typeof onSearch === 'function') {
             onSearch(results);
         }
@@ -152,20 +156,42 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch = () => {} }) => {
 
     return (
         <div className="osuverse-search" ref={inputRef}>
-            <form onSubmit={handleSearchSubmit}>
-                <input
-                    type="text"
-                    className="osuverse-search__input"
-                    placeholder={placeholder}
-                    value={query}
-                    onChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    onFocus={() => setShowSuggestions(true)}
-                />
-                <button type="submit" className="osuverse-search__button">
-                    <FaSearch className="osuverse-search__icon" />
-                </button>
-            </form>
+            <div className="osuverse-search__header">
+                <form onSubmit={handleSearchSubmit} className="osuverse-search__form">
+                    <input
+                        type="text"
+                        className="osuverse-search__input"
+                        placeholder={placeholder}
+                        value={query}
+                        onChange={handleInputChange}
+                        onKeyDown={handleKeyDown}
+                        onFocus={() => setShowSuggestions(true)}
+                    />
+                    <button type="submit" className="osuverse-search__button">
+                        <FaSearch className="osuverse-search__icon" />
+                    </button>
+                </form>
+                <div className="osuverse-search__sections">
+                    <button 
+                        className={`section-button ${searchSection === 'everything' ? 'active' : ''}`}
+                        onClick={() => setSearchSection('everything')}
+                    >
+                        Everything in osu!
+                    </button>
+                    <button 
+                        className={`section-button ${searchSection === 'collection' ? 'active' : ''}`}
+                        onClick={() => setSearchSection('collection')}
+                    >
+                        Your Collection
+                    </button>
+                    <button 
+                        className={`section-button ${searchSection === 'users' ? 'active' : ''}`}
+                        onClick={() => setSearchSection('users')}
+                    >
+                        Players
+                    </button>
+                </div>
+            </div>
 
             {showSuggestions && (
                 <div ref={dropdownRef}>
@@ -180,147 +206,83 @@ const OsuverseSearch = ({ placeholder = 'Szukaj...', onSearch = () => {} }) => {
                 </div>
             )}
 
-            {isExpanded && (
+            {searchSection === 'users' && userResults.length > 0 ? (
                 <div className="osuverse-search__results">
-                    <div className="osuverse-search__result-item">
-                        <div className="search-dropdown">
-                            <div className="search-dropdown__header">
-                                <div className="search-dropdown__title">Zaawansowane filtry</div>
-                                <button className="search-dropdown__close-button" onClick={() => setIsExpanded(false)}>×</button>
+                    {userResults.map(user => (
+                        <div key={user.id} className="user-item">
+                            <div className="user-info">
+                                <img src={user.avatar_url} alt={user.username} className="user-avatar" />
+                                <div className="user-details">
+                                    <div className="user-name">{user.username}</div>
+                                    <div className="user-rank">#{user.statistics?.global_rank || '?'}</div>
+                                </div>
+                            </div>
+                            <button className="add-user-button" onClick={() => {/* Dodaj obsługę dodawania użytkownika */}}>
+                                <FaUserPlus /> Add User
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            ) : results.length > 0 && (
+                <div className="osuverse-search__results">
+                    {results.map(beatmapset => (
+                        <div key={beatmapset.id} className="beatmapset-item">
+                            <div className="beatmapset-header" onClick={() => toggleBeatmapsetExpansion(beatmapset.id)}>
+                                <div className="beatmapset-thumbnail">
+                                    <img src={beatmapset.covers.card} alt={beatmapset.title} />
+                                </div>
+                                <div className="beatmapset-info">
+                                    <div className="beatmapset-title">
+                                        {beatmapset.artist} - {beatmapset.title}
+                                    </div>
+                                    <div className="beatmapset-mapper">
+                                        mapped by {beatmapset.creator}
+                                    </div>
+                                </div>
+                                <div className="beatmapset-actions">
+                                    <button 
+                                        className={`add-all-button ${beatmapset.isInCollection ? 'remove' : ''}`}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            // Tutaj dodamy funkcję dodawania/usuwania wszystkich beatmap
+                                        }}
+                                    >
+                                        <FaPlus /> {beatmapset.isInCollection ? 'Remove All' : 'Add All'}
+                                    </button>
+                                    {expandedBeatmapsets.has(beatmapset.id) ? <FaChevronUp /> : <FaChevronDown />}
+                                </div>
                             </div>
                             
-                            <div className="search-filters">
-                                <div className="filter-group">
-                                    <div className="filter-label">Szukaj w:</div>
-                                    <div className="filter-options">
-                                        <label className="filter-option">
-                                            <input
-                                                type="checkbox"
-                                                checked={filters.collections}
-                                                onChange={(e) => {
-                                                    setFilters(prev => ({
-                                                        ...prev,
-                                                        collections: e.target.checked
-                                                    }));
-                                                    handleSearch(query);
+                            {expandedBeatmapsets.has(beatmapset.id) && (
+                                <div className="beatmapset-difficulties">
+                                    {beatmapset.beatmaps.map(beatmap => (
+                                        <div key={beatmap.id} className="difficulty-item">
+                                            <div className="difficulty-info">
+                                                <span className="difficulty-name">{beatmap.version}</span>
+                                                <span className="difficulty-stars">{beatmap.difficulty_rating.toFixed(2)}★</span>
+                                            </div>
+                                            <button 
+                                                className={`add-difficulty-button ${beatmap.isInCollection ? 'remove' : ''}`}
+                                                onClick={() => {
+                                                    // Tutaj dodamy funkcję dodawania/usuwania pojedynczej beatmapy
                                                 }}
-                                            />
-                                            Moje kolekcje
-                                        </label>
-                                        <label className="filter-option">
-                                            <input
-                                                type="checkbox"
-                                                checked={filters.allBeatmaps}
-                                                onChange={(e) => {
-                                                    setFilters(prev => ({
-                                                        ...prev,
-                                                        allBeatmaps: e.target.checked
-                                                    }));
-                                                    handleSearch(query);
-                                                }}
-                                            />
-                                            Wszystkie Beatmapy
-                                        </label>
-                                    </div>
+                                            >
+                                                <FaPlus />
+                                            </button>
+                                        </div>
+                                    ))}
                                 </div>
-
-                                <div className="filter-group">
-                                    <div className="filter-label">Status:</div>
-                                    <div className="filter-options">
-                                        <label className="filter-option">
-                                            <input
-                                                type="checkbox"
-                                                checked={filters.ranked}
-                                                onChange={(e) => {
-                                                    setFilters(prev => ({
-                                                        ...prev,
-                                                        ranked: e.target.checked
-                                                    }));
-                                                    handleSearch(query);
-                                                }}
-                                            />
-                                            Ranked
-                                        </label>
-                                        <label className="filter-option">
-                                            <input
-                                                type="checkbox"
-                                                checked={filters.loved}
-                                                onChange={(e) => {
-                                                    setFilters(prev => ({
-                                                        ...prev,
-                                                        loved: e.target.checked
-                                                    }));
-                                                    handleSearch(query);
-                                                }}
-                                            />
-                                            Loved
-                                        </label>
-                                        <label className="filter-option">
-                                            <input
-                                                type="checkbox"
-                                                checked={filters.unranked}
-                                                onChange={(e) => {
-                                                    setFilters(prev => ({
-                                                        ...prev,
-                                                        unranked: e.target.checked
-                                                    }));
-                                                    handleSearch(query);
-                                                }}
-                                            />
-                                            Unranked
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div className="filter-group">
-                                    <div className="filter-label">Gwiazdki:</div>
-                                    <div className="filter-range">
-                                        <input
-                                            className="filter-input"
-                                            type="number"
-                                            placeholder="Min"
-                                            value={filters.minStars}
-                                            onChange={(e) => {
-                                                setFilters(prev => ({
-                                                    ...prev,
-                                                    minStars: e.target.value
-                                                }));
-                                                handleSearch(query);
-                                            }}
-                                            min="0"
-                                            max="12"
-                                            step="0.1"
-                                        />
-                                        <span>do</span>
-                                        <input
-                                            className="filter-input"
-                                            type="number"
-                                            placeholder="Max"
-                                            value={filters.maxStars}
-                                            onChange={(e) => {
-                                                setFilters(prev => ({
-                                                    ...prev,
-                                                    maxStars: e.target.value
-                                                }));
-                                                handleSearch(query);
-                                            }}
-                                            min="0"
-                                            max="12"
-                                            step="0.1"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+                            )}
                         </div>
-                    </div>
+                    ))}
                 </div>
             )}
 
-            {isLoading && <div className="loading-indicator">Szukanie...</div>}
+            {(isBeatmapLoading || isUserLoading) && <div className="loading-indicator">Szukanie...</div>}
             
-            {error && (
+            {(beatmapError || userError) && (
                 <div className="error-message">
-                    Błąd: {error}
+                    Błąd: {beatmapError || userError}
                 </div>
             )}
         </div>
