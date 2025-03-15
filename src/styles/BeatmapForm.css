@@ -1,0 +1,284 @@
+.beatmap-form-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.beatmap-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.beatmap-header {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+}
+
+.beatmap-header img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.beatmap-info {
+    flex: 1;
+}
+
+.beatmap-info h2 {
+    margin: 0 0 0.5rem 0;
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+.beatmap-info p {
+    margin: 0.25rem 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.beatmap-info a {
+    color: #ff66ab;
+    text-decoration: none;
+}
+
+.beatmap-info a:hover {
+    text-decoration: underline;
+}
+
+.difficulties-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.difficulty-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.difficulty-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.difficulty-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.difficulty-name {
+    color: #fff;
+    font-weight: 500;
+}
+
+.difficulty-stars {
+    color: #ffdc5c;
+    font-weight: 500;
+}
+
+.toggle-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.toggle-button:not(.selected) {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.toggle-button:not(.selected):hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.toggle-button.selected {
+    background: #ff66ab;
+    color: white;
+}
+
+.toggle-button.selected:hover {
+    background: #ff4d94;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.back-button {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.error-message {
+    color: #ff5555;
+    background: rgba(255, 85, 85, 0.1);
+    border: 1px solid #ff5555;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+input.error {
+    border-color: #ff5555;
+}
+
+.cover-image-section {
+    width: 100%;
+    height: 200px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.cover-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cover-upload-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+}
+
+.cover-input {
+    display: none;
+}
+
+.cover-upload-placeholder label {
+    color: #fff;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.cover-upload-placeholder label:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.form-group {
+    width: 100%;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+input, select {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.collection-section {
+    width: 100%;
+}
+
+.submit-button {
+    flex: 1;
+    padding: 1rem;
+    background: #ff66ab;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.submit-button:hover {
+    background: #ff4d94;
+}
+
+.submit-button:disabled {
+    background: #666;
+    cursor: not-allowed;
+}
+
+/* Stylizacja dla opcji w select */
+select option {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .beatmap-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .beatmap-header img {
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+}
