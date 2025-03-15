@@ -26,6 +26,12 @@ const CollectionDetails = () => {
     );
   }
 
+  const beatmapsArray = collection.beatmaps instanceof Map 
+    ? Array.from(collection.beatmaps.values())
+    : Array.isArray(collection.beatmaps) 
+      ? collection.beatmaps 
+      : [];
+
   const handleRemoveBeatmap = (beatmapId) => {
     removeBeatmapFromCollection(collection.id, beatmapId);
   };
@@ -41,13 +47,13 @@ const CollectionDetails = () => {
         </button>
         <h2 className="collection-details__title">{collection.name}</h2>
         <div className="collection-details__count">
-          {collection.beatmaps?.length || 0} beatmap w kolekcji
+          {beatmapsArray.length} beatmap w kolekcji
         </div>
       </div>
 
-      {collection.beatmaps?.length > 0 ? (
+      {beatmapsArray.length > 0 ? (
         <div className="beatmap-list">
-          {collection.beatmaps.map(beatmap => (
+          {beatmapsArray.map(beatmap => (
             <div key={beatmap.id} className="beatmap-item">
               <div className="beatmap-item__cover">
                 <img 

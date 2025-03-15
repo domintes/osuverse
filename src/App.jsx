@@ -46,7 +46,10 @@ function AppContent() {
     const { loadCollections } = useBeatmapStore();
 
     useEffect(() => {
-        loadCollections();
+        // Ładujemy kolekcje przy starcie aplikacji
+        if (loadCollections) {
+            loadCollections();
+        }
     }, [loadCollections]);
 
     // Jeśli użytkownik nie jest zalogowany i nie jest na stronie logowania/callback,

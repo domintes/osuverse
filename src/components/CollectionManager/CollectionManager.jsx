@@ -49,18 +49,26 @@ const CollectionManager = () => {
         updateCollection
     } = useBeatmapStore();
 
+    // Upewniamy się, że collections jest mapą
+    const collectionsArray = Array.isArray(collections) 
+        ? collections 
+        : (collections instanceof Map 
+            ? Array.from(collections.values()) 
+            : []);
+
     // Filtrowanie i sortowanie kolekcji
     const filteredCollections = useMemo(() => {
-        let filtered = Array.from(collections.values());
+        let filtered = collectionsArray;
 
         // Filtrowanie po tekście
         if (collectionFilter) {
             const searchText = collectionFilter.toLowerCase();
             filtered = filtered.filter(collection =>
                 collection.name.toLowerCase().includes(searchText) ||
-                Array.from(collection.beatmaps.values()).some(beatmap =>
-                    beatmap.tags.some(tag => tag.toLowerCase().includes(searchText))
-                )
+                (collection.beatmaps instanceof Map && 
+                    Array.from(collection.beatmaps.values()).some(beatmap =>
+                        beatmap.tags && beatmap.tags.some(tag => tag.toLowerCase().includes(searchText))
+                    ))
             );
         }
 
@@ -68,13 +76,16 @@ const CollectionManager = () => {
         switch (filterType) {
             case 'favorites':
                 filtered = filtered.filter(collection => 
-                    favorites.collections.has(collection.id)
+                    favorites && favorites.collections && favorites.collections.has(collection.id)
                 );
                 break;
             case 'recent':
                 filtered = filtered.filter(collection => 
                     Date.now() - collection.updatedAt < 7 * 24 * 60 * 60 * 1000
                 );
+                break;
+            default:
+                // wszystkie kolekcje
                 break;
         }
 
@@ -84,7 +95,11 @@ const CollectionManager = () => {
                 filtered.sort((a, b) => a.name.localeCompare(b.name));
                 break;
             case 'size':
-                filtered.sort((a, b) => b.beatmaps.size - a.beatmaps.size);
+                filtered.sort((a, b) => {
+                    const sizeA = a.beatmaps instanceof Map ? a.beatmaps.size : 0;
+                    const sizeB = b.beatmaps instanceof Map ? b.beatmaps.size : 0;
+                    return sizeB - sizeA;
+                });
                 break;
             case 'created':
                 filtered.sort((a, b) => b.createdAt - a.createdAt);
@@ -95,7 +110,7 @@ const CollectionManager = () => {
         }
 
         return filtered;
-    }, [collections, collectionFilter, filterType, sortType, favorites.collections]);
+    }, [collections, collectionFilter, filterType, sortType, favorites]);
 
     // Obsługa wyszukiwania
     const handleSearch = (results) => {
@@ -115,7 +130,13 @@ const CollectionManager = () => {
     const handleCreateCollection = () => {
         if (!newCollectionName.trim()) return;
         const id = createCollection(newCollectionName);
-        setSelectedCollection(collections.get(id));
+        
+        // Szukamy nowo utworzoną kolekcję w zaktualizowanej liście
+        const updatedCollections = useBeatmapStore.getState().collections;
+        if (updatedCollections instanceof Map) {
+            setSelectedCollection(updatedCollections.get(id));
+        }
+        
         setIsAddingNew(false);
         setNewCollectionName('');
     };
@@ -189,7 +210,7 @@ const CollectionManager = () => {
                                 <div>
                                     <span className={collectionItemTitleClass}>{collection.name}</span>
                                     <span className={collectionItemCountClass}>
-                                        ({collection.beatmaps.size} beatmap)
+                                        ({collection.beatmaps instanceof Map ? collection.beatmaps.size : 0} beatmap)
                                     </span>
                                 </div>
                                 <div className={collectionItemActionsClass}>
@@ -254,7 +275,7 @@ const CollectionManager = () => {
                                     selectedCollection.beatmaps.delete(beatmapId);
                                 }
                             }}
-                            isInCollection={selectedCollection?.beatmaps.has(beatmapset.id)}
+                            isInCollection={selectedCollection?.beatmaps?.has(beatmapset.id)}
                         />
                     ))}
                 </div>
