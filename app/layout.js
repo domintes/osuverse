@@ -14,6 +14,7 @@ export default function RootLayout({ children }) {
           <nav style={{ width: '200px', background: '#333', color: 'white', padding: '1rem' }}>
             <ul style={{ listStyle: 'none', padding: 0 }}>
               <li style={{ marginBottom: '1rem' }}><Link href="/">Home</Link></li>
+              <li style={{ marginBottom: '1rem' }}><Link href="/search">Search</Link></li>
               <li style={{ marginBottom: '1rem' }}><Link href="/about">About</Link></li>
               <li><Link href="/collections">Collections</Link></li>
             </ul>
