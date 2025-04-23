@@ -1,4 +1,4 @@
-import RootLayout from "../layout";
+'use client';
 
 export default function About() {
   return (
