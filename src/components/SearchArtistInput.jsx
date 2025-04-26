@@ -72,7 +72,7 @@ export default function SearchArtistInput() {
                         <select
                             value={filters.status}
                             onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-                            className="w-full p-2 border rounded-md"
+                            className="w-full p-2 border rounded-md bg-black"
                         >
                             <option value="all">All Status</option>
                             <option value="ranked">Ranked</option>
@@ -86,7 +86,7 @@ export default function SearchArtistInput() {
                         <select
                             value={filters.mode}
                             onChange={(e) => setFilters(prev => ({ ...prev, mode: e.target.value }))}
-                            className="w-full p-2 border rounded-md"
+                            className="w-full p-2 border rounded-md bg-black"
                         >
                             <option value="all">All Modes</option>
                             <option value="osu">osu!</option>
@@ -103,7 +103,7 @@ export default function SearchArtistInput() {
             
             <div className="space-y-4">
                 {results.map(map => (
-                    <div key={map.id} className="grid grid-cols-[120px_1fr] gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <div key={map.id} className="grid grid-cols-[120px_1fr] gap-4 p-4 bg-black rounded-lg shadow-sm hover:shadow-md transition-shadow">
                         <div className="aspect-square">
                             <img 
                                 src={`${map.covers.card}`}
