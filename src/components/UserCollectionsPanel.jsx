@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { IoIosAddCircle } from 'react-icons/io';
 import { MdDragIndicator } from 'react-icons/md';
@@ -11,7 +11,9 @@ export default function UserCollectionsPanel() {
     const [newCollectionName, setNewCollectionName] = useState('');
     const [newSubcollectionNames, setNewSubcollectionNames] = useState({});
     const [draggedItem, setDraggedItem] = useState(null);
-    const [dropTarget, setDropTarget] = useState(null);
+    const [draggedSubcollection, setDraggedSubcollection] = useState(null);
+    const [dragOverCollectionId, setDragOverCollectionId] = useState(null);
+    const dragPointRef = useRef({ y: 0 });
 
     const addCollection = () => {
         if (!newCollectionName.trim()) return;
@@ -53,41 +55,91 @@ export default function UserCollectionsPanel() {
 
     const handleDragStart = (collection, e) => {
         setDraggedItem(collection);
-        // Create a custom drag image
-        const dragImage = document.createElement('div');
-        dragImage.textContent = 'Move here';
-        dragImage.style.padding = '8px';
-        dragImage.style.background = '#333';
-        dragImage.style.color = 'white';
-        dragImage.style.borderRadius = '4px';
-        dragImage.style.position = 'absolute';
-        dragImage.style.top = '-1000px';
-        document.body.appendChild(dragImage);
-        e.dataTransfer.setDragImage(dragImage, 0, 0);
-        setTimeout(() => document.body.removeChild(dragImage), 0);
+        e.dataTransfer.effectAllowed = 'move';
+        // Store initial drag point
+        dragPointRef.current = { y: e.clientY };
     };
 
-    const handleDragOver = (e, targetCollection) => {
-        e.preventDefault();
-        if (draggedItem?.id !== targetCollection.id) {
-            setDropTarget(targetCollection);
-        }
+    const handleSubcollectionDragStart = (e, collection, subcollection) => {
+        e.stopPropagation();
+        setDraggedSubcollection({ 
+            subcollection,
+            fromCollectionId: collection.id 
+        });
+        e.dataTransfer.effectAllowed = 'move';
+        dragPointRef.current = { y: e.clientY };
     };
 
-    const handleDrop = (e, targetCollection) => {
-        e.preventDefault();
-        if (!draggedItem || draggedItem.id === targetCollection.id) return;
-
+    const reorderCollections = useCallback((draggedId, targetId, mouseY) => {
         setCollections(prev => {
             const newCollections = [...prev.collections];
-            const draggedIndex = newCollections.findIndex(c => c.id === draggedItem.id);
-            const targetIndex = newCollections.findIndex(c => c.id === targetCollection.id);
+            const draggedIndex = newCollections.findIndex(c => c.id === draggedId);
+            const targetIndex = newCollections.findIndex(c => c.id === targetId);
             
-            // Update orders
+            if (draggedIndex === -1 || targetIndex === -1) return prev;
+
+            // Get the target element's position
+            const targetElement = document.querySelector(`[data-collection-id="${targetId}"]`);
+            if (!targetElement) return prev;
+
+            const targetRect = targetElement.getBoundingClientRect();
+            const targetCenter = targetRect.top + targetRect.height / 2;
+
+            // Only reorder if mouse is above/below center based on drag direction
+            const shouldReorder = draggedIndex < targetIndex ? 
+                mouseY > targetCenter : 
+                mouseY < targetCenter;
+
+            if (!shouldReorder) return prev;
+
             const [removed] = newCollections.splice(draggedIndex, 1);
             newCollections.splice(targetIndex, 0, removed);
-            newCollections.forEach((collection, index) => {
-                collection.order = index;
+
+            return {
+                ...prev,
+                collections: newCollections.map((c, index) => ({
+                    ...c,
+                    order: index
+                }))
+            };
+        });
+    }, []);
+
+    const reorderSubcollections = useCallback((collectionId, draggedId, targetId, mouseY) => {
+        setCollections(prev => {
+            const newCollections = prev.collections.map(collection => {
+                if (collection.id !== collectionId) return collection;
+
+                const newSubcollections = [...collection.subcollections];
+                const draggedIndex = newSubcollections.findIndex(s => s.id === draggedId);
+                const targetIndex = newSubcollections.findIndex(s => s.id === targetId);
+
+                if (draggedIndex === -1 || targetIndex === -1) return collection;
+
+                // Get the target element's position
+                const targetElement = document.querySelector(`[data-subcollection-id="${targetId}"]`);
+                if (!targetElement) return collection;
+
+                const targetRect = targetElement.getBoundingClientRect();
+                const targetCenter = targetRect.top + targetRect.height / 2;
+
+                // Only reorder if mouse is above/below center based on drag direction
+                const shouldReorder = draggedIndex < targetIndex ? 
+                    mouseY > targetCenter : 
+                    mouseY < targetCenter;
+
+                if (!shouldReorder) return collection;
+
+                const [removed] = newSubcollections.splice(draggedIndex, 1);
+                newSubcollections.splice(targetIndex, 0, removed);
+
+                return {
+                    ...collection,
+                    subcollections: newSubcollections.map((s, index) => ({
+                        ...s,
+                        order: index
+                    }))
+                };
             });
 
             return {
@@ -95,8 +147,87 @@ export default function UserCollectionsPanel() {
                 collections: newCollections
             };
         });
+    }, []);
+
+    const moveSubcollection = useCallback((subcollection, fromCollectionId, toCollectionId) => {
+        setCollections(prev => {
+            const newCollections = prev.collections.map(collection => {
+                if (collection.id === fromCollectionId) {
+                    return {
+                        ...collection,
+                        subcollections: collection.subcollections.filter(
+                            sub => sub.id !== subcollection.id
+                        ).map((s, index) => ({ ...s, order: index }))
+                    };
+                }
+                if (collection.id === toCollectionId) {
+                    return {
+                        ...collection,
+                        subcollections: [...collection.subcollections, {
+                            ...subcollection,
+                            order: collection.subcollections.length
+                        }]
+                    };
+                }
+                return collection;
+            });
+
+            return {
+                ...prev,
+                collections: newCollections
+            };
+        });
+    }, []);
+
+    const handleDragOver = useCallback((e, targetCollection) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        
+        if (draggedItem && draggedItem.id !== targetCollection.id) {
+            setDragOverCollectionId(targetCollection.id);
+            reorderCollections(draggedItem.id, targetCollection.id, e.clientY);
+        }
+        
+        if (draggedSubcollection && draggedSubcollection.fromCollectionId !== targetCollection.id) {
+            setDragOverCollectionId(targetCollection.id);
+        }
+    }, [draggedItem, draggedSubcollection, reorderCollections]);
+
+    const handleSubcollectionDragOver = useCallback((e, collection, targetSubcollection) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.dataTransfer.dropEffect = 'move';
+
+        if (draggedSubcollection && 
+            draggedSubcollection.subcollection.id !== targetSubcollection.id) {
+            reorderSubcollections(
+                collection.id,
+                draggedSubcollection.subcollection.id,
+                targetSubcollection.id,
+                e.clientY
+            );
+        }
+    }, [draggedSubcollection, reorderSubcollections]);
+
+    const handleDragEnd = () => {
         setDraggedItem(null);
-        setDropTarget(null);
+        setDraggedSubcollection(null);
+        setDragOverCollectionId(null);
+    };
+
+    const handleDrop = (e, targetCollection) => {
+        e.preventDefault();
+        
+        if (draggedSubcollection && 
+            draggedSubcollection.fromCollectionId !== targetCollection.id) {
+            moveSubcollection(
+                draggedSubcollection.subcollection,
+                draggedSubcollection.fromCollectionId,
+                targetCollection.id
+            );
+        }
+        
+        handleDragEnd();
     };
 
     return (
@@ -107,10 +238,12 @@ export default function UserCollectionsPanel() {
                     .map(collection => (
                     <div
                         key={collection.id}
-                        className={`collection-item ${dropTarget?.id === collection.id ? 'drop-target' : ''}`}
+                        data-collection-id={collection.id}
+                        className={`collection-item ${dragOverCollectionId === collection.id ? 'drag-over' : ''}`}
                         draggable
                         onDragStart={(e) => handleDragStart(collection, e)}
                         onDragOver={(e) => handleDragOver(e, collection)}
+                        onDragEnd={handleDragEnd}
                         onDrop={(e) => handleDrop(e, collection)}
                     >
                         <div className="collection-header">
@@ -122,8 +255,21 @@ export default function UserCollectionsPanel() {
                             {collection.subcollections
                                 .sort((a, b) => a.order - b.order)
                                 .map(sub => (
-                                <div key={sub.id} className="subcollection-item">
-                                    {sub.name}
+                                <div 
+                                    key={sub.id}
+                                    data-subcollection-id={sub.id}
+                                    className={`subcollection-item ${
+                                        draggedSubcollection?.subcollection.id === sub.id ? 'dragging' : ''
+                                    }`}
+                                    draggable
+                                    onDragStart={(e) => handleSubcollectionDragStart(e, collection, sub)}
+                                    onDragOver={(e) => handleSubcollectionDragOver(e, collection, sub)}
+                                    onDragEnd={handleDragEnd}
+                                >
+                                    <div className="subcollection-content">
+                                        <span>{sub.name}</span>
+                                        <MdDragIndicator className="drag-handle" />
+                                    </div>
                                 </div>
                             ))}
                             
@@ -174,6 +320,12 @@ export default function UserCollectionsPanel() {
                     padding: 1rem;
                     border-radius: 8px;
                     cursor: move;
+                    transition: transform 0.2s ease, background-color 0.2s ease;
+                    position: relative;
+                }
+
+                .collection-item.drag-over {
+                    background: #3d3d3d;
                 }
 
                 .collection-header {
@@ -192,10 +344,6 @@ export default function UserCollectionsPanel() {
                     color: #666;
                 }
 
-                .drop-target {
-                    border: 2px dashed #666;
-                }
-
                 .subcollections {
                     padding-left: 1rem;
                 }
@@ -205,6 +353,18 @@ export default function UserCollectionsPanel() {
                     margin: 0.5rem 0;
                     background: #3d3d3d;
                     border-radius: 4px;
+                    cursor: move;
+                    transition: transform 0.2s ease, background-color 0.2s ease;
+                }
+
+                .subcollection-content {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+
+                .subcollection-item.dragging {
+                    opacity: 0.5;
                 }
 
                 .add-collection, .add-subcollection {
