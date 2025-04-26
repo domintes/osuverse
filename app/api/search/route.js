@@ -10,13 +10,18 @@ export async function GET(request) {
         const token = authHeader.split(' ')[1];
         const query = searchParams.get('query');
         const artist = searchParams.get('artist');
+        const mapper = searchParams.get('mapper');
         const status = searchParams.get('status');
         const mode = searchParams.get('mode');
 
         // Build the osu! API query parameters
+        let q = '';
+        if (query) q += query;
+        if (artist) q += (q ? ' ' : '') + `artist=${artist}`;
+        if (mapper) q += (q ? ' ' : '') + `creator=${mapper}`;
+
         const params = new URLSearchParams();
-        if (query) params.append('q', query);
-        if (artist) params.append('q', `artist=${artist}`);
+        if (q) params.append('q', q);
         if (status && status !== 'all') params.append('s', status);
         if (mode && mode !== 'all') params.append('m', mode);
 

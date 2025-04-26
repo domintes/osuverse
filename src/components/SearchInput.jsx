@@ -6,6 +6,8 @@ import { authAtom } from '@/store/authAtom';
 
 export default function SearchInput() {
     const [query, setQuery] = useState('');
+    const [artist, setArtist] = useState('');
+    const [mapper, setMapper] = useState('');
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -29,7 +31,7 @@ export default function SearchInput() {
     }, [query, filters]);
 
     useEffect(() => {
-        if (!query || !token) {
+        if ((!query && !artist && !mapper) || !token) {
             setResults([]);
             setError(null);
             return;
@@ -40,7 +42,9 @@ export default function SearchInput() {
             setError(null);
             try {
                 const params = new URLSearchParams({
-                    artist: query,
+                    ...(query && { query }),
+                    ...(artist && { artist }),
+                    ...(mapper && { mapper }),
                     ...(filters.status !== 'all' && { status: filters.status }),
                     ...(filters.mode !== 'all' && { mode: filters.mode })
                 });
@@ -66,7 +70,7 @@ export default function SearchInput() {
         }, 500);
 
         return () => clearTimeout(timeout);
-    }, [query, token, filters]);
+    }, [query, artist, mapper, token, filters]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -80,10 +84,26 @@ export default function SearchInput() {
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Type artist name"
+                    placeholder="Szukaj beatmapy (np. Camellia, Freedom Dive, cokolwiek)"
                     className="search-artist-input p-2 border rounded-md w-full"
                 />
-                
+                <div className="flex gap-4">
+                    <input
+                        type="text"
+                        value={artist}
+                        onChange={(e) => setArtist(e.target.value)}
+                        placeholder="Filtruj po artyście (opcjonalnie)"
+                        className="search-artist-input p-2 border rounded-md w-full"
+                    />
+                    <input
+                        type="text"
+                        value={mapper}
+                        onChange={(e) => setMapper(e.target.value)}
+                        placeholder="Filtruj po mapperze (opcjonalnie)"
+                        className="search-artist-input p-2 border rounded-md w-full"
+                    />
+                </div>
+
                 <div className="search-artist-input-select-group flex gap-4">
                     <div className="search-artist-filter flex-1">
                         <label className="search-artist-filter-label block text-sm font-medium mb-1">Status</label>
