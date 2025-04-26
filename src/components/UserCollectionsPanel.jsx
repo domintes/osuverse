@@ -13,7 +13,7 @@ export default function UserCollectionsPanel() {
     const [draggedItem, setDraggedItem] = useState(null);
     const [draggedSubcollection, setDraggedSubcollection] = useState(null);
     const [dragOverCollectionId, setDragOverCollectionId] = useState(null);
-    const [editMode, setEditMode] = useState(false);
+    const [editMode, setEditMode] = useState(true);
     const [editingCollectionId, setEditingCollectionId] = useState(null);
     const [editingSubcollectionId, setEditingSubcollectionId] = useState(null);
     const [editingName, setEditingName] = useState('');
@@ -404,9 +404,9 @@ export default function UserCollectionsPanel() {
             <div className="edit-mode-toggle">
                 <button 
                     onClick={() => setEditMode(!editMode)}
-                    className={`toggle-button ${editMode ? 'active' : ''}`}
+                    className={`toggle-button ${editMode ? '' : 'active'}`}
                 >
-                    {editMode ? 'Disable Edit Mode' : 'Enable Edit Mode'}
+                    {editMode ? 'Disable Edit Mode ' : 'Enable Edit Mode'}
                 </button>
             </div>
 
@@ -439,16 +439,14 @@ export default function UserCollectionsPanel() {
                             <div className="collection-actions">
                                 {editMode && (
                                     <>
-                                        <MdEdit 
-                                            className="edit-icon" 
-                                            onClick={() => startEditing(collection.id, 'collection', collection.name)} 
-                                        />
-                                        <MdDelete 
-                                            className="delete-icon" 
-                                            onClick={() => removeCollection(collection.id)} 
-                                        />
-                                    </>
-                                )}
+                                <MdEdit 
+                                    className="edit-icon" 
+                                    onClick={() => startEditing(collection.id, 'collection', collection.name)} 
+                                />
+                                <MdDelete 
+                                    className="delete-icon" 
+                                    onClick={() => removeCollection(collection.id)} 
+                                />
                                 <div
                                     draggable
                                     onDragStart={(e) => handleDragStart(collection, e)}
@@ -456,6 +454,8 @@ export default function UserCollectionsPanel() {
                                 >
                                     <MdDragIndicator className="drag-handle" />
                                 </div>
+                                    </>
+                                    )}
                             </div>
                         </div>
                         
@@ -497,8 +497,6 @@ export default function UserCollectionsPanel() {
                                                         className="delete-icon" 
                                                         onClick={() => removeSubcollection(collection.id, sub.id)} 
                                                     />
-                                                </>
-                                            )}
                                             <div
                                                 draggable
                                                 onDragStart={(e) => handleSubcollectionDragStart(e, collection, sub)}
@@ -506,6 +504,8 @@ export default function UserCollectionsPanel() {
                                             >
                                                 <MdDragIndicator className="drag-handle" />
                                             </div>
+                                                </>
+                                                )}
                                         </div>
                                     </div>
                                 </div>

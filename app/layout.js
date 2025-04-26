@@ -15,6 +15,7 @@ export default function RootLayout({ children }) {
             <ul style={{ listStyle: 'none', padding: 0 }}>
               <li style={{ marginBottom: '1rem' }}><Link href="/">Home</Link></li>
               <li style={{ marginBottom: '1rem' }}><Link href="/search">Search</Link></li>
+              <li style={{ marginBottom: '1rem' }}><Link href="/artists">Artists</Link></li>
               <li style={{ marginBottom: '1rem' }}><Link href="/about">About</Link></li>
               <li><Link href="/collections">Collections</Link></li>
             </ul>
