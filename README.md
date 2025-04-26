@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Osuverse
 
-## Getting Started
+A modern web application built with Next.js and React, featuring user collections, authentication, and search functionality.
 
-First, run the development server:
+## Technology Stack
+
+- **Frontend Framework**: [Next.js 15](https://nextjs.org/) with React 19
+- **Styling**: 
+  - SASS/SCSS for component-specific styles
+  - TailwindCSS for utility-first styling
+- **State Management**: 
+  - [Jotai](https://jotai.org/) for atomic state management
+  - Files: [authAtom.js](/src/store/authAtom.js), [collectionAtom.js](/src/store/collectionAtom.js)
+- **Database**: 
+  - PostgreSQL with [Prisma ORM](https://www.prisma.io/)
+  - Schema defined in [schema.prisma](/prisma/schema.prisma)
+- **API Layer**: 
+  - tRPC for type-safe API communication
+  - React Query for server state management and caching
+
+## Project Structure
+
+### Core Directories
+
+- `/app` - Next.js app directory containing pages and API routes
+  - `/app/page.js` - Homepage
+  - `/app/about` - About page
+  - `/app/collections` - User collections page
+  - `/app/search` - Search functionality
+  - `/app/api` - API routes for authentication and search
+
+### Components
+
+Key components are located in [/src/components](/src/components):
+- [Navigation.jsx](/src/components/Navigation.jsx) - Main navigation component with SCSS styling
+- [SearchInput.jsx](/src/components/SearchInput.jsx) - Reusable search input component
+- [UserCollectionsPanel.jsx](/src/components/UserCollectionsPanel.jsx) - Panel for managing user collections
+
+### Authentication
+
+Authentication is handled through:
+- [/app/api/auth/route.js](/app/api/auth/route.js) - Authentication API endpoints
+- [useAuth.js](/src/hooks/useAuth.js) - Custom hook for authentication state management
+
+### Features
+
+1. **User Authentication**
+   - Custom authentication system
+   - Persistent user sessions
+   - Protected routes
+
+2. **Search Functionality**
+   - Dynamic search with API integration
+   - Search results caching
+   - Type-safe search queries
+
+3. **User Collections**
+   - Personal collection management
+   - Collection sharing capabilities
+   - Real-time updates using React Query
+
+## Development
 
 ```bash
+# Install dependencies
+npm install
+
+# Set up the database
+npx prisma generate
+npx prisma db push
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Environment Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a `.env` file with the following variables:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/osuverse"
+```
 
-## Learn More
+## Build and Deployment
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Create production build
+npm run build
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Start production server
+npm start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For deployment, we recommend using [Vercel](https://vercel.com) for optimal Next.js compatibility and performance.
