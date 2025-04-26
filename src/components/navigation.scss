@@ -1,0 +1,36 @@
+nav {
+  width: 200px;
+  background: #333;
+  color: white;
+  padding: 1rem;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    margin-bottom: 1rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #444;
+    }
+
+    &.active {
+      background-color: #555;
+    }
+  }
+}
