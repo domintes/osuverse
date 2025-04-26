@@ -527,11 +527,10 @@ export default function UserCollectionsPanel() {
                                             className={`subcollection-input ${validationStates.subcollections[collection.id]?.isValid === false ? 'error' : ''}`}
                                         />
                                         {validationStates.subcollections[collection.id]?.isValid === false && (
-                                            <div className="error-message" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                            <div className="error-message">
                                                 {validationStates.subcollections[collection.id].message}
                                                 <MdClose
                                                     className="error-close"
-                                                    style={{ marginLeft: 4, cursor: 'pointer' }}
                                                     onClick={() => setValidationStates(prev => ({
                                                         ...prev,
                                                         subcollections: {
@@ -553,11 +552,10 @@ export default function UserCollectionsPanel() {
                             )}
                         </div>
                         {errors[`drop-${collection.id}`] && (
-                            <div className="drop-error-message" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <div className="drop-error-message">
                                 {errors[`drop-${collection.id}`]}
                                 <MdClose
                                     className="error-close"
-                                    style={{ marginLeft: 4, cursor: 'pointer' }}
                                     onClick={() => setErrors(prev => {
                                         const newErrors = { ...prev };
                                         delete newErrors[`drop-${collection.id}`];
@@ -582,11 +580,10 @@ export default function UserCollectionsPanel() {
                             className={`collection-input ${validationStates.collection.isValid === false ? 'error' : ''}`}
                         />
                         {validationStates.collection.isValid === false && (
-                            <div className="error-message" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <div className="error-message">
                                 {validationStates.collection.message}
                                 <MdClose
                                     className="error-close"
-                                    style={{ marginLeft: 4, cursor: 'pointer' }}
                                     onClick={() => setValidationStates(prev => ({
                                         ...prev,
                                         collection: { isValid: true, message: '' }
