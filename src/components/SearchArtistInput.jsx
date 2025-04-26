@@ -10,10 +10,23 @@ export default function SearchArtistInput() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [filters, setFilters] = useState({
-        status: 'all', // ranked, loved, pending, all
-        mode: 'all' // osu, mania, taiko, fruits
+        status: 'all',
+        mode: 'all'
     });
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const token = useAtom(authAtom)[0];
+
+    // Calculate pagination values
+    const totalPages = Math.ceil(results.length / itemsPerPage);
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = results.slice(indexOfFirstItem, indexOfLastItem);
+
+    // Reset to first page when search query or filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [query, filters]);
 
     useEffect(() => {
         if (!query || !token) {
@@ -50,29 +63,34 @@ export default function SearchArtistInput() {
             } finally {
                 setLoading(false);
             }
-        }, 500); // Debounce search requests
+        }, 500);
 
         return () => clearTimeout(timeout);
     }, [query, token, filters]);
 
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     return (
-        <div className="space-y-4">
-            <div className="flex flex-col space-y-4">
+        <div className="search-artist-input-container space-y-4">
+            <div className="search-artist-input-controls flex flex-col space-y-4">
                 <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Type artist name"
-                    className="p-2 border rounded-md w-full"
+                    className="search-artist-input p-2 border rounded-md w-full"
                 />
                 
-                <div className="flex gap-4">
-                    <div className="flex-1">
-                        <label className="block text-sm font-medium mb-1">Status</label>
+                <div className="search-artist-input-select-group flex gap-4">
+                    <div className="search-artist-filter flex-1">
+                        <label className="search-artist-filter-label block text-sm font-medium mb-1">Status</label>
                         <select
                             value={filters.status}
                             onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-                            className="w-full p-2 border rounded-md bg-black"
+                            className="search-artist-select w-full p-2 border rounded-md"
                         >
                             <option value="all">All Status</option>
                             <option value="ranked">Ranked</option>
@@ -81,12 +99,12 @@ export default function SearchArtistInput() {
                         </select>
                     </div>
                     
-                    <div className="flex-1">
-                        <label className="block text-sm font-medium mb-1">Game Mode</label>
+                    <div className="search-artist-filter flex-1">
+                        <label className="search-artist-filter-label block text-sm font-medium mb-1">Game Mode</label>
                         <select
                             value={filters.mode}
                             onChange={(e) => setFilters(prev => ({ ...prev, mode: e.target.value }))}
-                            className="w-full p-2 border rounded-md bg-black"
+                            className="search-artist-select w-full p-2 border rounded-md"
                         >
                             <option value="all">All Modes</option>
                             <option value="osu">osu!</option>
@@ -95,37 +113,56 @@ export default function SearchArtistInput() {
                             <option value="fruits">osu!catch</option>
                         </select>
                     </div>
+
+                    <div className="search-artist-filter flex-1">
+                        <label className="search-artist-filter-label block text-sm font-medium mb-1">Results per page</label>
+                        <select
+                            value={itemsPerPage}
+                            onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                            className="search-artist-select w-full p-2 border rounded-md"
+                        >
+                            <option value={10}>10</option>
+                            <option value={20}>20</option>
+                            <option value={50}>50</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            {loading && <div className="text-center">Loading...</div>}
-            {error && <div className="text-red-500">{error}</div>}
+            {loading && <div className="search-artist-loading text-center">Loading...</div>}
+            {error && <div className="search-artist-error text-red-500">{error}</div>}
             
-            <div className="space-y-4">
-                {results.map(map => (
-                    <div key={map.id} className="grid grid-cols-[120px_1fr] gap-4 p-4 bg-black rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                        <div className="aspect-square">
+            {results.length > 0 && (
+                <div className="search-artist-results-info text-sm text-gray-500 mb-2">
+                    Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, results.length)} of {results.length} results
+                </div>
+            )}
+
+            <div className="search-artist-results space-y-4">
+                {currentItems.map(map => (
+                    <div key={map.id} className="search-artist-beatmap-item grid grid-cols-[120px_1fr] gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                        <div className="search-artist-beatmap-thumbnail aspect-square">
                             <img 
                                 src={`${map.covers.card}`}
                                 alt={`${map.title} Beatmap Background`}
                                 className="w-full h-full object-cover rounded-md"
                             />
                         </div>
-                        <div className="flex flex-col justify-center">
-                            <div className="text-lg font-semibold">
+                        <div className="search-artist-beatmap-info flex flex-col justify-center">
+                            <div className="search-artist-beatmap-title text-lg font-semibold">
                                 {map.artist} - {map.title}
                             </div>
-                            <div className="flex items-center gap-2 text-gray-600">
-                                <span className="flex items-center">
+                            <div className="search-artist-beatmap-details flex items-center gap-2 text-gray-600">
+                                <span className="search-artist-beatmap-difficulty flex items-center">
                                     {map.difficulty_rating}
-                                    <svg className="w-4 h-4 ml-1 text-yellow-400" viewBox="0 0 24 24" fill="currentColor">
+                                    <svg className="search-artist-beatmap-star w-4 h-4 ml-1 text-yellow-400" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                                     </svg>
                                 </span>
-                                <span className="text-sm">
+                                <span className="search-artist-beatmap-mapper text-sm">
                                     mapped by <a href={`https://osu.ppy.sh/users/${map.user_id}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{map.creator}</a>
                                 </span>
-                                <span className="text-sm px-2 py-1 rounded bg-gray-100">
+                                <span className="search-artist-beatmap-status text-sm px-2 py-1 rounded bg-gray-100">
                                     {map.status}
                                 </span>
                             </div>
@@ -133,6 +170,44 @@ export default function SearchArtistInput() {
                     </div>
                 ))}
             </div>
+
+            {results.length > 0 && (
+                <div className="search-artist-pagination flex justify-center items-center space-x-2 mt-4">
+                    <button
+                        onClick={() => handlePageChange(1)}
+                        disabled={currentPage === 1}
+                        className="search-artist-pagination-button px-3 py-1 rounded border disabled:opacity-50"
+                    >
+                        First
+                    </button>
+                    <button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="search-artist-pagination-button px-3 py-1 rounded border disabled:opacity-50"
+                    >
+                        Previous
+                    </button>
+                    
+                    <span className="search-artist-pagination-info px-4">
+                        Page {currentPage} of {totalPages}
+                    </span>
+
+                    <button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="search-artist-pagination-button px-3 py-1 rounded border disabled:opacity-50"
+                    >
+                        Next
+                    </button>
+                    <button
+                        onClick={() => handlePageChange(totalPages)}
+                        disabled={currentPage === totalPages}
+                        className="search-artist-pagination-button px-3 py-1 rounded border disabled:opacity-50"
+                    >
+                        Last
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
