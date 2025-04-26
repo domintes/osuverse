@@ -22,21 +22,47 @@ export async function GET(request) {
 
         const params = new URLSearchParams();
         if (q) params.append('q', q);
-        if (status && status !== 'all') params.append('s', status);
         if (mode && mode !== 'all') params.append('m', mode);
 
-        const res = await fetch(`https://osu.ppy.sh/api/v2/beatmapsets/search?${params}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
+        let beatmaps = [];
+        if (status === 'all' || !status) {
+            // Fetch all except graveyard
+            const res1 = await fetch(`https://osu.ppy.sh/api/v2/beatmapsets/search?${params.toString()}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!res1.ok) throw new Error('Failed to fetch from osu! API');
+            const data1 = await res1.json();
+            beatmaps = data1.beatmapsets;
+
+            // Fetch graveyard
+            const graveParams = new URLSearchParams(params);
+            graveParams.set('s', 'graveyard');
+            const res2 = await fetch(`https://osu.ppy.sh/api/v2/beatmapsets/search?${graveParams.toString()}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res2.ok) {
+                const data2 = await res2.json();
+                // Avoid duplicates
+                const graveIds = new Set(data2.beatmapsets.map(b => b.id));
+                beatmaps = [
+                    ...beatmaps,
+                    ...data2.beatmapsets.filter(b => !beatmaps.some(m => m.id === b.id))
+                ];
             }
-        });
-
-        if (!res.ok) {
-            throw new Error('Failed to fetch from osu! API');
+        } else {
+            if (status && status !== 'all') params.append('s', status);
+            const res = await fetch(`https://osu.ppy.sh/api/v2/beatmapsets/search?${params}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (!res.ok) {
+                throw new Error('Failed to fetch from osu! API');
+            }
+            const data = await res.json();
+            beatmaps = data.beatmapsets;
         }
-
-        const data = await res.json();
-        return Response.json({ beatmaps: data.beatmapsets });
+        return Response.json({ beatmaps });
 
     } catch (error) {
         console.error('Search API error:', error);

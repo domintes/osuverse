@@ -84,7 +84,7 @@ export default function SearchInput() {
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Szukaj beatmapy (np. Camellia, Freedom Dive, cokolwiek)"
+                    placeholder="Search beatmaps"
                     className="search-artist-input p-2 border rounded-md w-full"
                 />
                 <div className="flex gap-4">
@@ -92,14 +92,14 @@ export default function SearchInput() {
                         type="text"
                         value={artist}
                         onChange={(e) => setArtist(e.target.value)}
-                        placeholder="Filtruj po artyście (opcjonalnie)"
+                        placeholder="Artists filter"
                         className="search-artist-input p-2 border rounded-md w-full"
                     />
                     <input
                         type="text"
                         value={mapper}
                         onChange={(e) => setMapper(e.target.value)}
-                        placeholder="Filtruj po mapperze (opcjonalnie)"
+                        placeholder="Mappers filter"
                         className="search-artist-input p-2 border rounded-md w-full"
                     />
                 </div>
@@ -116,6 +116,7 @@ export default function SearchInput() {
                             <option value="ranked">Ranked</option>
                             <option value="loved">Loved</option>
                             <option value="pending">Pending</option>
+                            <option value="graveyard">Graveyard</option>
                         </select>
                     </div>
                     
