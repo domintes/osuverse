@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { IoIosAddCircle } from 'react-icons/io';
-import { MdDragIndicator, MdEdit, MdDelete } from 'react-icons/md';
+import { MdDragIndicator, MdEdit, MdDelete, MdClose } from 'react-icons/md';
 import { collectionsAtom } from '@/store/collectionAtom';
 import './userCollectionsPanel.scss';
 
@@ -527,8 +527,19 @@ export default function UserCollectionsPanel() {
                                             className={`subcollection-input ${validationStates.subcollections[collection.id]?.isValid === false ? 'error' : ''}`}
                                         />
                                         {validationStates.subcollections[collection.id]?.isValid === false && (
-                                            <div className="error-message">
+                                            <div className="error-message" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                                                 {validationStates.subcollections[collection.id].message}
+                                                <MdClose
+                                                    className="error-close"
+                                                    style={{ marginLeft: 4, cursor: 'pointer' }}
+                                                    onClick={() => setValidationStates(prev => ({
+                                                        ...prev,
+                                                        subcollections: {
+                                                            ...prev.subcollections,
+                                                            [collection.id]: { isValid: true, message: '' }
+                                                        }
+                                                    }))}
+                                                />
                                             </div>
                                         )}
                                     </div>
@@ -542,8 +553,17 @@ export default function UserCollectionsPanel() {
                             )}
                         </div>
                         {errors[`drop-${collection.id}`] && (
-                            <div className="drop-error-message">
+                            <div className="drop-error-message" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                                 {errors[`drop-${collection.id}`]}
+                                <MdClose
+                                    className="error-close"
+                                    style={{ marginLeft: 4, cursor: 'pointer' }}
+                                    onClick={() => setErrors(prev => {
+                                        const newErrors = { ...prev };
+                                        delete newErrors[`drop-${collection.id}`];
+                                        return newErrors;
+                                    })}
+                                />
                             </div>
                         )}
                     </div>
@@ -562,8 +582,16 @@ export default function UserCollectionsPanel() {
                             className={`collection-input ${validationStates.collection.isValid === false ? 'error' : ''}`}
                         />
                         {validationStates.collection.isValid === false && (
-                            <div className="error-message">
+                            <div className="error-message" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                                 {validationStates.collection.message}
+                                <MdClose
+                                    className="error-close"
+                                    style={{ marginLeft: 4, cursor: 'pointer' }}
+                                    onClick={() => setValidationStates(prev => ({
+                                        ...prev,
+                                        collection: { isValid: true, message: '' }
+                                    }))}
+                                />
                             </div>
                         )}
                     </div>

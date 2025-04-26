@@ -161,10 +161,41 @@
   color: #666;
 }
 
+.delete-icon {
+  transition: color 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    color: #e25555;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+}
+
+.edit-icon {
+  transition: color 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    color: #4c9fff;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+}
+
 :root {
   --toggle-hover-color: #4d4d4d;
 }
 
 [data-edit-mode="true"] {
   --toggle-hover-color: #357abd;
+}
+
+.error-close {
+  position: relative;
+  top: 0;
+  left: -4px;
+  &:hover {
+    opacity: 0.8;
+  }
 }
