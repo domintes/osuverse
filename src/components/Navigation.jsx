@@ -15,14 +15,11 @@ export default function Navigation() {
         <li style={{ marginBottom: '1rem' }}>
           <Link href="/search" className={pathname === '/search' ? 'active' : ''}>Search</Link>
         </li>
-        <li style={{ marginBottom: '1rem' }}>
-          <Link href="/artists" className={pathname === '/artists' ? 'active' : ''}>Artists</Link>
+        <li>
+          <Link href="/collections" className={pathname === '/collections' ? 'active' : ''}>Collections</Link>
         </li>
         <li style={{ marginBottom: '1rem' }}>
           <Link href="/about" className={pathname === '/about' ? 'active' : ''}>About</Link>
-        </li>
-        <li>
-          <Link href="/collections" className={pathname === '/collections' ? 'active' : ''}>Collections</Link>
         </li>
       </ul>
       <style jsx>{`

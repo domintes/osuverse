@@ -8,7 +8,7 @@ export default function SearchPage() {
 
     return (
         <div>
-            <h1>Find osu! beatmaps</h1>
+            <h1 className="text-2xl font-bold mb-4">Find beatmaps by artist</h1>
             <SearchInput />
         </div>
     );
