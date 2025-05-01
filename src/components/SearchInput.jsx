@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/store/authAtom';
 import './searchInput.scss';
+import classNames from 'classnames';
 
 export default function SearchInput() {
     const [query, setQuery] = useState('');
@@ -18,8 +19,12 @@ export default function SearchInput() {
     });
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [rowCount, setRowCount] = useState(2);
     const token = useAtom(authAtom)[0];
     const [dropdownOpen, setDropdownOpen] = useState({}); // <-- moved to top level
+    const [hoveredItem, setHoveredItem] = useState(null);
+    const [hoveredDiff, setHoveredDiff] = useState(null);
+    const [collapsedItem, setCollapsedItem] = useState(null);
     // Helper to toggle dropdown for a beatmapset
     const toggleDropdown = (id) => setDropdownOpen(prev => ({ ...prev, [id]: !prev[id] }));
 
@@ -80,9 +85,6 @@ export default function SearchInput() {
         setCurrentPage(page);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
-
-    console.log('results');
-    console.log(results);
 
     return (
         <div className="search-artist-input-container space-y-4">
@@ -154,6 +156,20 @@ export default function SearchInput() {
                             <option value={50}>50</option>
                         </select>
                     </div>
+
+                    <div className="search-artist-filter flex-1">
+                        <label className="search-artist-filter-label block text-sm font-medium mb-1">Row of results</label>
+                        <select
+                            value={rowCount}
+                            onChange={e => setRowCount(Number(e.target.value))}
+                            className="search-artist-select search-artist-select-dark w-full p-2 border rounded-md"
+                        >
+                            <option value={1}>1</option>
+                            <option value={2}>2</option>
+                            <option value={3}>3</option>
+                            <option value={4}>4</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -166,14 +182,21 @@ export default function SearchInput() {
                 </div>
             )}
 
-            <div className="search-artist-results space-y-4">
+            <div
+                className="search-artist-results space-y-4"
+                style={{
+                    display: 'grid',
+                    gridTemplateColumns: `repeat(${rowCount}, 1fr)`,
+                    gap: '1rem'
+                }}
+            >
                 {currentItems.map(set => {
                     const beatmaps = set.beatmaps || [];
-                    const showAll = dropdownOpen[set.id];
+                    const isCollapsed = collapsedItem === set.id;
                     return (
                         <div
                             key={set.id}
-                            className="search-artist-beatmap-item grid grid-cols-[120px_1fr] gap-4 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                            className="search-artist-beatmap-item"
                             style={{
                                 backgroundImage: `url(${set.covers?.cover})`,
                                 backgroundSize: 'cover',
@@ -182,6 +205,8 @@ export default function SearchInput() {
                                 backgroundColor: 'rgba(0,28,54,0.85)',
                                 backgroundBlendMode: 'darken',
                             }}
+                            onMouseEnter={() => setCollapsedItem(set.id)}
+                            onMouseLeave={() => setCollapsedItem(null)}
                         >
                             <div className="search-artist-beatmap-thumbnail aspect-square">
                                 <img 
@@ -192,7 +217,9 @@ export default function SearchInput() {
                             </div>
                             <div className="search-artist-beatmap-info flex flex-col justify-center">
                                 <div className="search-artist-beatmap-title text-lg font-semibold">
-                                    {set.artist} - {set.title}
+                                    <a href={`https://osu.ppy.sh/beatmapsets/${set.id}`} target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-700">
+                                        {set.artist} - {set.title}
+                                    </a>
                                 </div>
                                 <div className="search-artist-beatmap-details flex items-center gap-2 text-gray-600">
                                     <span className="search-artist-beatmap-mapper text-sm">
@@ -202,56 +229,56 @@ export default function SearchInput() {
                                         {set.status}
                                     </span>
                                 </div>
-                                {/* Difficulties section */}
-                                {beatmaps.length === 1 ? (
-                                    <div className="search-artist-beatmap-difficulty flex items-center mt-1">
-                                        <span className="font-medium mr-2">{beatmaps[0].version}</span>
-                                        <span className="flex items-center">
-                                            {beatmaps[0].difficulty_rating}
-                                            <svg className="search-artist-beatmap-star w-4 h-4 ml-1 text-yellow-400" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                            </svg>
-                                        </span>
-                                    </div>
-                                ) : beatmaps.length > 1 ? (
-                                    <div className="search-artist-beatmap-difficulties mt-1">
-                                        {/* Show first difficulty always */}
-                                        <div className="flex items-center">
-                                            <span className="font-medium mr-2">{beatmaps[0].version}</span>
-                                            <span className="flex items-center">
-                                                {beatmaps[0].difficulty_rating}
-                                                <svg className="search-artist-beatmap-star w-4 h-4 ml-1 text-yellow-400" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        {/* See all/hide difficulties toggle */}
-                                        {beatmaps.length > 1 && (
-                                            <button
-                                                className="search-artist-beatmap-difficulties-toggle text-blue-500 hover:underline text-sm mb-1 mt-1"
-                                                onClick={() => toggleDropdown(set.id)}
-                                                type="button"
-                                            >
-                                                {showAll ? 'Hide difficulties' : `See all difficulties (${beatmaps.length})`}
-                                            </button>
+                                {/* Difficulties as colored squares */}
+                                {beatmaps.length > 0 && (
+                                    <div
+                                        className={classNames(
+                                            'search-artist-beatmap-difficulties-squares',
+                                            { 'collapsed': isCollapsed }
                                         )}
-                                        {showAll && (
-                                            <div className="search-artist-beatmap-difficulties-list space-y-1">
-                                                {beatmaps.slice(1).map(bm => (
-                                                    <div key={bm.id} className="flex items-center ml-2">
-                                                        <span className="font-medium mr-2">{bm.version}</span>
-                                                        <span className="flex items-center">
-                                                            {bm.difficulty_rating}
-                                                            <svg className="search-artist-beatmap-star w-4 h-4 ml-1 text-yellow-400" viewBox="0 0 24 24" fill="currentColor">
-                                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                                            </svg>
-                                                        </span>
+                                        style={{ minHeight: '20px' }}
+                                    >
+                                        {beatmaps
+                                            .slice()
+                                            .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
+                                            .map((bm, idx) => (
+                                                <a
+                                                    key={bm.id}
+                                                    href={`https://osu.ppy.sh/beatmaps/${bm.id}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="difficulty-rect block border border-gray-300 transition-transform duration-150 hover:scale-110"
+                                                    style={{
+                                                        background: getDiffColor(bm.difficulty_rating),
+                                                        width: '24px',
+                                                        height: '12px',
+                                                        borderRadius: '4px',
+                                                        marginRight: '4px',
+                                                        display: 'inline-block'
+                                                    }}
+                                                    title={bm.version}
+                                                />
+                                            ))}
+                                        {/* Tooltip on hover after 0.5s */}
+                                        <div className={classNames(
+                                            'search-artist-beatmap-difficulties-tooltip',
+                                            { 'show': hoveredDiff === set.id }
+                                        )}>
+                                            {beatmaps
+                                                .slice()
+                                                .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
+                                                .map(bm => (
+                                                    <div key={bm.id} className="flex items-center gap-2 mb-1 last:mb-0">
+                                                        <span className="inline-block w-3 h-3 rounded-sm" style={{ background: getDiffColor(bm.difficulty_rating) }}></span>
+                                                        <a href={`https://osu.ppy.sh/beatmaps/${bm.id}`} target="_blank" rel="noopener noreferrer" className="font-medium text-blue-700 hover:underline">
+                                                            {bm.version}
+                                                        </a>
+                                                        <span className="text-xs text-gray-500">{bm.difficulty_rating.toFixed(2)}★</span>
                                                     </div>
                                                 ))}
-                                            </div>
-                                        )}
+                                        </div>
                                     </div>
-                                ) : null}
+                                )}
                             </div>
                         </div>
                     );
@@ -297,4 +324,14 @@ export default function SearchInput() {
             )}
         </div>
     );
+}
+
+// Helper function for difficulty color
+function getDiffColor(star) {
+    if (star < 2) return '#66bb6a'; // green
+    if (star < 2.7) return '#42a5f5'; // blue
+    if (star < 4) return '#ab47bc'; // purple
+    if (star < 5.3) return '#ffa726'; // orange
+    if (star < 6.5) return '#ef5350'; // red
+    return '#616161'; // gray
 }

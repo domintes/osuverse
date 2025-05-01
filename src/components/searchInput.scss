@@ -1,5 +1,114 @@
 .search-artist-beatmap-item {
     background-color: rgb(0, 28, 54);
-    padding: 0;
     margin: 12px 0;
+    display: grid;
+    align-items: center;
+    min-height: 72px;
+    max-height: 92px;
+    height: 92px;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.08);
+    transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s, background 0.2s;
+    grid-template-columns: auto 1fr !important;
+    column-gap: 12px;
+}
+.search-artist-beatmap-item.collapsed {
+  max-height: 32px;
+  min-height: 32px;
+  height: 32px;
+  opacity: 0.7;
+  filter: blur(0.5px) grayscale(0.2);
+  cursor: pointer;
+}
+.search-artist-beatmap-item.expanded {
+  max-height: 220px;
+  min-height: 92px;
+  height: auto;
+  opacity: 1;
+  filter: none;
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.18);
+  z-index: 2;
+  background-color: rgba(0,28,54,0.98);
+}
+.search-artist-beatmap-item.collapsed:hover,
+.search-artist-beatmap-item.expanded {
+  opacity: 1;
+  filter: none;
+}
+.search-artist-beatmap-thumbnail {
+  width: 92px;
+  height: 92px;
+  min-width: 72px;
+  min-height: 72px;
+  max-width: 92px;
+  max-height: 92px;
+  overflow: hidden;
+  border-radius: 8px;
+  transition: width 0.35s, height 0.35s;
+}
+.search-artist-beatmap-item.collapsed .search-artist-beatmap-thumbnail {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  max-width: 32px;
+  max-height: 32px;
+}
+.search-artist-beatmap-info {
+  transition: opacity 0.3s, max-height 0.3s;
+}
+.search-artist-beatmap-item.collapsed .search-artist-beatmap-info {
+  opacity: 0;
+  max-height: 0;
+  pointer-events: none;
+}
+.search-artist-beatmap-item.expanded .search-artist-beatmap-info {
+  opacity: 1;
+  max-height: 500px;
+  pointer-events: auto;
+}
+
+.search-artist-results.space-y-4 {
+  margin-bottom: 0 !important;
+}
+.search-artist-results.space-y-4 > .search-artist-beatmap-item:last-child {
+  margin-bottom: 8px !important;
+}
+
+.search-artist-beatmap-difficulties-squares {
+  display: flex;
+  align-items: center;
+  min-height: 20px;
+  transition: min-height 0.2s;
+}
+.search-artist-beatmap-difficulties-squares .difficulty-rect {
+  width: 24px;
+  height: 12px;
+  border-radius: 4px;
+  margin-right: 4px;
+  display: inline-block;
+}
+
+.search-artist-beatmap-difficulties-tooltip {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 22px;
+  z-index: 10;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.08);
+  padding: 8px 12px;
+  min-width: 180px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.search-artist-beatmap-difficulties-squares.expanded .search-artist-beatmap-difficulties-tooltip {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 0.5s;
 }
