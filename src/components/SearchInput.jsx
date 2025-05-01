@@ -169,11 +169,20 @@ export default function SearchInput() {
             <div className="search-artist-results space-y-4">
                 {currentItems.map(set => {
                     const beatmaps = set.beatmaps || [];
-                    // Removed useState from here
-                    // Helper to toggle dropdown for a beatmapset is now at top level
-
+                    const showAll = dropdownOpen[set.id];
                     return (
-                        <div key={set.id} className="search-artist-beatmap-item grid grid-cols-[120px_1fr] gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                        <div
+                            key={set.id}
+                            className="search-artist-beatmap-item grid grid-cols-[120px_1fr] gap-4 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                            style={{
+                                backgroundImage: `url(${set.covers?.cover})`,
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat',
+                                backgroundColor: 'rgba(0,28,54,0.85)',
+                                backgroundBlendMode: 'darken',
+                            }}
+                        >
                             <div className="search-artist-beatmap-thumbnail aspect-square">
                                 <img 
                                     src={`${set.covers.card}`}
@@ -206,16 +215,29 @@ export default function SearchInput() {
                                     </div>
                                 ) : beatmaps.length > 1 ? (
                                     <div className="search-artist-beatmap-difficulties mt-1">
-                                        <button
-                                            className="search-artist-beatmap-difficulties-toggle text-blue-500 hover:underline text-sm mb-1"
-                                            onClick={() => toggleDropdown(set.id)}
-                                            type="button"
-                                        >
-                                            {dropdownOpen[set.id] ? 'Hide difficulties' : `Show ${beatmaps.length} difficulties`}
-                                        </button>
-                                        {dropdownOpen[set.id] && (
+                                        {/* Show first difficulty always */}
+                                        <div className="flex items-center">
+                                            <span className="font-medium mr-2">{beatmaps[0].version}</span>
+                                            <span className="flex items-center">
+                                                {beatmaps[0].difficulty_rating}
+                                                <svg className="search-artist-beatmap-star w-4 h-4 ml-1 text-yellow-400" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                        {/* See all/hide difficulties toggle */}
+                                        {beatmaps.length > 1 && (
+                                            <button
+                                                className="search-artist-beatmap-difficulties-toggle text-blue-500 hover:underline text-sm mb-1 mt-1"
+                                                onClick={() => toggleDropdown(set.id)}
+                                                type="button"
+                                            >
+                                                {showAll ? 'Hide difficulties' : `See all difficulties (${beatmaps.length})`}
+                                            </button>
+                                        )}
+                                        {showAll && (
                                             <div className="search-artist-beatmap-difficulties-list space-y-1">
-                                                {beatmaps.map(bm => (
+                                                {beatmaps.slice(1).map(bm => (
                                                     <div key={bm.id} className="flex items-center ml-2">
                                                         <span className="font-medium mr-2">{bm.version}</span>
                                                         <span className="flex items-center">
