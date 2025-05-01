@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/store/authAtom';
+import './searchInput.scss';
 
 export default function SearchInput() {
     const [query, setQuery] = useState('');
