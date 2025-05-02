@@ -21,20 +21,20 @@ export default function SearchInput() {
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [rowCount, setRowCount] = useState(2);
     const token = useAtom(authAtom)[0];
-    const [dropdownOpen, setDropdownOpen] = useState({}); // <-- moved to top level
+    const [dropdownOpen, setDropdownOpen] = useState({});
     const [hoveredItem, setHoveredItem] = useState(null);
     const [hoveredDiff, setHoveredDiff] = useState(null);
     const [collapsedItem, setCollapsedItem] = useState(null);
-    // Helper to toggle dropdown for a beatmapset
+    const [searchMappers, setSearchMappers] = useState(false);
+    const [foundMapper, setFoundMapper] = useState(null);
+
     const toggleDropdown = (id) => setDropdownOpen(prev => ({ ...prev, [id]: !prev[id] }));
 
-    // Calculate pagination values
     const totalPages = Math.ceil(results.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = results.slice(indexOfFirstItem, indexOfLastItem);
 
-    // Reset to first page when search query or filters change
     useEffect(() => {
         setCurrentPage(1);
     }, [query, filters]);
@@ -81,6 +81,35 @@ export default function SearchInput() {
         return () => clearTimeout(timeout);
     }, [query, artist, mapper, token, filters]);
 
+    useEffect(() => {
+        if (!searchMappers || !mapper || !token) {
+            setFoundMapper(null);
+            return;
+        }
+        let cancelled = false;
+        setFoundMapper(null);
+        setLoading(true);
+        fetch(`/api/user?username=${encodeURIComponent(mapper)}&token=${encodeURIComponent(token)}`)
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (!cancelled && data && data.id) {
+                    setFoundMapper({
+                        id: data.id,
+                        username: data.username,
+                        avatar_url: data.avatar_url,
+                        country: data.country?.name,
+                        country_code: data.country?.code,
+                        profile_url: `https://osu.ppy.sh/users/${data.id}`
+                    });
+                } else if (!cancelled) {
+                    setFoundMapper(null);
+                }
+            })
+            .catch(() => !cancelled && setFoundMapper(null))
+            .finally(() => !cancelled && setLoading(false));
+        return () => { cancelled = true; };
+    }, [searchMappers, mapper, token]);
+
     const handlePageChange = (page) => {
         setCurrentPage(page);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -96,7 +125,7 @@ export default function SearchInput() {
                     placeholder="Search beatmaps"
                     className="search-artist-input p-2 border rounded-md w-full"
                 />
-                <div className="flex gap-4">
+                <div className="flex gap-4 items-center">
                     <input
                         type="text"
                         value={artist}
@@ -111,6 +140,14 @@ export default function SearchInput() {
                         placeholder="Mappers filter"
                         className="search-artist-input p-2 border rounded-md w-full"
                     />
+                    <label className="flex items-center gap-2 ml-2">
+                        <input
+                            type="checkbox"
+                            checked={searchMappers}
+                            onChange={e => setSearchMappers(e.target.checked)}
+                        />
+                        <span>search mappers</span>
+                    </label>
                 </div>
 
                 <div className="search-artist-input-select-group flex gap-4">
@@ -128,7 +165,6 @@ export default function SearchInput() {
                             <option value="graveyard">Graveyard</option>
                         </select>
                     </div>
-                    
                     <div className="search-artist-filter flex-1">
                         <label className="search-artist-filter-label block text-sm font-medium mb-1">Game Mode</label>
                         <select
@@ -143,7 +179,6 @@ export default function SearchInput() {
                             <option value="fruits">osu!catch</option>
                         </select>
                     </div>
-
                     <div className="search-artist-filter flex-1">
                         <label className="search-artist-filter-label block text-sm font-medium mb-1">Results per page</label>
                         <select
@@ -156,7 +191,6 @@ export default function SearchInput() {
                             <option value={50}>50</option>
                         </select>
                     </div>
-
                     <div className="search-artist-filter flex-1">
                         <label className="search-artist-filter-label block text-sm font-medium mb-1">Row of results</label>
                         <select
@@ -172,6 +206,29 @@ export default function SearchInput() {
                     </div>
                 </div>
             </div>
+
+            {searchMappers && foundMapper && (
+                <div className="search-mapper-result flex items-center gap-4 p-3 mb-2 bg-gray-900 rounded shadow">
+                    <img
+                        src={foundMapper.avatar_url}
+                        alt={foundMapper.username}
+                        className="w-12 h-12 rounded-full border"
+                    />
+                    <div>
+                        <a
+                            href={foundMapper.profile_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-bold text-blue-400 hover:underline"
+                        >
+                            {foundMapper.username}
+                        </a>
+                        {foundMapper.country && (
+                            <span className="ml-2 text-sm text-gray-400">({foundMapper.country})</span>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {loading && <div className="search-artist-loading text-center">Loading...</div>}
             {error && <div className="search-artist-error text-red-500">{error}</div>}
@@ -229,7 +286,6 @@ export default function SearchInput() {
                                         {set.status}
                                     </span>
                                 </div>
-                                {/* Difficulties as colored squares */}
                                 {beatmaps.length > 0 && (
                                     <div className="search-artist-beatmap-difficulties-wrapper">
                                         <div className="search-artist-beatmap-difficulties-squares flex gap-1">
@@ -325,12 +381,11 @@ export default function SearchInput() {
     );
 }
 
-// Helper function for difficulty color
 function getDiffColor(star) {
-    if (star < 2) return '#66bb6a'; // green
-    if (star < 2.7) return '#42a5f5'; // blue
-    if (star < 4) return '#ab47bc'; // purple
-    if (star < 5.3) return '#ffa726'; // orange
-    if (star < 6.5) return '#ef5350'; // red
-    return '#616161'; // gray
+    if (star < 2) return '#66bb6a';
+    if (star < 2.7) return '#42a5f5';
+    if (star < 4) return '#ab47bc';
+    if (star < 5.3) return '#ffa726';
+    if (star < 6.5) return '#ef5350';
+    return '#616161';
 }
