@@ -192,11 +192,11 @@ export default function SearchInput() {
             >
                 {currentItems.map(set => {
                     const beatmaps = set.beatmaps || [];
-                    const isCollapsed = collapsedItem === set.id;
+                    const isHovered = hoveredItem === set.id;
                     return (
                         <div
                             key={set.id}
-                            className="search-artist-beatmap-item"
+                            className="search-artist-beatmap-item relative"
                             style={{
                                 backgroundImage: `url(${set.covers?.cover})`,
                                 backgroundSize: 'cover',
@@ -205,8 +205,8 @@ export default function SearchInput() {
                                 backgroundColor: 'rgba(0,28,54,0.85)',
                                 backgroundBlendMode: 'darken',
                             }}
-                            onMouseEnter={() => setCollapsedItem(set.id)}
-                            onMouseLeave={() => setCollapsedItem(null)}
+                            onMouseEnter={() => setHoveredItem(set.id)}
+                            onMouseLeave={() => setHoveredItem(null)}
                         >
                             <div className="search-artist-beatmap-thumbnail aspect-square">
                                 <img 
@@ -231,52 +231,51 @@ export default function SearchInput() {
                                 </div>
                                 {/* Difficulties as colored squares */}
                                 {beatmaps.length > 0 && (
-                                    <div
-                                        className={classNames(
-                                            'search-artist-beatmap-difficulties-squares',
-                                            { 'collapsed': isCollapsed }
-                                        )}
-                                        style={{ minHeight: '20px' }}
-                                    >
-                                        {beatmaps
-                                            .slice()
-                                            .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
-                                            .map((bm, idx) => (
-                                                <a
-                                                    key={bm.id}
-                                                    href={`https://osu.ppy.sh/beatmaps/${bm.id}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="difficulty-rect block border border-gray-300 transition-transform duration-150 hover:scale-110"
-                                                    style={{
-                                                        background: getDiffColor(bm.difficulty_rating),
-                                                        width: '24px',
-                                                        height: '12px',
-                                                        borderRadius: '4px',
-                                                        marginRight: '4px',
-                                                        display: 'inline-block'
-                                                    }}
-                                                    title={bm.version}
-                                                />
-                                            ))}
-                                        {/* Tooltip on hover after 0.5s */}
-                                        <div className={classNames(
-                                            'search-artist-beatmap-difficulties-tooltip',
-                                            { 'show': hoveredDiff === set.id }
-                                        )}>
+                                    <div className="search-artist-beatmap-difficulties-wrapper">
+                                        <div className="search-artist-beatmap-difficulties-squares flex gap-1">
                                             {beatmaps
                                                 .slice()
                                                 .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
-                                                .map(bm => (
-                                                    <div key={bm.id} className="flex items-center gap-2 mb-1 last:mb-0">
-                                                        <span className="inline-block w-3 h-3 rounded-sm" style={{ background: getDiffColor(bm.difficulty_rating) }}></span>
-                                                        <a href={`https://osu.ppy.sh/beatmaps/${bm.id}`} target="_blank" rel="noopener noreferrer" className="font-medium text-blue-700 hover:underline">
-                                                            {bm.version}
-                                                        </a>
-                                                        <span className="text-xs text-gray-500">{bm.difficulty_rating.toFixed(2)}★</span>
-                                                    </div>
+                                                .map((bm) => (
+                                                    <div
+                                                        key={bm.id}
+                                                        className="difficulty-rect border border-gray-300 transition-transform duration-150 hover:scale-110"
+                                                        style={{
+                                                            background: getDiffColor(bm.difficulty_rating),
+                                                            width: '24px',
+                                                            height: '12px',
+                                                            borderRadius: '4px',
+                                                        }}
+                                                        title={bm.version}
+                                                    />
                                                 ))}
                                         </div>
+                                        {isHovered && (
+                                            <div className="search-artist-beatmap-difficulties-details absolute left-0 right-0 bg-white/95 p-3 rounded-md shadow-lg z-10 mt-2">
+                                                {beatmaps
+                                                    .slice()
+                                                    .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
+                                                    .map(bm => (
+                                                        <div key={bm.id} className="flex items-center gap-2 mb-2 last:mb-0">
+                                                            <span 
+                                                                className="inline-block w-3 h-3 rounded-sm" 
+                                                                style={{ background: getDiffColor(bm.difficulty_rating) }}
+                                                            />
+                                                            <a 
+                                                                href={`https://osu.ppy.sh/beatmaps/${bm.id}`} 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer" 
+                                                                className="font-medium text-blue-700 hover:underline"
+                                                            >
+                                                                {bm.version}
+                                                            </a>
+                                                            <span className="text-xs text-gray-500">
+                                                                {bm.difficulty_rating.toFixed(2)}★
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
