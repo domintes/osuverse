@@ -1,11 +1,29 @@
 'use client';
-
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import './navigation.scss';
 
 export default function Navigation() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const pathname = usePathname();
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("/api/auth/check");
+        const data = await res.json();
+        if (data.loggedIn) setUser(data.user);
+        else setUser(null);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchUser();
+  }, []);
 
   return (
     <nav>
@@ -22,6 +40,18 @@ export default function Navigation() {
         <li>
           <Link href="/about" className={pathname === '/about' ? 'active' : ''}>About</Link>
         </li>
+        <li style={{ marginLeft: 'auto' }} />
+        {loading ? null : user ? (
+          <li style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: 'auto' }}>
+            <img src={user.avatar_url} alt={user.username} style={{ width: 32, height: 32, borderRadius: '50%' }} />
+            <span>{user.username}</span>
+            <Link href="/api/auth/logout" style={{ marginLeft: 8 }}>Logout</Link>
+          </li>
+        ) : (
+          <li style={{ marginLeft: 'auto' }}>
+            <Link href="/api/auth/login" className="login-btn">Login with osu!</Link>
+          </li>
+        )}
       </ul>
     </nav>
   );

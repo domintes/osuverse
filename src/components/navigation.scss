@@ -45,4 +45,21 @@ nav {
       box-shadow: 0 2px 12px 0 #4447b1aa;
     }
   }
+
+  .login-btn {
+    background: #f67221;
+    color: #fff;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px 0 #f6722133;
+    margin-left: 1rem;
+    &:hover {
+      background: #e55b00;
+      color: #fff;
+      box-shadow: 0 2px 12px 0 #f67221aa;
+    }
+  }
 }
