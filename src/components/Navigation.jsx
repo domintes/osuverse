@@ -49,7 +49,13 @@ export default function Navigation() {
           </li>
         ) : (
           <li style={{ marginLeft: 'auto' }}>
-            <Link href="/api/auth/login" className="login-btn">Login with osu!</Link>
+C            <button
+              onClick={() => { window.location.href = "/api/auth/login"; }}
+              className="login-btn"
+              type="button"
+            >
+              Login with osu!
+            </button>
           </li>
         )}
       </ul>

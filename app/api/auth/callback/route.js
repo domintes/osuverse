@@ -6,10 +6,12 @@ export async function GET(request) {
     const state = searchParams.get("state");
     const error = searchParams.get("error");
     if (error) {
-        return NextResponse.redirect("/auth/error?error=" + encodeURIComponent(error));
+        const redirectUrl = new URL("/auth/error?error=" + encodeURIComponent(error), request.url);
+        return NextResponse.redirect(redirectUrl);
     }
     if (!code) {
-        return NextResponse.redirect("/auth/error?error=Missing+code");
+        const redirectUrl = new URL("/auth/error?error=Missing+code", request.url);
+        return NextResponse.redirect(redirectUrl);
     }
     // Exchange code for access token
     const clientId = process.env.OSU_API_CLIENT_ID;
@@ -27,7 +29,8 @@ export async function GET(request) {
         })
     });
     if (!tokenRes.ok) {
-        return NextResponse.redirect("/auth/error?error=Token+exchange+failed");
+        const redirectUrl = new URL("/auth/error?error=Token+exchange+failed", request.url);
+        return NextResponse.redirect(redirectUrl);
     }
     const tokenData = await tokenRes.json();
     // Fetch user info
@@ -35,11 +38,13 @@ export async function GET(request) {
         headers: { Authorization: `Bearer ${tokenData.access_token}` }
     });
     if (!userRes.ok) {
-        return NextResponse.redirect("/auth/error?error=Failed+to+fetch+user");
+        const redirectUrl = new URL("/auth/error?error=Failed+to+fetch+user", request.url);
+        return NextResponse.redirect(redirectUrl);
     }
     const user = await userRes.json();
     // Set session cookie (simple, not secure for production)
-    const response = NextResponse.redirect("/");
+    const redirectUrl = new URL("/", request.url);
+    const response = NextResponse.redirect(redirectUrl);
     response.cookies.set("osu_session", JSON.stringify({
         access_token: tokenData.access_token,
         refresh_token: tokenData.refresh_token,
