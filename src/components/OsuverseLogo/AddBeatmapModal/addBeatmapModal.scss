@@ -1,0 +1,47 @@
+/* filepath: /c:/Stuff/Projects/osuverse/src/components/addBeatmapModal.scss */
+.beatmap-collection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.beatmap-item {
+    background-size: cover;
+    background-position: center;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: flex-end;
+    padding: 10px;
+    color: white;
+    text-shadow: 0 0 5px black;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.beatmap-info {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.beatmap-info h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.beatmap-info p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.beatmap-info a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.beatmap-info a:hover {
+    text-decoration: underline;
+}
