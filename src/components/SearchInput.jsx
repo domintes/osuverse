@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/store/authAtom';
+import { collectionsAtom } from '@/store/collectionAtom';
 import './searchInput.scss';
 import classNames from 'classnames';
 
@@ -27,6 +28,9 @@ export default function SearchInput() {
     const [collapsedItem, setCollapsedItem] = useState(null);
     const [searchMappers, setSearchMappers] = useState(false);
     const [foundMapper, setFoundMapper] = useState(null);
+    const [collections, setCollections] = useAtom(collectionsAtom);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalTarget, setModalTarget] = useState(null); // { type: 'single'|'all', set, beatmap } or null
 
     const toggleDropdown = (id) => setDropdownOpen(prev => ({ ...prev, [id]: !prev[id] }));
 
@@ -113,6 +117,49 @@ export default function SearchInput() {
     const handlePageChange = (page) => {
         setCurrentPage(page);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const isBeatmapInCollections = (beatmapId) => {
+        return Object.values(collections.beatmaps || {}).some(bm => bm.id === beatmapId);
+    };
+
+    const areAllBeatmapsInCollections = (beatmaps) => {
+        return beatmaps.every(bm => isBeatmapInCollections(bm.id));
+    };
+
+    const openAddModal = (set, beatmap, type = 'single') => {
+        setModalTarget({ set, beatmap, type });
+        setModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalOpen(false);
+        setModalTarget(null);
+    };
+
+    const handleAddToCollection = (collectionId, subcollectionId = null) => {
+        if (!modalTarget) return;
+        const { set, beatmap, type } = modalTarget;
+        setCollections(prev => {
+            const newBeatmaps = { ...prev.beatmaps };
+            if (type === 'all') {
+                set.beatmaps.forEach(bm => {
+                    newBeatmaps[bm.id] = { ...bm, setId: set.id };
+                });
+            } else if (beatmap) {
+                newBeatmaps[beatmap.id] = { ...beatmap, setId: set.id };
+            }
+            return { ...prev, beatmaps: newBeatmaps };
+        });
+        closeModal();
+    };
+
+    const handleRemoveFromCollection = (beatmapId) => {
+        setCollections(prev => {
+            const newBeatmaps = { ...prev.beatmaps };
+            delete newBeatmaps[beatmapId];
+            return { ...prev, beatmaps: newBeatmaps };
+        });
     };
 
     return (
@@ -250,6 +297,7 @@ export default function SearchInput() {
                 {currentItems.map(set => {
                     const beatmaps = set.beatmaps || [];
                     const isHovered = hoveredItem === set.id;
+                    const singleDiff = beatmaps.length === 1;
                     return (
                         <div
                             key={set.id}
@@ -287,7 +335,7 @@ export default function SearchInput() {
                                     </span>
                                 </div>
                                 {beatmaps.length > 0 && (
-                                    <div className="search-artist-beatmap-difficulties-wrapper">
+                                    <div className={`search-artist-beatmap-difficulties-wrapper${(singleDiff || isHovered) ? ' show-difficulties' : ''}`}>
                                         <div className="search-artist-beatmap-difficulties-squares flex gap-1">
                                             {beatmaps
                                                 .slice()
@@ -306,30 +354,49 @@ export default function SearchInput() {
                                                     />
                                                 ))}
                                         </div>
-                                        {isHovered && (
+                                        {(singleDiff || isHovered) && (
                                             <div className="search-artist-beatmap-difficulties-details absolute left-0 right-0 bg-white/95 p-3 rounded-md shadow-lg z-10 mt-2">
                                                 {beatmaps
                                                     .slice()
                                                     .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
-                                                    .map(bm => (
-                                                        <div key={bm.id} className="flex items-center gap-2 mb-2 last:mb-0">
-                                                            <span 
-                                                                className="inline-block w-3 h-3 rounded-sm" 
-                                                                style={{ background: getDiffColor(bm.difficulty_rating) }}
-                                                            />
-                                                            <a 
-                                                                href={`https://osu.ppy.sh/beatmaps/${bm.id}`} 
-                                                                target="_blank" 
-                                                                rel="noopener noreferrer" 
-                                                                className="font-medium text-blue-700 hover:underline"
-                                                            >
-                                                                {bm.version}
-                                                            </a>
-                                                            <span className="text-xs text-gray-500">
-                                                                {bm.difficulty_rating.toFixed(2)}★
-                                                            </span>
-                                                        </div>
-                                                    ))}
+                                                    .map(bm => {
+                                                        const inCollection = isBeatmapInCollections(bm.id);
+                                                        return (
+                                                            <div key={bm.id} className="flex items-center gap-2 mb-2 last:mb-0">
+                                                                <span 
+                                                                    className="inline-block w-3 h-3 rounded-sm" 
+                                                                    style={{ background: getDiffColor(bm.difficulty_rating) }}
+                                                                />
+                                                                <a 
+                                                                    href={`https://osu.ppy.sh/beatmaps/${bm.id}`} 
+                                                                    target="_blank" 
+                                                                    rel="noopener noreferrer" 
+                                                                    className="font-medium text-blue-700 hover:underline"
+                                                                >
+                                                                    {bm.version}
+                                                                </a>
+                                                                <span className="text-xs text-gray-500">
+                                                                    {bm.difficulty_rating.toFixed(2)}★
+                                                                </span>
+                                                                <button
+                                                                    className={`ml-auto px-2 py-1 rounded text-xs ${inCollection ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}
+                                                                    onClick={() => inCollection ? handleRemoveFromCollection(bm.id) : openAddModal(set, bm, 'single')}
+                                                                >
+                                                                    {inCollection ? 'Remove difficult' : 'Add to collection'}
+                                                                </button>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                {beatmaps.length > 1 && (
+                                                    <div className="flex items-center gap-2 mt-2">
+                                                        <button
+                                                            className={`px-3 py-1 rounded text-xs ${areAllBeatmapsInCollections(beatmaps) ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}
+                                                            onClick={() => openAddModal(set, null, 'all')}
+                                                        >
+                                                            {areAllBeatmapsInCollections(beatmaps) ? 'Remove all difficults' : 'Add all difficults'}
+                                                        </button>
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
                                     </div>
@@ -339,7 +406,39 @@ export default function SearchInput() {
                     );
                 })}
             </div>
-
+            {modalOpen && modalTarget && (
+                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
+                        <button className="absolute top-2 right-2 text-gray-500" onClick={closeModal}>✕</button>
+                        <h2 className="text-lg font-bold mb-4">Select collection to add</h2>
+                        <div className="space-y-2 max-h-64 overflow-y-auto">
+                            {collections.collections.length === 0 && <div>No collections found.</div>}
+                            {collections.collections.map(col => (
+                                <div key={col.id} className="border rounded p-2 mb-1">
+                                    <div className="flex items-center justify-between">
+                                        <span>{col.name}</span>
+                                        <button className="ml-2 px-2 py-1 bg-blue-500 text-white rounded text-xs" onClick={() => handleAddToCollection(col.id)}>
+                                            Add
+                                        </button>
+                                    </div>
+                                    {col.subcollections && col.subcollections.length > 0 && (
+                                        <div className="pl-4 mt-1">
+                                            {col.subcollections.map(sub => (
+                                                <div key={sub.id} className="flex items-center justify-between mb-1">
+                                                    <span>{sub.name}</span>
+                                                    <button className="ml-2 px-2 py-1 bg-blue-400 text-white rounded text-xs" onClick={() => handleAddToCollection(col.id, sub.id)}>
+                                                        Add
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
             {results.length > 0 && (
                 <div className="search-artist-pagination flex justify-center items-center space-x-2 mt-4">
                     <button

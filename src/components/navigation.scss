@@ -1,13 +1,15 @@
 nav {
   width: 100%;
-  color: white;
+  color: #c3e6ff;
   padding: 0.5rem 2rem;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 12px 0 #04050899;
-  max-height: 40px;
-  background-color: #101e37;
+  box-shadow: 0 2px 24px 0 #0a0f2aee, 0 0 40px 0 #1a2a4d99;
+  max-height: 48px;
+  background: linear-gradient(90deg, #0a0f2a 80%, #1a2a4d 100%);
+  border-bottom: 2px solid #1a2a4d;
+
   ul {
     list-style: none;
     padding: 0;
@@ -23,43 +25,56 @@ nav {
   }
 
   a {
-    color: white;
+    color: #c3e6ff;
     text-decoration: none;
     padding: 0.5rem 1.2rem;
-    border-radius: 6px;
+    border-radius: 8px;
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 1.1rem;
     position: relative;
     z-index: 1;
+    letter-spacing: 0.04em;
+    background: linear-gradient(
+      90deg,
+      rgba(20, 30, 60, 0.7) 0%,
+      rgba(44, 54, 120, 0.2) 100%
+    );
+    box-shadow: 0 2px 8px 0 #0a0f2a44;
+    border: 1px solid transparent;
 
     &:hover {
-      background: rgba(68, 71, 177, 0.32);
-      color: #b3cfff;
-      box-shadow: 0 2px 8px 0 #12315944;
+      background: linear-gradient(90deg, #1a2a4d 0%, #2c3678 100%);
+      color: #7ee0ff;
+      box-shadow: 0 2px 16px 0 #1a2a4d99;
+      border: 1px solid #2c3678;
     }
 
     &.active {
-      background: #4447b1;
+      background: linear-gradient(90deg, #0a0f2a 0%, #4447b1 100%);
       color: #fff;
-      box-shadow: 0 2px 12px 0 #4447b1aa;
+      box-shadow: 0 2px 24px 0 #4447b1cc;
+      border: 1px solid #4447b1;
     }
   }
 
   .login-btn {
-    background: #f67221;
+    background: linear-gradient(90deg, #f67221 60%, #1a2a4d 100%);
     color: #fff;
     padding: 0.5rem 1.2rem;
-    border-radius: 6px;
+    border-radius: 8px;
     font-weight: bold;
     text-decoration: none;
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 8px 0 #f6722133;
+    box-shadow: 0 2px 12px 0 #f6722133, 0 0 16px 0 #1a2a4d55;
     margin-left: 1rem;
+    border: 1px solid #f67221;
+
     &:hover {
-      background: #e55b00;
+      background: linear-gradient(90deg, #e55b00 60%, #1a2a4d 100%);
       color: #fff;
-      box-shadow: 0 2px 12px 0 #f67221aa;
+      box-shadow: 0 2px 24px 0 #f67221cc;
+      border: 1px solid #e55b00;
     }
   }
 }

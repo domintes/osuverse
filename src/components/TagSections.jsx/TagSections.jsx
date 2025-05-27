@@ -62,6 +62,13 @@ const doesTagMatch = (map, selectedTags) => {
 const TagsSection = () => {
     const [collection] = useAtom(collectionAtom)
     const [selectedTags, setSelectedTags] = useAtom(selectedTagsAtom)
+    // Add state for toggling tag group visibility
+    const [visibleGroups, setVisibleGroups] = React.useState({
+        Artists: true,
+        Mappers: true,
+        Stars: true,
+        'User Tags': true
+    })
 
     const filtered = selectedTags.length
         ? collection.filter(map => doesTagMatch(map, selectedTags))
@@ -77,26 +84,46 @@ const TagsSection = () => {
         )
     }
 
+    // Toggle visibility of tag group
+    const toggleGroup = (group) => {
+        setVisibleGroups(prev => ({ ...prev, [group]: !prev[group] }))
+    }
+
     return (
         <div>
+            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: 16 }}>
+                {Object.keys(tagGroups).map(groupName => (
+                    <label key={groupName} style={{ fontFamily: 'Orbitron', fontSize: 15 }}>
+                        <input
+                            type="checkbox"
+                            checked={visibleGroups[groupName]}
+                            onChange={() => toggleGroup(groupName)}
+                            style={{ marginRight: 6 }}
+                        />
+                        {groupName}
+                    </label>
+                ))}
+            </div>
             {Object.entries(tagGroups).map(([groupName, tags]) => (
-                <div key={groupName}>
-                    <h3 style={{ fontFamily: 'Orbitron', fontSize: '17px', marginBottom: '8px', marginTop: '24px' }}>{groupName}</h3>
-                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                        {Object.entries(tags).map(([tag, count]) => {
-                            const isActive = selectedTags.includes(tag)
-                            return (
-                                <button
-                                    key={tag}
-                                    className={`tag-button ${isActive ? 'tag-button-active' : ''}`}
-                                    onClick={() => toggleTag(tag)}
-                                >
-                                    {tag} ({count})
-                                </button>
-                            )
-                        })}
+                visibleGroups[groupName] && (
+                    <div key={groupName}>
+                        <h3 style={{ fontFamily: 'Orbitron', fontSize: '17px', marginBottom: '8px', marginTop: '24px' }}>{groupName}</h3>
+                        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                            {Object.entries(tags).map(([tag, count]) => {
+                                const isActive = selectedTags.includes(tag)
+                                return (
+                                    <button
+                                        key={tag}
+                                        className={`tag-button ${isActive ? 'tag-button-active' : ''}`}
+                                        onClick={() => toggleTag(tag)}
+                                    >
+                                        {tag} ({count})
+                                    </button>
+                                )
+                            })}
+                        </div>
                     </div>
-                </div>
+                )
             ))}
         </div>
     )

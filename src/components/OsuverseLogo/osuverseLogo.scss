@@ -3,72 +3,84 @@
     align-items: center;
     gap: 20px;
     position: relative;
+    background: radial-gradient(circle at 20% 60%, #0a0f2a 60%, #1a2a4d 100%);
+    border-radius: 18px;
+    box-shadow: 0 0 60px 10px #0a0f2a, 0 0 120px 0 #1a2a4d99;
+    padding: 0.5rem 2rem;
 }
 
 .osuverse-logo {
-        font-size: 42px;
-        font-weight: 900;
-        color: black;
-        text-shadow: 0 0 7px rgb(212, 212, 219), 0 0 5px rgb(206, 206, 219), 0 0 3px rgb(202, 202, 209);
-        display: flex;
-        align-items: center;
-        gap: 10px;
+    font-size: 48px;
+    font-weight: 900;
+    color: #c3e6ff;
+    text-shadow: 0 0 12px #7ee0ff, 0 0 24px #1a2a4d, 0 0 8px #4447b1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: 0.08em;
+    filter: drop-shadow(0 0 8px #1a2a4d);
 }
 
 .osuniverse-logo-letter-first {
-    // visibility: hidden !important;
-    // padding-right: 20px;
     z-index: 10;
     font-weight: 900;
-    font-family: 'Cracked Code';;
+    font-family: 'Cracked Code';
+    color: #7ee0ff;
+    text-shadow: 0 0 24px #1a2a4d, 0 0 8px #7ee0ff;
+    filter: drop-shadow(0 0 12px #1a2a4d);
 }
 
 .wonderful-void {
     z-index: 7;
-    width: 32px;
+    width: 52px;
     height: 52px;
     position: absolute;
     top: 7px;
     left: 5px;
-    background: radial-gradient(circle, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 100%);
+    background: radial-gradient(circle, #000 60%, #1a2a4d 100%);
     border-radius: 50%;
-    animation: glow 3s ease-in-out infinite;
-    box-shadow: 0 0 15px 12px rgba(211, 48, 138, 0.8);
-    z-index: 0;
+    animation: glow 3s ease-in-out infinite, eventHorizon 8s linear infinite;
+    box-shadow: 0 0 40px 20px #1a2a4dcc, 0 0 80px 40px #0a0f2a99;
+    border: 2px solid #7ee0ff44;
 }
 
 @keyframes glow {
-
     0%,
     100% {
-        box-shadow: 0 0 25px 12px rgba(211, 48, 170, 0.8);
+        box-shadow: 0 0 40px 20px #1a2a4dcc;
     }
 
     50% {
-        box-shadow: 0 0 30px 15px rgba(211, 48, 138, 0.8);
+        box-shadow: 0 0 60px 30px #7ee0ffcc;
     }
 }
 
-@keyframes spin {
+@keyframes eventHorizon {
     0% {
-        transform: rotate(0deg);
+        filter: blur(0px) brightness(1);
+    }
+
+    50% {
+        filter: blur(2px) brightness(1.2);
     }
 
     100% {
-        transform: rotate(360deg);
+        filter: blur(0px) brightness(1);
     }
 }
-
 
 .osuniverse-logo-letter {
     font-weight: 900;
     font-family: 'Cracked Code';
     z-index: 777;
+    color: #c3e6ff;
+    text-shadow: 0 0 8px #7ee0ff, 0 0 16px #1a2a4d;
+    transition: color 0.2s, text-shadow 0.2s;
 }
 
-.black-hole:hover+.osuniverse-logo-letter,
 .osuniverse-logo-letter:hover {
-    cursor: default;
+    color: #7ee0ff;
+    text-shadow: 0 0 24px #7ee0ff, 0 0 32px #1a2a4d;
 }
 
 .nav-bar {

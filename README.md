@@ -1,95 +1,34 @@
 # Osuverse
 
-A modern web application built with Next.js and React, featuring user collections, authentication, and search functionality.
+A modern, cyberpunk-inspired web app for creating and managing osu! beatmap collections with custom tags, dynamic tag sorting, and hi-tech void/galaxy visuals.
 
-## Technology Stack
+## Features
 
-- **Frontend Framework**: [Next.js 15](https://nextjs.org/) with React 19
-- **Styling**: 
-  - SASS/SCSS for component-specific styles
-  - TailwindCSS for utility-first styling
-- **State Management**: 
-  - [Jotai](https://jotai.org/) for atomic state management
-  - Files: [authAtom.js](/src/store/authAtom.js), [collectionAtom.js](/src/store/collectionAtom.js)
-- **Database**: 
-  - PostgreSQL with [Prisma ORM](https://www.prisma.io/)
-  - Schema defined in [schema.prisma](/prisma/schema.prisma)
-- **API Layer**: 
-  - tRPC for type-safe API communication
-  - React Query for server state management and caching
+- **Modern UI**: Cyberpunk, void, hi-tech, and metallic dark blue/black hole theme
+- **User Collections**: Add, manage, and organize beatmaps into collections and subcollections
+- **Custom Tags**: Add your own tags to beatmaps; dynamic tag sections (Artists, Mappers, Difficulty, User Tags)
+- **Tag Filtering**: Show/hide tag groups with checkboxes; filter beatmaps by tags
+- **osu!APIv2 Integration**: Search and fetch beatmaps (see [osu!APIv2 docs](https://osu.ppy.sh/docs/))
+- **Global State**: Uses Jotai for state, with localStorage persistence
+- **Account Sync**: (Planned) Save collections to user account if authenticated
+- **Beautiful Effects**: Black hole particles, animated gradients, neon glows
 
-## Project Structure
+## Quick Start
 
-### Core Directories
+1. `npm install`
+2. `npm run dev`
+3. Open [http://localhost:3000](http://localhost:3000)
 
-- `/app` - Next.js app directory containing pages and API routes
-  - `/app/page.js` - Homepage
-  - `/app/about` - About page
-  - `/app/collections` - User collections page
-  - `/app/search` - Search functionality
-  - `/app/api` - API routes for authentication and search
+## Developer Docs
 
-### Components
+See [Docs.md](./Docs.md) for important files, component reuse, and future ideas.
 
-Key components are located in [/src/components](/src/components):
-- [Navigation.jsx](/src/components/Navigation.jsx) - Main navigation component with SCSS styling
-- [SearchInput.jsx](/src/components/SearchInput.jsx) - Reusable search input component
-- [UserCollectionsPanel.jsx](/src/components/UserCollectionsPanel.jsx) - Panel for managing user collections
+## Contributing
 
-### Authentication
+- Fork, branch, and PR as usual
+- Please keep the cyberpunk/void/hi-tech style consistent
+- See [osu!APIv2 docs](https://osu.ppy.sh/docs/) for API integration
 
-Authentication is handled through:
-- [/app/api/auth/route.js](/app/api/auth/route.js) - Authentication API endpoints
-- [useAuth.js](/src/hooks/useAuth.js) - Custom hook for authentication state management
+---
 
-### Features
-
-1. **User Authentication**
-   - Custom authentication system
-   - Persistent user sessions
-   - Protected routes
-
-2. **Search Functionality**
-   - Dynamic search with API integration
-   - Search results caching
-   - Type-safe search queries
-
-3. **User Collections**
-   - Personal collection management
-   - Collection sharing capabilities
-   - Real-time updates using React Query
-
-## Development
-
-```bash
-# Install dependencies
-npm install
-
-# Set up the database
-npx prisma generate
-npx prisma db push
-
-# Start development server
-npm run dev
-```
-
-The application will be available at [http://localhost:3000](http://localhost:3000).
-
-## Environment Setup
-
-Create a `.env` file with the following variables:
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/osuverse"
-```
-
-## Build and Deployment
-
-```bash
-# Create production build
-npm run build
-
-# Start production server
-npm start
-```
-
-For deployment, we recommend using [Vercel](https://vercel.com) for optimal Next.js compatibility and performance.
+For more, see in-code comments and Docs.md
