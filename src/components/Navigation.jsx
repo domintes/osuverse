@@ -1,13 +1,14 @@
 'use client';
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import './navigation.scss';
 
 export default function Navigation() {
   const [user, setUser] = useState(null);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -45,7 +46,12 @@ export default function Navigation() {
               <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <img src={user.avatar_url} alt={user.username} style={{ width: 32, height: 32, borderRadius: '50%' }} />
                 <span>{user.username}</span>
-                <Link href="/api/auth/logout" style={{ marginLeft: 8 }}>Logout</Link>
+                <Link href="/api/auth/logout" style={{ marginLeft: 8 }} onClick={async (e) => {
+                  e.preventDefault();
+                  await fetch('/api/auth/logout');
+                  setUser(null);
+                  router.refresh(); // natychmiastowy refresh stanu po wylogowaniu
+                }}>Logout</Link>
               </span>
             ) : (
               <button

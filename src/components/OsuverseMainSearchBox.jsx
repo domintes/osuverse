@@ -7,6 +7,8 @@ import { collectionsAtom } from '../store/collectionAtom';
 import OsuverseModal from './OsuverseModal/OsuverseModal';
 import AddBeatmapForm from './OsuverseModal/AddBeatmapForm';
 import { osuverseModalAtom } from '../store/osuverseModalAtom';
+import BeatmapsetList from './BeatmapsetList';
+import './beatmapsetList.scss';
 
 // TODO: Import Jotai atoms, modal system, and API hooks when ready
 
@@ -169,30 +171,7 @@ const OsuverseMainSearchBox = () => {
     return (
       <div className="osu-api-results">
         <div className="osu-api-results-header">Wyniki z osu! (API v2)</div>
-        {osuApiResults.slice(0, 7).map(bm => (
-          <div key={bm.id} className="beatmap-card">
-            <div className="cover" style={{ backgroundImage: `url(${bm.cover || ''})` }} />
-            <div className="info">
-              <div style={{ fontWeight: 600 }}>{bm.artist} – {bm.title}</div>
-              <div className="tags">
-                {(bm.tags || []).map(tag => (
-                  <span
-                    key={tag}
-                    className="tag-chip"
-                    onClick={() => handleTagSelect(tag)}
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-              {!bm.inCollection && (
-                <button className="add-to-collection-btn" onClick={() => handleAddToCollectionClick(bm)}>
-                  Dodaj do kolekcji
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+        <BeatmapsetList beatmapsets={osuApiResults} onAddToCollection={handleAddToCollectionClick} />
         {osuApiResults.length > 7 && (
           <button className="add-to-collection-btn" style={{ marginTop: 12 }}>Pokaż wszystkie</button>
         )}
