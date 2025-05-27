@@ -1,0 +1,39 @@
+.osuverse-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.osuverse-modal-content {
+  background: linear-gradient(120deg, #0a0f2a 60%, #1a2a4d 100%);
+  border-radius: 18px;
+  box-shadow: 0 0 40px 0 #1a2a4d99, 0 0 80px 0 #0a0f2a55;
+  border: 2px solid #7ee0ff44;
+  padding: 32px 28px 24px 28px;
+  min-width: 340px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  color: #fff;
+}
+
+.osuverse-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #7ee0ff;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.2s;
+}
+.osuverse-modal-close:hover {
+  color: #ff1744;
+}
