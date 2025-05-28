@@ -2,10 +2,10 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { useAtom } from 'jotai';
-import { IoIosAddCircle } from 'react-icons/io';
-import { MdDragIndicator, MdEdit, MdDelete, MdClose } from 'react-icons/md';
+import { PlusCircle, Edit, Trash2, GripVertical, X } from 'lucide-react';
 import { collectionsAtom } from '@/store/collectionAtom';
 import './userCollectionsPanel.scss';
+import NeonBorderBox from './NeonBorderBox';
 
 export default function UserCollectionsPanel() {
     const [collections, setCollections] = useAtom(collectionsAtom);
@@ -353,18 +353,14 @@ export default function UserCollectionsPanel() {
         if (!name.trim()) {
             return { isValid: false, message: 'Subcollection name cannot be empty' };
         }
-
         const collection = collections.collections.find(c => c.id === collectionId);
         if (!collection) return { isValid: true, message: '' };
-
         const exists = collection.subcollections.some(s => 
-            s.name.toLowerCase() === name.trim().toLowerCase()
+            s.name.trim().toLowerCase() === name.trim().toLowerCase()
         );
-
         if (exists && isNew) {
             return { isValid: false, message: 'Subcollection with this name already exists in this collection' };
         }
-
         return { isValid: true, message: '' };
     };
 
@@ -440,11 +436,11 @@ export default function UserCollectionsPanel() {
                             <div className="collection-actions">
                                 {editMode && (
                                     <>
-                                <MdEdit 
+                                <Edit 
                                     className="edit-icon" 
                                     onClick={() => startEditing(collection.id, 'collection', collection.name)} 
                                 />
-                                <MdDelete 
+                                <Trash2 
                                     className="delete-icon" 
                                     onClick={() => removeCollection(collection.id)} 
                                 />
@@ -453,7 +449,7 @@ export default function UserCollectionsPanel() {
                                     onDragStart={(e) => handleDragStart(collection, e)}
                                     className="drag-handle-wrapper"
                                 >
-                                    <MdDragIndicator className="drag-handle" />
+                                    <GripVertical className="drag-handle" />
                                 </div>
                                     </>
                                     )}
@@ -490,11 +486,11 @@ export default function UserCollectionsPanel() {
                                         <div className="subcollection-actions">
                                             {editMode && (
                                                 <>
-                                                    <MdEdit 
+                                                    <Edit 
                                                         className="edit-icon" 
                                                         onClick={() => startEditing(sub.id, 'subcollection', sub.name)} 
                                                     />
-                                                    <MdDelete 
+                                                    <Trash2 
                                                         className="delete-icon" 
                                                         onClick={() => removeSubcollection(collection.id, sub.id)} 
                                                     />
@@ -503,7 +499,7 @@ export default function UserCollectionsPanel() {
                                                 onDragStart={(e) => handleSubcollectionDragStart(e, collection, sub)}
                                                 className="drag-handle-wrapper"
                                             >
-                                                <MdDragIndicator className="drag-handle" />
+                                                <GripVertical className="drag-handle" />
                                             </div>
                                                 </>
                                                 )}
@@ -527,26 +523,16 @@ export default function UserCollectionsPanel() {
                                             className={`subcollection-input ${validationStates.subcollections[collection.id]?.isValid === false ? 'error' : ''}`}
                                         />
                                         {validationStates.subcollections[collection.id]?.isValid === false && (
-                                            <div className="error-message">
+                                            <NeonBorderBox error style={{ marginTop: 8, marginBottom: 8 }}>
                                                 {validationStates.subcollections[collection.id].message}
-                                                <MdClose
-                                                    className="error-close"
-                                                    onClick={() => setValidationStates(prev => ({
-                                                        ...prev,
-                                                        subcollections: {
-                                                            ...prev.subcollections,
-                                                            [collection.id]: { isValid: true, message: '' }
-                                                        }
-                                                    }))}
-                                                />
-                                            </div>
+                                            </NeonBorderBox>
                                         )}
                                     </div>
                                     <button
                                         onClick={() => addSubcollection(collection.id)}
                                         className="add-button"
                                     >
-                                        <IoIosAddCircle />
+                                        <PlusCircle />
                                     </button>
                                 </div>
                             )}
@@ -554,7 +540,7 @@ export default function UserCollectionsPanel() {
                         {errors[`drop-${collection.id}`] && (
                             <div className="drop-error-message">
                                 {errors[`drop-${collection.id}`]}
-                                <MdClose
+                                <X
                                     className="error-close"
                                     onClick={() => setErrors(prev => {
                                         const newErrors = { ...prev };
@@ -580,20 +566,13 @@ export default function UserCollectionsPanel() {
                             className={`collection-input ${validationStates.collection.isValid === false ? 'error' : ''}`}
                         />
                         {validationStates.collection.isValid === false && (
-                            <div className="error-message">
+                            <NeonBorderBox error style={{ marginTop: 8, marginBottom: 8 }}>
                                 {validationStates.collection.message}
-                                <MdClose
-                                    className="error-close"
-                                    onClick={() => setValidationStates(prev => ({
-                                        ...prev,
-                                        collection: { isValid: true, message: '' }
-                                    }))}
-                                />
-                            </div>
+                            </NeonBorderBox>
                         )}
                     </div>
                     <button onClick={addCollection} className="add-button">
-                        <IoIosAddCircle />
+                        <PlusCircle />
                     </button>
                 </div>
             )}

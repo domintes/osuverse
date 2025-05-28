@@ -1,13 +1,60 @@
 @use "tailwindcss";
+@use '../src/components/OsuverseDiv.scss' as *;
 
-body {
-  background: radial-gradient(ellipse at 60% 40%, #0b0f1c 70%, #1a2a4d 100%) fixed;
-  color: #c3e6ff;
-  font-family: 'Orbitron Variable', Arial, Helvetica, sans-serif;
+@font-face {
+  font-family: 'Orbitron';
+  src: url('/fonts/Orbitron.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Bruno Ace';
+  src: url('/fonts/BrunoAce-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cracked Code';
+  src: url('/fonts/Cracked-Code.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Rubik Glitch';
+  src: url('/fonts/Rubik-Glitch.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Neotriad';
+  src: url('/fonts/Neotriad.otf') format('opentype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Glitch Inside';
+  src: url('/fonts/Glitch-Inside.otf') format('opentype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Guardian';
+  src: url('/fonts/Guardian.ttf') format('truetype');
+  font-display: swap;
+}
+
+body, html {
   min-height: 100vh;
-  letter-spacing: 0.02em;
-  box-shadow: inset 0 0 120px 0 #1a2a4d99;
+  background: #0a0f2a;
+  color: #f5f5f5;
+  font-family: 'Orbitron', 'Bruno Ace', 'Rubik Glitch', 'Cracked Code', 'Segoe UI', 'Arial', sans-serif;
+  letter-spacing: 0.01em;
+  font-size: 1.08rem;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   overflow-x: hidden;
+}
+
+.app-body {
+  min-height: 100vh;
+  background: transparent;
+  position: relative;
+  z-index: 1;
 }
 
 // Cyberpunk neon glow for focus
@@ -19,9 +66,51 @@ body {
 // Scrollbar styling
 ::-webkit-scrollbar {
   width: 10px;
-  background: #101a2b;
+  background: #181a20;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(90deg, #1a2a4d 60%, #4447b1 100%);
+  background: #23262f;
   border-radius: 8px;
+  box-shadow: 0 0 8px #00e67644;
 }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Orbitron', 'Bruno Ace', 'Rubik Glitch', 'Cracked Code', 'Segoe UI', 'Arial', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+
+a {
+  color: #00e676;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover {
+  color: #fff;
+  text-shadow: 0 0 8px #00e67699;
+}
+
+// Neon border utility
+.neon-border {
+  border: 2.5px solid #fff;
+  border-radius: 18px;
+  box-shadow: 0 0 32px #00e676cc, 0 0 0 2px #fff, 0 0 80px 0 #0a0f2a55;
+}
+
+// Neon glow text
+.neon-text {
+  color: #fff;
+  text-shadow: 0 0 8px #00e676, 0 0 24px #00e67699;
+}
+
+// Animacje motion (przykład)
+.fade-in {
+  animation: fadeIn 0.7s cubic-bezier(.4,2,.6,1) both;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+// OsuverseDiv styl bazowy już zaimportowany na początku pliku

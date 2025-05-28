@@ -294,117 +294,20 @@ export default function SearchInput() {
                     gap: '1rem'
                 }}
             >
-                {currentItems.map(set => {
-                    const beatmaps = set.beatmaps || [];
-                    const isHovered = hoveredItem === set.id;
-                    const singleDiff = beatmaps.length === 1;
-                    return (
-                        <div
-                            key={set.id}
-                            className="search-artist-beatmap-item relative"
-                            style={{
-                                backgroundImage: `url(${set.covers?.cover})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                backgroundRepeat: 'no-repeat',
-                                backgroundColor: 'rgba(0,28,54,0.85)',
-                                backgroundBlendMode: 'darken',
-                            }}
-                            onMouseEnter={() => setHoveredItem(set.id)}
-                            onMouseLeave={() => setHoveredItem(null)}
-                        >
-                            <div className="search-artist-beatmap-thumbnail aspect-square">
-                                <img 
-                                    src={`${set.covers.card}`}
-                                    alt={`${set.title} Beatmap Background`}
-                                    className="w-full h-full object-cover rounded-md"
-                                />
-                            </div>
-                            <div className="search-artist-beatmap-info flex flex-col justify-center">
-                                <div className="search-artist-beatmap-title text-lg font-semibold">
-                                    <a href={`https://osu.ppy.sh/beatmapsets/${set.id}`} target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-700">
-                                        {set.artist} - {set.title}
-                                    </a>
-                                </div>
-                                <div className="search-artist-beatmap-details flex items-center gap-2 text-gray-600">
-                                    <span className="search-artist-beatmap-mapper text-sm">
-                                        mapped by <a href={`https://osu.ppy.sh/users/${set.user_id}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{set.creator}</a>
-                                    </span>
-                                    <span className="search-artist-beatmap-status text-sm px-2 py-1 rounded bg-gray-100">
-                                        {set.status}
-                                    </span>
-                                </div>
-                                {beatmaps.length > 0 && (
-                                    <div className={`search-artist-beatmap-difficulties-wrapper${(singleDiff || isHovered) ? ' show-difficulties' : ''}`}>
-                                        <div className="search-artist-beatmap-difficulties-squares flex gap-1">
-                                            {beatmaps
-                                                .slice()
-                                                .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
-                                                .map((bm) => (
-                                                    <div
-                                                        key={bm.id}
-                                                        className="difficulty-rect border border-gray-300 transition-transform duration-150 hover:scale-110"
-                                                        style={{
-                                                            background: getDiffColor(bm.difficulty_rating),
-                                                            width: '24px',
-                                                            height: '12px',
-                                                            borderRadius: '4px',
-                                                        }}
-                                                        title={bm.version}
-                                                    />
-                                                ))}
-                                        </div>
-                                        {(singleDiff || isHovered) && (
-                                            <div className="search-artist-beatmap-difficulties-details absolute left-0 right-0 bg-white/95 p-3 rounded-md shadow-lg z-10 mt-2">
-                                                {beatmaps
-                                                    .slice()
-                                                    .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
-                                                    .map(bm => {
-                                                        const inCollection = isBeatmapInCollections(bm.id);
-                                                        return (
-                                                            <div key={bm.id} className="flex items-center gap-2 mb-2 last:mb-0">
-                                                                <span 
-                                                                    className="inline-block w-3 h-3 rounded-sm" 
-                                                                    style={{ background: getDiffColor(bm.difficulty_rating) }}
-                                                                />
-                                                                <a 
-                                                                    href={`https://osu.ppy.sh/beatmaps/${bm.id}`} 
-                                                                    target="_blank" 
-                                                                    rel="noopener noreferrer" 
-                                                                    className="font-medium text-blue-700 hover:underline"
-                                                                >
-                                                                    {bm.version}
-                                                                </a>
-                                                                <span className="text-xs text-gray-500">
-                                                                    {bm.difficulty_rating.toFixed(2)}★
-                                                                </span>
-                                                                <button
-                                                                    className={`ml-auto px-2 py-1 rounded text-xs ${inCollection ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}
-                                                                    onClick={() => inCollection ? handleRemoveFromCollection(bm.id) : openAddModal(set, bm, 'single')}
-                                                                >
-                                                                    {inCollection ? 'Remove difficult' : 'Add to collection'}
-                                                                </button>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                {beatmaps.length > 1 && (
-                                                    <div className="flex items-center gap-2 mt-2">
-                                                        <button
-                                                            className={`px-3 py-1 rounded text-xs ${areAllBeatmapsInCollections(beatmaps) ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}
-                                                            onClick={() => openAddModal(set, null, 'all')}
-                                                        >
-                                                            {areAllBeatmapsInCollections(beatmaps) ? 'Remove all difficults' : 'Add all difficults'}
-                                                        </button>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    );
-                })}
+                {currentItems.map(set => (
+                    <BeatmapItem
+                        key={set.id}
+                        set={set}
+                        isHovered={hoveredItem === set.id}
+                        singleDiff={(set.beatmaps || []).length === 1}
+                        openAddModal={openAddModal}
+                        handleRemoveFromCollection={handleRemoveFromCollection}
+                        isBeatmapInCollections={isBeatmapInCollections}
+                        areAllBeatmapsInCollections={areAllBeatmapsInCollections}
+                        hoveredItem={hoveredItem}
+                        setHoveredItem={setHoveredItem}
+                    />
+                ))}
             </div>
             {modalOpen && modalTarget && (
                 <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
@@ -476,6 +379,135 @@ export default function SearchInput() {
                     </button>
                 </div>
             )}
+        </div>
+    );
+}
+
+function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFromCollection, isBeatmapInCollections, areAllBeatmapsInCollections, hoveredItem, setHoveredItem }) {
+    const beatmaps = set.beatmaps || [];
+    // Fallback logic for cover images
+    const coverSources = [
+        set.covers?.card,
+        set.covers?.cover,
+        set.covers?.list,
+        set.covers?.slimcover,
+        set.id ? `https://assets.ppy.sh/beatmaps/${set.id}/covers/cover.jpg` : null,
+        set.id ? `https://assets.ppy.sh/beatmaps/${set.id}/covers/card.jpg` : null,
+        set.id ? `https://assets.ppy.sh/beatmaps/${set.id}/covers/raw.jpg` : null,
+        '/favicon.ico'
+    ].filter(Boolean);
+    const [imgSrc, setImgSrc] = useState(coverSources[0]);
+    useEffect(() => { setImgSrc(coverSources[0]); }, [set.id]);
+    const handleImgError = () => {
+        const idx = coverSources.indexOf(imgSrc);
+        if (idx < coverSources.length - 1) setImgSrc(coverSources[idx + 1]);
+    };
+    return (
+        <div
+            key={set.id}
+            className="search-artist-beatmap-item relative"
+            style={{
+                backgroundImage: `url(${imgSrc})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                backgroundColor: 'rgba(0,28,54,0.85)',
+                backgroundBlendMode: 'darken',
+            }}
+            onMouseEnter={() => setHoveredItem(set.id)}
+            onMouseLeave={() => setHoveredItem(null)}
+        >
+            <div className="search-artist-beatmap-thumbnail aspect-square">
+                <img 
+                    src={imgSrc}
+                    alt={`${set.title} Beatmap Background`}
+                    className="w-full h-full object-cover rounded-md"
+                    onError={handleImgError}
+                    style={{ background: '#101a2b' }}
+                />
+            </div>
+            <div className="search-artist-beatmap-info flex flex-col justify-center">
+                <div className="search-artist-beatmap-title text-lg font-semibold">
+                    <a href={`https://osu.ppy.sh/beatmapsets/${set.id}`} target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-700">
+                        {set.artist} - {set.title}
+                    </a>
+                </div>
+                <div className="search-artist-beatmap-details flex items-center gap-2 text-gray-600">
+                    <span className="search-artist-beatmap-mapper text-sm">
+                        mapped by <a href={`https://osu.ppy.sh/users/${set.user_id}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{set.creator}</a>
+                    </span>
+                    <span className="search-artist-beatmap-status text-sm px-2 py-1 rounded bg-gray-100">
+                        {set.status}
+                    </span>
+                </div>
+                {beatmaps.length > 0 && (
+                    <div className={`search-artist-beatmap-difficulties-wrapper${(singleDiff || isHovered) ? ' show-difficulties' : ''}`}>
+                        <div className="search-artist-beatmap-difficulties-squares flex gap-1">
+                            {beatmaps
+                                .slice()
+                                .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
+                                .map((bm) => (
+                                    <div
+                                        key={bm.id}
+                                        className="difficulty-rect border border-gray-300 transition-transform duration-150 hover:scale-110"
+                                        style={{
+                                            background: getDiffColor(bm.difficulty_rating),
+                                            width: '24px',
+                                            height: '12px',
+                                            borderRadius: '4px',
+                                        }}
+                                        title={bm.version}
+                                    />
+                                ))}
+                        </div>
+                        {(singleDiff || isHovered) && (
+                            <div className="search-artist-beatmap-difficulties-details absolute left-0 right-0 bg-white/95 p-3 rounded-md shadow-lg z-10 mt-2">
+                                {beatmaps
+                                    .slice()
+                                    .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
+                                    .map(bm => {
+                                        const inCollection = isBeatmapInCollections(bm.id);
+                                        return (
+                                            <div key={bm.id} className="flex items-center gap-2 mb-2 last:mb-0">
+                                                <span 
+                                                    className="inline-block w-3 h-3 rounded-sm" 
+                                                    style={{ background: getDiffColor(bm.difficulty_rating) }}
+                                                />
+                                                <a 
+                                                    href={`https://osu.ppy.sh/beatmaps/${bm.id}`} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer" 
+                                                    className="font-medium text-blue-700 hover:underline"
+                                                >
+                                                    {bm.version}
+                                                </a>
+                                                <span className="text-xs text-gray-500">
+                                                    {bm.difficulty_rating.toFixed(2)}★
+                                                </span>
+                                                <button
+                                                    className={`ml-auto px-2 py-1 rounded text-xs ${inCollection ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}
+                                                    onClick={() => inCollection ? handleRemoveFromCollection(bm.id) : openAddModal(set, bm, 'single')}
+                                                >
+                                                    {inCollection ? 'Remove difficult' : 'Add to collection'}
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
+                                {beatmaps.length > 1 && (
+                                    <div className="flex items-center gap-2 mt-2">
+                                        <button
+                                            className={`px-3 py-1 rounded text-xs ${areAllBeatmapsInCollections(beatmaps) ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}
+                                            onClick={() => openAddModal(set, null, 'all')}
+                                        >
+                                            {areAllBeatmapsInCollections(beatmaps) ? 'Remove all difficults' : 'Add all difficults'}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

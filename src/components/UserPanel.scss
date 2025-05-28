@@ -1,0 +1,98 @@
+.user-panel-overlay {
+  background: rgba(10, 15, 42, 0.88);
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  animation: fadeIn 0.2s;
+}
+
+.user-panel-content {
+  background: linear-gradient(120deg, #0a0f2a 60%, #1a2a4d 100%);
+  border-radius: 18px;
+  box-shadow: 0 0 40px 0 #1a2a4d99, 0 0 80px 0 #0a0f2a55;
+  border: 2px solid #7ee0ff44;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 340px;
+  max-width: 96vw;
+  min-height: 320px;
+  max-height: 90vh;
+  padding: 2rem 2.5rem 2rem 2rem;
+  z-index: 1100;
+  color: #c3e6ff;
+  animation: popIn 0.22s;
+  overflow-y: auto;
+}
+
+.user-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.user-panel-avatar img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2.5px solid #7ee0ff;
+  box-shadow: 0 0 16px #7ee0ff99;
+  background: #101a2b;
+}
+
+.user-panel-username {
+  font-size: 1.4rem;
+  font-family: 'Orbitron', 'Bruno Ace', 'Rubik Glitch', Arial, sans-serif;
+  color: #7ee0ff;
+  text-shadow: 0 0 8px #1a2a4d, 0 0 4px #7ee0ff;
+}
+
+.user-panel-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #7ee0ff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.user-panel-close:hover {
+  color: #ff4fd8;
+}
+
+.user-panel-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: #7ee0ff;
+  font-family: 'Orbitron', 'Bruno Ace', Arial, sans-serif;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.25rem 0.75rem;
+  border-radius: 8px;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 8px 0 #0a0f2a44;
+}
+.user-panel-trigger:hover {
+  background: linear-gradient(90deg, #1a2a4d 0%, #2c3678 100%);
+  color: #ff4fd8;
+  box-shadow: 0 2px 16px 0 #1a2a4d99;
+}
+
+.user-panel-homepage-options {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes popIn {
+  from { opacity: 0; transform: translate(-50%, -60%) scale(0.96); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}

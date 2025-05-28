@@ -1,4 +1,5 @@
 import Navigation from '@/components/Navigation';
+import OsuverseBackground from '@/components/OsuverseBackground';
 import "./globals.scss";
 
 export const metadata = {
@@ -10,10 +11,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className="app-body vsc-initialized">
-          <Navigation />
-          <main style={{ flex: 1, padding: '1rem' }}>
-            {children}
-          </main>
+        <OsuverseBackground />
+        <Navigation />
+        <main style={{ flex: 1, padding: '1rem' }}>
+          {children}
+        </main>
       </body>
     </html>
   );

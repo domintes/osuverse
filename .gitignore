@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# old osuverse code
+osuverse_old/*
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

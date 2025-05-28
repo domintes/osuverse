@@ -1,12 +1,23 @@
 'use client';
-import { useEffect, useState } from "react";
+import UserPanel from './UserPanel';
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import './navigation.scss';
+import OsuverseMainSearchBox from './OsuverseMainSearchBox';
 
 export default function Navigation() {
   const [user, setUser] = useState(null);
   const [mounted, setMounted] = useState(false);
+  const [showSearchBox, setShowSearchBox] = useState(false);
+  const [homepageConfig, setHomepageConfig] = useState({
+    showCollections: true,
+    showTags: true,
+    showSearch: true,
+    showRanked: false,
+    showCustomSection: false,
+  });
+  const searchBoxRef = useRef(null);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -25,6 +36,61 @@ export default function Navigation() {
     fetchUser();
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.altKey || e.ctrlKey) && e.key.toLowerCase() === 'o') {
+        e.preventDefault();
+        setShowSearchBox(true);
+        setTimeout(() => {
+          if (searchBoxRef.current) {
+            const input = searchBoxRef.current.querySelector('input[type="text"]');
+            if (input) input.focus();
+          }
+        }, 50);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Zamknij search box po kliknięciu poza nim lub po Escape
+  useEffect(() => {
+    if (!showSearchBox) return;
+    const handleClick = (e) => {
+      if (searchBoxRef.current && !searchBoxRef.current.contains(e.target)) {
+        setShowSearchBox(false);
+      }
+    };
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setShowSearchBox(false);
+    };
+    document.addEventListener('mousedown', handleClick);
+    window.addEventListener('keydown', handleEsc);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [showSearchBox]);
+
+  // Obsługa eksportu danych (placeholder)
+  const handleExport = () => {
+    // TODO: implementacja eksportu danych użytkownika
+    alert('Export coming soon!');
+  };
+
+  // Obsługa zmiany avatara (placeholder)
+  const handleAvatarChange = () => {
+    // TODO: implementacja zmiany avatara
+    alert('Avatar change coming soon!');
+  };
+
+  // Obsługa wylogowania (usuń OAuth i dane)
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout');
+    setUser(null);
+    router.refresh();
+  };
+
   return (
     <nav>
       <ul>
@@ -33,6 +99,12 @@ export default function Navigation() {
         </li>
         <li>
           <Link href="/search" className={pathname === '/search' ? 'active' : ''}>Search</Link>
+        </li>
+        {/* OsuverseMainSearchBox w navbarze, tuż za Search */}
+        <li style={{ position: 'relative', minWidth: 320, maxWidth: 600, zIndex: 20 }}>
+          <div ref={searchBoxRef} style={{ display: showSearchBox ? 'block' : 'none', position: 'absolute', left: 0, top: '100%', width: 480, background: 'none' }}>
+            <OsuverseMainSearchBox />
+          </div>
         </li>
         <li>
           <Link href="/collections" className={pathname === '/collections' ? 'active' : ''}>Collections</Link>
@@ -43,16 +115,14 @@ export default function Navigation() {
         <li style={{ marginLeft: 'auto' }}>
           {mounted && (
             user ? (
-              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <img src={user.avatar_url} alt={user.username} style={{ width: 32, height: 32, borderRadius: '50%' }} />
-                <span>{user.username}</span>
-                <Link href="/api/auth/logout" style={{ marginLeft: 8 }} onClick={async (e) => {
-                  e.preventDefault();
-                  await fetch('/api/auth/logout');
-                  setUser(null);
-                  router.refresh(); // natychmiastowy refresh stanu po wylogowaniu
-                }}>Logout</Link>
-              </span>
+              <UserPanel
+                user={user}
+                onLogout={handleLogout}
+                onExport={handleExport}
+                onAvatarChange={handleAvatarChange}
+                homepageConfig={homepageConfig}
+                setHomepageConfig={setHomepageConfig}
+              />
             ) : (
               <button
                 onClick={() => { window.location.href = "/api/auth/login"; }}

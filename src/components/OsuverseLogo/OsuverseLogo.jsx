@@ -1,6 +1,5 @@
 import React from "react";
 import "./osuverseLogo.scss";
-import '@fontsource-variable/orbitron';
 
 
 export default function OsuverseLogo() {

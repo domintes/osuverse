@@ -9,6 +9,7 @@ import AddBeatmapForm from './OsuverseModal/AddBeatmapForm';
 import { osuverseModalAtom } from '../store/osuverseModalAtom';
 import BeatmapsetList from './BeatmapsetList';
 import './beatmapsetList.scss';
+import OsuverseDiv from './OsuverseDiv';
 
 // TODO: Import Jotai atoms, modal system, and API hooks when ready
 
@@ -231,7 +232,7 @@ const OsuverseMainSearchBox = () => {
   };
 
   return (
-    <div className="osuverse-main-search-box">
+    <OsuverseDiv className="osuverse-main-search-box">
       <div className="search-input-wrapper">
         {/* Input wyszukiwania */}
         <input
@@ -263,7 +264,7 @@ const OsuverseMainSearchBox = () => {
           />
         )}
       </OsuverseModal>
-    </div>
+    </OsuverseDiv>
   );
 };
 

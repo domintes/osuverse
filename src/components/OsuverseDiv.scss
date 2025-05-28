@@ -1,0 +1,20 @@
+.osuverse-div {
+  background: rgba(18, 20, 28, 0.92);
+  border: 3px solid #fff;
+  border-radius: 22px;
+  box-shadow: 0 0 32px 0 #00e676cc, 0 0 0 2px #fff, 0 0 80px 0 #0a0f2a55;
+  padding: 2.5rem 2.5rem 2.5rem 2.5rem;
+  margin: 2.5rem auto;
+  max-width: 900px;
+  min-width: 320px;
+  transition: box-shadow 0.25s, border 0.25s;
+  position: relative;
+  z-index: 2;
+  font-family: 'Orbitron', 'Bruno Ace', 'Rubik Glitch', 'Cracked Code', 'Segoe UI', 'Arial', sans-serif;
+  color: #f5f5f5;
+  overflow: visible;
+}
+.osuverse-div:hover {
+  box-shadow: 0 0 48px 0 #00e676, 0 0 0 2.5px #d0d0d0, 0 0 120px 0 #0a0f2a99;
+  border-color: #d0d0d0;
+}
