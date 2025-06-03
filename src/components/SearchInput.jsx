@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/store/authAtom';
 import { collectionsAtom } from '@/store/collectionAtom';
@@ -32,6 +32,8 @@ export default function SearchInput() {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalTarget, setModalTarget] = useState(null); // { type: 'single'|'all', set, beatmap } or null
     const [difficultyVisible, setDifficultyVisible] = useState({});
+
+    const componentRef = useRef(null);
 
     const toggleDropdown = (id) => setDropdownOpen(prev => ({ ...prev, [id]: !prev[id] }));
 
@@ -115,6 +117,27 @@ export default function SearchInput() {
         return () => { cancelled = true; };
     }, [searchMappers, mapper, token]);
 
+    useEffect(() => {
+        const updateRowCount = () => {
+            if (window.innerWidth > 1200) {
+                setRowCount(4); // 4 wyniki w rzędzie dla dużych ekranów
+            } else if (window.innerWidth > 768) {
+                setRowCount(2); // 2 wyniki w rzędzie dla średnich ekranów
+            } else {
+                setRowCount(1); // 1 wynik w rzędzie dla małych ekranów
+            }
+        };
+
+        updateRowCount(); // Początkowe ustawienie rowCount
+        
+        const handleResize = () => {
+            updateRowCount();
+        };
+        
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const handlePageChange = (page) => {
         setCurrentPage(page);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -168,10 +191,8 @@ export default function SearchInput() {
             ...prev,
             [id]: !prev[id]
         }));
-    };
-
-    return (
-        <div className="search-artist-input-container space-y-4">
+    };    return (
+        <div className="search-artist-input-container space-y-4" ref={componentRef}>
             <div className="search-artist-input-controls flex flex-col space-y-4">
                 <input
                     type="text"
@@ -292,13 +313,11 @@ export default function SearchInput() {
                 <div className="search-artist-results-info text-sm text-gray-500 mb-2">
                     Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, results.length)} of {results.length} results
                 </div>
-            )}
-
-            <div
+            )}            <div
                 className="search-artist-results space-y-4"
                 style={{
                     display: 'grid',
-                    gridTemplateColumns: `repeat(${rowCount}, 1fr)`,
+                    gridTemplateColumns: `repeat(${rowCount}, minmax(0, 1fr))`,
                     gap: '1rem'
                 }}
             >

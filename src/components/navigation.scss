@@ -6,9 +6,17 @@ nav {
   top: 0;
   z-index: 100;
   box-shadow: 0 2px 24px 0 #2f0f3aee, 0 0 40px 0 #3a1a4d99;
-  max-height: 48px;
   background: linear-gradient(90deg, #2f0f3a 80%, #3a1a4d 100%);
   border-bottom: 2px solid #3a1a4d;
+  
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0.4rem 0.6rem;
+    overflow-x: auto;
+  }
 
   ul {
     list-style: none;
@@ -18,12 +26,20 @@ nav {
     flex-direction: row;
     gap: 2rem;
     align-items: center;
+    
+    @media (max-width: 768px) {
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    @media (max-width: 480px) {
+      gap: 0.5rem;
+    }
   }
 
   li {
     margin-bottom: 0;
-  }
-  a {
+  }  a {
     color: #ffcae6;
     text-decoration: none;
     padding: 0.5rem 1.2rem;
@@ -41,6 +57,17 @@ nav {
     );
     box-shadow: 0 2px 8px 0 #2f0f3a44;
     border: 1px solid transparent;
+    
+    @media (max-width: 768px) {
+      font-size: 1rem;
+      padding: 0.4rem 0.9rem;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 0.9rem;
+      padding: 0.3rem 0.6rem;
+      letter-spacing: 0.02em;
+    }
 
     &:hover {
       background: linear-gradient(90deg, #4d1a3a 0%, #780f56 100%);
@@ -53,9 +80,11 @@ nav {
       box-shadow: 0 2px 24px 0 #f264a4cc;
       border: 1px solid #f264a4;
     }
-  }
-  .login-btn {
+  }  .login-btn {
     background: linear-gradient(90deg, #f264a4 60%, #2f0f3a 100%);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color: #fff;
     padding: 0.5rem 1.2rem;
     border-radius: 8px;
@@ -65,12 +94,112 @@ nav {
     box-shadow: 0 2px 12px 0 #f264a433, 0 0 16px 0 #2f0f3a55;
     margin-left: 1rem;
     border: 1px solid #f264a4;
+    
+    @media (max-width: 768px) {
+      font-size: 0.95rem;
+      padding: 0.4rem 0.9rem;
+      margin-left: 0.5rem;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 0.85rem;
+      padding: 0.3rem 0.6rem;
+    }
 
     &:hover {
       background: linear-gradient(90deg, #ff7eba 60%, #2f0f3a 100%);
       color: #fff;
       box-shadow: 0 2px 24px 0 #f264a4cc;
       border: 1px solid #ff7eba;
+    }
+  }
+  
+  .navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      
+      a {
+        color: #f264a4;
+        background: none;
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        
+        &:hover {
+          text-shadow: 0 0 8px #f264a499, 0 0 16px #f264a466;
+          background: none;
+          border: none;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        font-size: 1.3rem;
+      }
+      
+      @media (max-width: 480px) {
+        font-size: 1.2rem;
+      }
+    }
+    
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      z-index: 200;
+      
+      .line {
+        width: 25px;
+        height: 3px;
+        background-color: #f264a4;
+        margin: 3px;
+        border-radius: 3px;
+        transition: all 0.3s ease;
+      }
+      
+      @media (max-width: 768px) {
+        display: flex;
+      }
+    }
+  }
+
+  // Responsywne style dla linków nawigacji
+  .nav-links {
+    @media (max-width: 768px) {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 70%;
+      height: 100vh;
+      flex-direction: column;
+      background: linear-gradient(90deg, #2f0f3a 0%, #3a1a4d 100%);
+      padding: 4rem 1rem 2rem 1rem;
+      gap: 1rem !important;
+      z-index: 100;
+      transition: right 0.3s ease;
+      border-left: 2px solid #f264a4;
+      box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+      overflow-y: auto;
+      
+      &.open {
+        right: 0;
+      }
+      
+      li {
+        width: 100%;
+        margin: 0.5rem 0;
+        
+        a {
+          display: block;
+          width: 100%;
+          text-align: left;
+        }
+      }
     }
   }
 }

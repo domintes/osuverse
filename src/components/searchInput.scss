@@ -1,3 +1,18 @@
+.search-artist-results {
+  width: 100%;
+  margin-top: 1.5rem;
+  
+  @media (max-width: 768px) {
+    gap: 0.75rem !important;
+    margin-top: 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.5rem !important;
+    margin-top: 0.5rem;
+  }
+}
+
 .search-artist-beatmap-item {
     background: linear-gradient(90deg, #2f0f3a 80%, #3a1a4d 100%);
     color: #ffcae6;
@@ -14,6 +29,23 @@
     transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s, background 0.2s;
     grid-template-columns: auto 1fr !important;
     column-gap: 12px;
+    
+    @media (max-width: 768px) {
+        min-height: 64px;
+        max-height: 80px;
+        height: 80px;
+        column-gap: 8px;
+        margin: 8px 0;
+    }
+    
+    @media (max-width: 480px) {
+        min-height: 60px;
+        max-height: 70px;
+        height: 70px;
+        column-gap: 6px;
+        margin: 6px 0;
+        border-radius: 8px;
+    }
 }
 .search-artist-beatmap-item.collapsed {
   max-height: 32px;
@@ -49,6 +81,25 @@
   max-height: 92px;
   overflow: hidden;
   border-radius: 8px;
+  
+  @media (max-width: 768px) {
+    width: 80px;
+    height: 80px;
+    min-width: 64px;
+    min-height: 64px;
+    max-width: 80px;
+    max-height: 80px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 70px;
+    height: 70px;
+    min-width: 60px;
+    min-height: 60px;
+    max-width: 70px;
+    max-height: 70px;
+    border-radius: 6px;
+  }
   transition: width 0.35s, height 0.35s;
   box-shadow: 0 0 12px 0 #1a2a4d99;
   border: 1px solid #4447b1;
@@ -124,6 +175,21 @@
 .search-artist-beatmap-difficulties-wrapper {
   position: relative;
   margin-top: 0.5rem;
+  overflow: hidden;
+  max-height: 48px;
+  transition: max-height 0.3s ease-in-out;
+  
+  &.show-difficulties {
+    max-height: 300px;
+  }
+  
+  @media (max-width: 768px) {
+    margin-top: 0.3rem;
+  }
+  
+  @media (max-width: 480px) {
+    margin-top: 0.2rem;
+  }
 
   .search-artist-beatmap-difficulties-squares {
     display: flex;
@@ -207,5 +273,90 @@
   }
   100% {
     filter: drop-shadow(0 0 12px #7ee0ff66);
+  }
+}
+
+.search-artist-input-select-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  
+  @media (max-width: 1024px) {
+    gap: 0.75rem;
+  }
+  
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
+  
+  .search-artist-filter {
+    flex: 1;
+    min-width: 150px;
+    
+    @media (max-width: 768px) {
+      min-width: calc(50% - 0.5rem);
+      flex: 0 0 calc(50% - 0.5rem);
+    }
+    
+    @media (max-width: 480px) {
+      min-width: 100%;
+      flex: 0 0 100%;
+    }
+  }
+}
+
+.search-artist-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    gap: 0.3rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.2rem;
+    justify-content: space-between;
+  }
+  
+  .search-artist-pagination-button {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #4D2F6C;
+    background: linear-gradient(90deg, #2f0f3a 0%, #3a1a4d 100%);
+    color: #ffcae6;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    
+    &:hover:not(:disabled) {
+      background: linear-gradient(90deg, #3a1a4d 0%, #f264a4 100%);
+      border-color: #f264a4;
+      box-shadow: 0 0 12px #f264a466;
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    @media (max-width: 768px) {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.85rem;
+    }
+    
+    @media (max-width: 480px) {
+      padding: 0.3rem 0.5rem;
+      font-size: 0.8rem;
+    }
+  }
+  
+  .search-artist-pagination-info {
+    @media (max-width: 480px) {
+      font-size: 0.85rem;
+      padding: 0 0.25rem;
+    }
   }
 }

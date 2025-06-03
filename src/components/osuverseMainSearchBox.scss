@@ -8,6 +8,16 @@
   border: 2px solid #f264a4;
   padding: 24px 32px 32px 32px;
   position: relative;
+  
+  @media (max-width: 768px) {
+    padding: 20px 24px 28px 24px;
+    border-radius: 14px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 16px 18px 24px 18px;
+    border-radius: 12px;
+  }
 }
 
 .search-input-wrapper {

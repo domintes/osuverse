@@ -10,6 +10,8 @@ export default function Navigation() {
   const [user, setUser] = useState(null);
   const [mounted, setMounted] = useState(false);
   const [showSearchBox, setShowSearchBox] = useState(false);
+  // Dodajemy stan dla mobilnego menu
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [homepageConfig, setHomepageConfig] = useState({
     showCollections: true,
     showTags: true,
@@ -21,6 +23,11 @@ export default function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
 
+  // Funkcja do zamykania mobilnego menu po kliknięciu w link
+  const handleNavLinkClick = () => {
+    setMobileMenuOpen(false);
+  };
+  
   useEffect(() => {
     setMounted(true);
     async function fetchUser() {
@@ -93,48 +100,73 @@ export default function Navigation() {
 
   return (
     <nav>
-      <ul>
-        <li>
-          <Link href="/" className={pathname === '/' ? 'active' : ''}>Home</Link>
-        </li>
-        <li>
-          <Link href="/search" className={pathname === '/search' ? 'active' : ''}>Search</Link>
-        </li>
-        {/* OsuverseMainSearchBox w navbarze, tuż za Search */}
-        <li style={{ position: 'relative', minWidth: 320, maxWidth: 600, zIndex: 20 }}>
-          <div ref={searchBoxRef} style={{ display: showSearchBox ? 'block' : 'none', position: 'absolute', left: 0, top: '100%', width: 480, background: 'none' }}>
-            <OsuverseMainSearchBox />
-          </div>
-        </li>
-        <li>
-          <Link href="/collections" className={pathname === '/collections' ? 'active' : ''}>Collections</Link>
-        </li>
-        <li>
-          <Link href="/about" className={pathname === '/about' ? 'active' : ''}>About</Link>
-        </li>
-        <li style={{ marginLeft: 'auto' }}>
-          {mounted && (
-            user ? (
-              <UserPanel
-                user={user}
-                onLogout={handleLogout}
-                onExport={handleExport}
-                onAvatarChange={handleAvatarChange}
-                homepageConfig={homepageConfig}
-                setHomepageConfig={setHomepageConfig}
-              />
-            ) : (
-              <button
-                onClick={() => { window.location.href = "/api/auth/login"; }}
-                className="login-btn"
-                type="button"
-              >
-                Login with osu!
-              </button>
-            )
-          )}
-        </li>
-      </ul>
+      <div className="navbar-container">
+        <div className="logo">
+          <Link href="/">Osuverse</Link>
+        </div>
+        <ul className={`nav-links ${mobileMenuOpen ? 'open' : ''}`}>
+          <li>
+            <Link href="/" className={pathname === '/' ? 'active' : ''} onClick={handleNavLinkClick}>Home</Link>
+          </li>
+          <li>
+            <Link href="/search" className={pathname === '/search' ? 'active' : ''} onClick={handleNavLinkClick}>Search</Link>
+          </li>
+          {/* OsuverseMainSearchBox w navbarze, tuż za Search */}
+          <li style={{ 
+            position: 'relative', 
+            minWidth: 'min(320px, 80vw)', 
+            maxWidth: 600, 
+            zIndex: 20,
+            '@media (max-width: 768px)': { minWidth: 'min(280px, 80vw)' },
+            '@media (max-width: 480px)': { minWidth: 'min(240px, 80vw)' }
+          }}>
+            <div ref={searchBoxRef} style={{ 
+              display: showSearchBox ? 'block' : 'none', 
+              position: 'absolute', 
+              left: 0, 
+              top: '100%', 
+              width: 'min(480px, 95vw)', 
+              background: 'none' 
+            }}>
+              <OsuverseMainSearchBox />
+            </div>
+          </li>
+          <li>
+            <Link href="/collections" className={pathname === '/collections' ? 'active' : ''} onClick={handleNavLinkClick}>Collections</Link>
+          </li>
+          <li>
+            <Link href="/about" className={pathname === '/about' ? 'active' : ''} onClick={handleNavLinkClick}>About</Link>
+          </li>
+          <li style={{ marginLeft: 'auto' }}>
+            {mounted && (
+              user ? (
+                <UserPanel
+                  user={user}
+                  onLogout={handleLogout}
+                  onExport={handleExport}
+                  onAvatarChange={handleAvatarChange}
+                  homepageConfig={homepageConfig}
+                  setHomepageConfig={setHomepageConfig}
+                />
+              ) : (
+                <button
+                  onClick={() => { window.location.href = "/api/auth/login"; }}
+                  className="login-btn"
+                  type="button"
+                >
+                  Login with osu!
+                </button>
+              )
+            )}
+          </li>
+        </ul>
+        {/* Przycisk menu hamburgera dla mniejszych ekranów */}
+        <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          <div className="line"></div>
+          <div className="line"></div>
+          <div className="line"></div>
+        </div>
+      </div>
     </nav>
   );
 }
