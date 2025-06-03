@@ -4,10 +4,13 @@ nav {
   padding: 0.5rem 2rem;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
   box-shadow: 0 2px 24px 0 #2f0f3aee, 0 0 40px 0 #3a1a4d99;
   background: linear-gradient(90deg, #2f0f3a 80%, #3a1a4d 100%);
   border-bottom: 2px solid #3a1a4d;
+  background-image: 
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 16px),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 16px);
   
   @media (max-width: 768px) {
     padding: 0.5rem 1rem;
@@ -119,7 +122,7 @@ nav {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    
+    z-index: 72;
     .logo {
       font-size: 1.5rem;
       font-weight: bold;
@@ -200,6 +203,38 @@ nav {
           text-align: left;
         }
       }
+    }
+  }
+
+  // Dodanie stylów dla kontenera wyszukiwania
+  .search-container {
+    position: relative;
+    min-width: min(320px, 80vw);
+    max-width: 600px;
+    z-index: 20;
+    
+    @media (max-width: 768px) {
+      min-width: min(280px, 80vw);
+    }
+    
+    @media (max-width: 480px) {
+      min-width: min(240px, 80vw);
+    }
+  }
+
+  .search-dropdown {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    width: min(480px, 95vw);
+    background: none;
+    
+    &.hidden {
+      display: none;
+    }
+    
+    &.visible {
+      display: block;
     }
   }
 }

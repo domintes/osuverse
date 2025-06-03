@@ -1,13 +1,13 @@
 'use client';
 
 import UserCollectionsPanel from '@/components/UserCollectionsPanel';
-import OsuverseDiv from '@/components/OsuverseDiv';
+import MainOsuverseDiv from '@/components/MainOsuverseDiv';
 
 export default function Collections() {
   return (
-    <OsuverseDiv className="collections-container">
-      <h1 style={{ fontSize: 32, color: '#7ee0ff', textShadow: '0 0 16px #1a2a4d' }}>Collections</h1>
+    <MainOsuverseDiv className="collections-container">
+      <h1 style={{ fontSize: 32, color: '#ea81fb', textShadow: '0 0 16px #2f0f3a' }}>Collections</h1>
       <UserCollectionsPanel />
-    </OsuverseDiv>
+    </MainOsuverseDiv>
   );
 }

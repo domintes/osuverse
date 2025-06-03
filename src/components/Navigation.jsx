@@ -111,23 +111,8 @@ export default function Navigation() {
           <li>
             <Link href="/search" className={pathname === '/search' ? 'active' : ''} onClick={handleNavLinkClick}>Search</Link>
           </li>
-          {/* OsuverseMainSearchBox w navbarze, tuż za Search */}
-          <li style={{ 
-            position: 'relative', 
-            minWidth: 'min(320px, 80vw)', 
-            maxWidth: 600, 
-            zIndex: 20,
-            '@media (max-width: 768px)': { minWidth: 'min(280px, 80vw)' },
-            '@media (max-width: 480px)': { minWidth: 'min(240px, 80vw)' }
-          }}>
-            <div ref={searchBoxRef} style={{ 
-              display: showSearchBox ? 'block' : 'none', 
-              position: 'absolute', 
-              left: 0, 
-              top: '100%', 
-              width: 'min(480px, 95vw)', 
-              background: 'none' 
-            }}>
+          {/* OsuverseMainSearchBox w navbarze, tuż za Search */}          <li className="search-container">
+            <div ref={searchBoxRef} className={`search-dropdown ${showSearchBox ? 'visible' : 'hidden'}`}>
               <OsuverseMainSearchBox />
             </div>
           </li>
@@ -148,10 +133,9 @@ export default function Navigation() {
                   homepageConfig={homepageConfig}
                   setHomepageConfig={setHomepageConfig}
                 />
-              ) : (
-                <button
+              ) : (                <button
                   onClick={() => { window.location.href = "/api/auth/login"; }}
-                  className="login-btn"
+                  className="login-btn grid-pattern"
                   type="button"
                 >
                   Login with osu!

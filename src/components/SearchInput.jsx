@@ -46,6 +46,20 @@ export default function SearchInput() {
         setCurrentPage(1);
     }, [query, filters]);
 
+    // Dostosowanie itemsPerPage na podstawie rowCount, aby uniknąć pustych miejsc
+    useEffect(() => {
+        // Podstawowe wartości dla różnych rowCount
+        const baseValues = {
+            1: 5,  // dla 1 rzędu - 5 elementów
+            2: 10, // dla 2 rzędów - 10 elementów 
+            3: 12, // dla 3 rzędów - 12 elementów
+            4: 16  // dla 4 rzędów - 16 elementów
+        };
+        
+        // Ustawienie odpowiedniej wartości itemsPerPage
+        setItemsPerPage(baseValues[rowCount] || 10);
+    }, [rowCount]);
+
     useEffect(() => {
         if ((!query && !artist && !mapper) || !token) {
             setResults([]);
@@ -191,32 +205,31 @@ export default function SearchInput() {
             ...prev,
             [id]: !prev[id]
         }));
-    };    return (
-        <div className="search-artist-input-container space-y-4" ref={componentRef}>
-            <div className="search-artist-input-controls flex flex-col space-y-4">
+    };    return (        <div className="search-artist-input-container" ref={componentRef}>
+            <div className="search-artist-input-controls">
                 <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search beatmaps"
-                    className="search-artist-input p-2 border rounded-md w-full"
+                    className="search-artist-input"
                 />
-                <div className="flex gap-4 items-center">
+                <div className="search-artist-input-group">
                     <input
                         type="text"
                         value={artist}
                         onChange={(e) => setArtist(e.target.value)}
                         placeholder="Artists filter"
-                        className="search-artist-input p-2 border rounded-md w-full"
+                        className="search-artist-input"
                     />
                     <input
                         type="text"
                         value={mapper}
                         onChange={(e) => setMapper(e.target.value)}
                         placeholder="Mappers filter"
-                        className="search-artist-input p-2 border rounded-md w-full"
+                        className="search-artist-input"
                     />
-                    <label className="flex items-center gap-2 ml-2">
+                    <label className="search-artist-checkbox-label">
                         <input
                             type="checkbox"
                             checked={searchMappers}
@@ -224,15 +237,13 @@ export default function SearchInput() {
                         />
                         <span>search mappers</span>
                     </label>
-                </div>
-
-                <div className="search-artist-input-select-group flex gap-4">
-                    <div className="search-artist-filter flex-1">
-                        <label className="search-artist-filter-label block text-sm font-medium mb-1">Status</label>
+                </div>                <div className="search-artist-input-select-group">
+                    <div className="search-artist-filter">
+                        <label className="search-artist-filter-label">Status</label>
                         <select
                             value={filters.status}
                             onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-                            className="search-artist-select w-full p-2 border rounded-md"
+                            className="search-artist-select"
                         >
                             <option value="all">All Status</option>
                             <option value="ranked">Ranked</option>
@@ -241,12 +252,12 @@ export default function SearchInput() {
                             <option value="graveyard">Graveyard</option>
                         </select>
                     </div>
-                    <div className="search-artist-filter flex-1">
-                        <label className="search-artist-filter-label block text-sm font-medium mb-1">Game Mode</label>
+                    <div className="search-artist-filter">
+                        <label className="search-artist-filter-label">Game Mode</label>
                         <select
                             value={filters.mode}
                             onChange={(e) => setFilters(prev => ({ ...prev, mode: e.target.value }))}
-                            className="search-artist-select w-full p-2 border rounded-md"
+                            className="search-artist-select"
                         >
                             <option value="all">All Modes</option>
                             <option value="osu">osu!</option>
@@ -254,25 +265,52 @@ export default function SearchInput() {
                             <option value="taiko">osu!taiko</option>
                             <option value="fruits">osu!catch</option>
                         </select>
-                    </div>
-                    <div className="search-artist-filter flex-1">
-                        <label className="search-artist-filter-label block text-sm font-medium mb-1">Results per page</label>
+                    </div>                    <div className="search-artist-filter">
+                        <label className="search-artist-filter-label">Results per page</label>
                         <select
                             value={itemsPerPage}
                             onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                            className="search-artist-select w-full p-2 border rounded-md"
+                            className="search-artist-select"
                         >
-                            <option value={10}>10</option>
-                            <option value={20}>20</option>
-                            <option value={50}>50</option>
+                            {rowCount === 1 && (
+                                <>
+                                    <option value={5}>5</option>
+                                    <option value={10}>10</option>
+                                    <option value={15}>15</option>
+                                </>
+                            )}
+                            {rowCount === 2 && (
+                                <>
+                                    <option value={8}>8</option>
+                                    <option value={10}>10</option>
+                                    <option value={12}>12</option>
+                                    <option value={20}>20</option>
+                                </>
+                            )}
+                            {rowCount === 3 && (
+                                <>
+                                    <option value={9}>9</option>
+                                    <option value={12}>12</option>
+                                    <option value={15}>15</option>
+                                    <option value={24}>24</option>
+                                </>
+                            )}
+                            {rowCount === 4 && (
+                                <>
+                                    <option value={8}>8</option>
+                                    <option value={12}>12</option>
+                                    <option value={16}>16</option>
+                                    <option value={20}>20</option>
+                                    <option value={24}>24</option>
+                                </>
+                            )}
                         </select>
-                    </div>
-                    <div className="search-artist-filter flex-1">
-                        <label className="search-artist-filter-label block text-sm font-medium mb-1">Row of results</label>
+                    </div>                    <div className="search-artist-filter">
+                        <label className="search-artist-filter-label">Row of results</label>
                         <select
                             value={rowCount}
                             onChange={e => setRowCount(Number(e.target.value))}
-                            className="search-artist-select search-artist-select-dark w-full p-2 border rounded-md"
+                            className="search-artist-select"
                         >
                             <option value={1}>1</option>
                             <option value={2}>2</option>
@@ -281,40 +319,36 @@ export default function SearchInput() {
                         </select>
                     </div>
                 </div>
-            </div>
-
-            {searchMappers && foundMapper && (
-                <div className="search-mapper-result flex items-center gap-4 p-3 mb-2 bg-gray-900 rounded shadow">
+            </div>            {searchMappers && foundMapper && (
+                <div className="search-artist-mapper-result">
                     <img
                         src={foundMapper.avatar_url}
                         alt={foundMapper.username}
-                        className="w-12 h-12 rounded-full border"
+                        className="search-artist-mapper-avatar"
                     />
-                    <div>
+                    <div className="search-artist-mapper-info">
                         <a
                             href={foundMapper.profile_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="font-bold text-blue-400 hover:underline"
+                            className="search-artist-mapper-name"
                         >
                             {foundMapper.username}
                         </a>
                         {foundMapper.country && (
-                            <span className="ml-2 text-sm text-gray-400">({foundMapper.country})</span>
+                            <span className="search-artist-mapper-country">({foundMapper.country})</span>
                         )}
                     </div>
                 </div>
-            )}
-
-            {loading && <div className="search-artist-loading text-center">Loading...</div>}
-            {error && <div className="search-artist-error text-red-500">{error}</div>}
+            )}            {loading && <div className="search-artist-loading">Loading...</div>}
+            {error && <div className="search-artist-error">{error}</div>}
             
             {results.length > 0 && (
-                <div className="search-artist-results-info text-sm text-gray-500 mb-2">
+                <div className="search-artist-results-info">
                     Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, results.length)} of {results.length} results
                 </div>
-            )}            <div
-                className="search-artist-results space-y-4"
+            )}<div
+                className="search-artist-results"
                 style={{
                     display: 'grid',
                     gridTemplateColumns: `repeat(${rowCount}, minmax(0, 1fr))`,
@@ -336,28 +370,27 @@ export default function SearchInput() {
                         isDifficultyVisible={difficultyVisible[set.id] || false}
                     />
                 ))}
-            </div>
-            {modalOpen && modalTarget && (
-                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
-                        <button className="absolute top-2 right-2 text-gray-500" onClick={closeModal}>✕</button>
-                        <h2 className="text-lg font-bold mb-4">Select collection to add</h2>
-                        <div className="space-y-2 max-h-64 overflow-y-auto">
+            </div>                {modalOpen && modalTarget && (
+                <div className="search-artist-modal-overlay">
+                    <div className="search-artist-modal-content">
+                        <button className="search-artist-modal-close" onClick={closeModal}>✕</button>
+                        <h2 className="search-artist-modal-title">Select collection to add</h2>
+                        <div className="search-artist-modal-items">
                             {collections.collections.length === 0 && <div>No collections found.</div>}
                             {collections.collections.map(col => (
-                                <div key={col.id} className="border rounded p-2 mb-1">
-                                    <div className="flex items-center justify-between">
-                                        <span>{col.name}</span>
-                                        <button className="ml-2 px-2 py-1 bg-blue-500 text-white rounded text-xs" onClick={() => handleAddToCollection(col.id)}>
+                                <div key={col.id} className="search-artist-collection-item">
+                                    <div className="search-artist-collection-header">
+                                        <span className="search-artist-collection-name">{col.name}</span>
+                                        <button className="search-artist-collection-button" onClick={() => handleAddToCollection(col.id)}>
                                             Add
                                         </button>
                                     </div>
                                     {col.subcollections && col.subcollections.length > 0 && (
-                                        <div className="pl-4 mt-1">
+                                        <div className="search-artist-subcollections">
                                             {col.subcollections.map(sub => (
-                                                <div key={sub.id} className="flex items-center justify-between mb-1">
+                                                <div key={sub.id} className="search-artist-subcollection-item">
                                                     <span>{sub.name}</span>
-                                                    <button className="ml-2 px-2 py-1 bg-blue-400 text-white rounded text-xs" onClick={() => handleAddToCollection(col.id, sub.id)}>
+                                                    <button className="search-artist-subcollection-button" onClick={() => handleAddToCollection(col.id, sub.id)}>
                                                         Add
                                                     </button>
                                                 </div>
@@ -369,39 +402,38 @@ export default function SearchInput() {
                         </div>
                     </div>
                 </div>
-            )}
-            {results.length > 0 && (
-                <div className="search-artist-pagination flex justify-center items-center space-x-2 mt-4">
+            )}            {results.length > 0 && (
+                <div className="search-artist-pagination">
                     <button
                         onClick={() => handlePageChange(1)}
                         disabled={currentPage === 1}
-                        className="search-artist-pagination-button px-3 py-1 rounded border disabled:opacity-50"
+                        className="search-artist-pagination-button"
                     >
                         First
                     </button>
                     <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="search-artist-pagination-button px-3 py-1 rounded border disabled:opacity-50"
+                        className="search-artist-pagination-button"
                     >
                         Previous
                     </button>
                     
-                    <span className="search-artist-pagination-info px-4">
+                    <span className="search-artist-pagination-info">
                         Page {currentPage} of {totalPages}
                     </span>
 
                     <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="search-artist-pagination-button px-3 py-1 rounded border disabled:opacity-50"
+                        className="search-artist-pagination-button"
                     >
                         Next
                     </button>
                     <button
                         onClick={() => handlePageChange(totalPages)}
                         disabled={currentPage === totalPages}
-                        className="search-artist-pagination-button px-3 py-1 rounded border disabled:opacity-50"
+                        className="search-artist-pagination-button"
                     >
                         Last
                     </button>
@@ -438,7 +470,7 @@ function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFro
     return (
         <div
             key={set.id}
-            className="search-artist-beatmap-item relative"
+            className="search-artist-beatmap-item"
             style={{
                 backgroundImage: `url(${imgSrc})`,
                 backgroundSize: 'cover',
@@ -450,29 +482,26 @@ function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFro
             onMouseEnter={() => setHoveredItem(set.id)}
             onMouseLeave={() => setHoveredItem(null)}
         >
-            <div className="search-artist-beatmap-thumbnail aspect-square">
-                <img 
+            <div className="search-artist-beatmap-thumbnail">                <img 
                     src={imgSrc}
                     alt={`${set.title} Beatmap Background`}
-                    className="w-full h-full object-cover rounded-md"
                     onError={handleImgError}
                     style={{ background: '#101a2b' }}
                 />
             </div>
-            <div className="search-artist-beatmap-info flex flex-col justify-center">
-                <div className="search-artist-beatmap-title text-lg font-semibold">
-                    <a href={`https://osu.ppy.sh/beatmapsets/${set.id}`} target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-700">
+            <div className="search-artist-beatmap-info">                <div className="search-artist-beatmap-title">
+                    <a href={`https://osu.ppy.sh/beatmapsets/${set.id}`} target="_blank" rel="noopener noreferrer">
                         {set.artist} - {set.title}
                     </a>
                 </div>
-                <div className="search-artist-beatmap-details flex items-center gap-2 text-gray-600">
-                    <span className="search-artist-beatmap-mapper text-sm">
-                        mapped by <a href={`https://osu.ppy.sh/users/${set.user_id}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{set.creator}</a>
+                <div className="search-artist-beatmap-details">
+                    <span className="search-artist-beatmap-mapper">
+                        mapped by <a href={`https://osu.ppy.sh/users/${set.user_id}`} target="_blank" rel="noopener noreferrer">{set.creator}</a>
                     </span>
-                    <span className="search-artist-beatmap-status text-sm px-2 py-1 rounded bg-gray-100">
+                    <span className="search-artist-beatmap-status">
                         {set.status}
                     </span>
-                </div>                        {beatmaps.length > 0 && (
+                </div>{beatmaps.length > 0 && (
                     <>                        <button 
                             className="difficulty-toggle" 
                             onClick={(e) => {
@@ -484,14 +513,14 @@ function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFro
                             {isDifficultyVisible ? '▲' : '▼'}
                         </button>
                         <div className={`search-artist-beatmap-difficulties-wrapper ${isDifficultyVisible ? 'show-difficulties' : ''}`}>
-                            <div className="search-artist-beatmap-difficulties-squares flex gap-1">
+                            <div className="search-artist-beatmap-difficulties-squares">
                                 {beatmaps
                                     .slice()
                                     .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
                                     .map((bm) => (
                                         <div
                                             key={bm.id}
-                                            className="difficulty-rect border border-gray-300 transition-transform duration-150 hover:scale-110"
+                                            className="difficulty-rect"
                                             style={{
                                                 background: getDiffColor(bm.difficulty_rating),
                                                 width: '24px',
@@ -508,36 +537,34 @@ function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFro
                                         .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
                                         .map(bm => {
                                             const inCollection = isBeatmapInCollections(bm.id);
-                                            return (
-                                                <div key={bm.id} className="flex items-center gap-2 mb-2 last:mb-0">
+                                            return (                                <div key={bm.id} className="search-artist-beatmap-difficulty">
                                                     <span 
-                                                        className="inline-block w-3 h-3 rounded-sm" 
+                                                        className="search-artist-beatmap-difficulty-indicator" 
                                                         style={{ background: getDiffColor(bm.difficulty_rating) }}
                                                     />
                                                     <a 
                                                         href={`https://osu.ppy.sh/beatmaps/${bm.id}`} 
                                                         target="_blank" 
                                                         rel="noopener noreferrer" 
-                                                        className="font-medium text-blue-700 hover:underline"
+                                                        className="search-artist-beatmap-difficulty-name"
                                                     >
                                                         {bm.version}
                                                     </a>
-                                                    <span className="text-xs text-gray-500">
+                                                    <span className="search-artist-beatmap-difficulty-rating">
                                                         {bm.difficulty_rating.toFixed(2)}★
                                                     </span>
                                                     <button
-                                                        className={`ml-auto px-2 py-1 rounded text-xs ${inCollection ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}
+                                                        className={`search-artist-beatmap-difficulty-button ${inCollection ? 'remove' : 'add'}`}
                                                         onClick={() => inCollection ? handleRemoveFromCollection(bm.id) : openAddModal(set, bm, 'single')}
                                                     >
                                                         {inCollection ? 'Remove difficult' : 'Add to collection'}
                                                     </button>
                                                 </div>
                                             );
-                                        })}
-                                    {beatmaps.length > 1 && (
-                                        <div className="flex items-center gap-2 mt-2">
+                                        })}                                    {beatmaps.length > 1 && (
+                                        <div className="search-artist-beatmap-difficulty-all">
                                             <button
-                                                className={`px-3 py-1 rounded text-xs ${areAllBeatmapsInCollections(beatmaps) ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}
+                                                className={`search-artist-beatmap-difficulty-button ${areAllBeatmapsInCollections(beatmaps) ? 'remove' : 'add'}`}
                                                 onClick={() => openAddModal(set, null, 'all')}
                                             >
                                                 {areAllBeatmapsInCollections(beatmaps) ? 'Remove all difficults' : 'Add all difficults'}

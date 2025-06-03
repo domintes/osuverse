@@ -58,7 +58,10 @@ body, html {
   min-height: 100vh;
   background: transparent;
   position: relative;
-  z-index: 1;
+  z-index: 3;
+  background-image: 
+    repeating-linear-gradient(90deg, rgba(242, 100, 164, 0.015) 0px, rgba(242, 100, 164, 0.015) 1px, transparent 1px, transparent 20px),
+    repeating-linear-gradient(0deg, rgba(242, 100, 164, 0.015) 0px, rgba(242, 100, 164, 0.015) 1px, transparent 1px, transparent 20px);
 }
 
 // Cyberpunk neon glow for focus
@@ -103,6 +106,13 @@ a:hover {
   border: 2.5px solid #fff;
   border-radius: 18px;
   box-shadow: 0 0 32px #f264a4cc, 0 0 0 2px #fff, 0 0 80px 0 #2f0f3a55;
+}
+
+// Grid pattern background
+.grid-pattern {
+  background-image: 
+    repeating-linear-gradient(90deg, rgba(242, 100, 164, 0.03) 0px, rgba(242, 100, 164, 0.03) 1px, transparent 1px, transparent 16px),
+    repeating-linear-gradient(0deg, rgba(242, 100, 164, 0.03) 0px, rgba(242, 100, 164, 0.03) 1px, transparent 1px, transparent 16px);
 }
 
 // Neon glow text
