@@ -1,5 +1,4 @@
-{
-  "compilerOptions": {
+{  "compilerOptions": {
     "target": "es2020",
     "lib": [
       "dom",
@@ -28,8 +27,14 @@
       ]
     },
     "types": [
+      "node",
+      "react",
+      "react-dom",
       "estree",
       "json-schema"
+    ],
+    "typeRoots": [
+      "./node_modules/@types"
     ]
   },
   "include": [

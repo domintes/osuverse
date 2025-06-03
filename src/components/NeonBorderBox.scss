@@ -53,6 +53,11 @@
               repeating-linear-gradient(0deg, rgba(147,112,219,0.08) 0 1px, transparent 1px 16px);
 }
 
+.neon-border-box.neon-warning .neon-border-grid {
+  background: repeating-linear-gradient(90deg, rgba(255,179,0,0.08) 0 1px, transparent 1px 16px),
+              repeating-linear-gradient(0deg, rgba(255,179,0,0.08) 0 1px, transparent 1px 16px);
+}
+
 .neon-border-content {
   position: relative;
   z-index: 2;
@@ -87,4 +92,102 @@
 .neon-border-box.neon-info {
   border-color: #9370DB;
   box-shadow: 0 0 32px 0 #9370DBcc, 0 0 0 2.5px #fff, 0 0 80px 0 #2f0f3a55;
+}
+
+.neon-border-box.neon-warning {
+  border-color: #ffb300;
+  box-shadow: 0 0 32px 0 #ffb300cc, 0 0 0 2.5px #fff, 0 0 80px 0 #2f0f3a55;
+}
+
+.neon-border-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  margin-top: 0;
+  
+  .neon-error & {
+    color: #ff6b81;
+    text-shadow: 0 0 10px rgba(255, 23, 68, 0.7);
+  }
+  
+  .neon-success & {
+    color: #69f0ae;
+    text-shadow: 0 0 10px rgba(0, 230, 118, 0.7);
+  }
+  
+  .neon-info & {
+    color: #64b5f6;
+    text-shadow: 0 0 10px rgba(30, 136, 229, 0.7);
+  }
+  
+  .neon-warning & {
+    color: #ffd54f;
+    text-shadow: 0 0 10px rgba(255, 179, 0, 0.7);
+  }
+}
+
+.neon-border-message {
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.neon-border-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.neon-border-action {
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background: rgba(0, 0, 0, 0.25);
+  border: 2px solid;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  }
+  
+  &:active {
+    transform: translateY(1px);
+  }
+  
+  &.neon-border-retry {
+    .neon-error & {
+      border-color: #ff1744;
+      color: #ff6b81;
+      
+      &:hover {
+        background: rgba(255, 23, 68, 0.15);
+        box-shadow: 0 0 15px rgba(255, 23, 68, 0.4);
+      }
+    }
+    
+    .neon-warning & {
+      border-color: #ffb300;
+      color: #ffd54f;
+      
+      &:hover {
+        background: rgba(255, 179, 0, 0.15);
+        box-shadow: 0 0 15px rgba(255, 179, 0, 0.4);
+      }
+    }
+  }
+  
+  &.neon-border-close {
+    .neon-error &, .neon-warning &, .neon-info &, .neon-success & {
+      border-color: rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.7);
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
 }

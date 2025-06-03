@@ -101,9 +101,6 @@ export default function Navigation() {
   return (
     <nav>
       <div className="navbar-container">
-        <div className="logo">
-          <Link href="/">Osuverse</Link>
-        </div>
         <ul className={`nav-links ${mobileMenuOpen ? 'open' : ''}`}>
           <li>
             <Link href="/" className={pathname === '/' ? 'active' : ''} onClick={handleNavLinkClick}>Home</Link>

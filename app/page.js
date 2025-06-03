@@ -25,7 +25,6 @@ export default function Home() {
             textShadow: "0 0 24px #2f0f3a, 0 0 8px #ea81fb",
           }}
         >
-          Osuverse
         </h1>
         <SearchPage />
       </div>

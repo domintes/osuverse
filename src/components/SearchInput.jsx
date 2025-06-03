@@ -5,6 +5,7 @@ import { useAtom } from 'jotai';
 import { authAtom } from '@/store/authAtom';
 import { collectionsAtom } from '@/store/collectionAtom';
 import './searchInput.scss';
+import NeonBorderBox from './NeonBorderBox';
 import classNames from 'classnames';
 
 export default function SearchInput() {
@@ -79,20 +80,36 @@ export default function SearchInput() {
                     ...(filters.mode !== 'all' && { mode: filters.mode })
                 });
 
+                // Sprawdzenie, czy sieć jest dostępna
+                if (!navigator.onLine) {
+                    throw new Error('Sieć jest niedostępna. Sprawdź swoje połączenie internetowe.');
+                }
+
                 const res = await fetch(`/api/search?${params.toString()}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                
-                if (!res.ok) {
-                    const errorData = await res.json();
-                    throw new Error(errorData.error || 'Failed to fetch beatmaps');
+                  if (!res.ok) {
+                    if (res.status === 500) {
+                        throw new Error('Wewnętrzny błąd serwera. Spróbuj ponownie później.');
+                    } else if (res.status === 401 || res.status === 403) {
+                        throw new Error('Błąd autoryzacji. Możliwe, że Twoja sesja wygasła. Spróbuj się ponownie zalogować.');
+                    } else if (res.status === 404) {
+                        throw new Error('Nie znaleziono beatmapy lub endpoint API nie istnieje.');
+                    } else {
+                        const errorData = await res.json().catch(() => ({ error: `Błąd HTTP: ${res.status}` }));
+                        throw new Error(errorData.error || 'Błąd pobierania beatmap');
+                    }
                 }
                 
                 const data = await res.json();
                 setResults(data.beatmaps);
             } catch (err) {
                 console.error('Search error:', err.message);
-                setError(err.message);
+                if (err.message === 'Failed to fetch') {
+                    setError('Nie można połączyć się z serwerem. Sprawdź swoje połączenie internetowe lub spróbuj ponownie później.');
+                } else {
+                    setError(err.message);
+                }
                 setResults([]);
             } finally {
                 setLoading(false);
@@ -100,9 +117,7 @@ export default function SearchInput() {
         }, 500);
 
         return () => clearTimeout(timeout);
-    }, [query, artist, mapper, token, filters]);
-
-    useEffect(() => {
+    }, [query, artist, mapper, token, filters]);    useEffect(() => {
         if (!searchMappers || !mapper || !token) {
             setFoundMapper(null);
             return;
@@ -110,8 +125,29 @@ export default function SearchInput() {
         let cancelled = false;
         setFoundMapper(null);
         setLoading(true);
+        setError(null);
+        
+        // Sprawdzenie, czy sieć jest dostępna
+        if (!navigator.onLine) {
+            setError('Sieć jest niedostępna. Sprawdź swoje połączenie internetowe.');
+            setLoading(false);
+            return;
+        }
+
         fetch(`/api/user?username=${encodeURIComponent(mapper)}&token=${encodeURIComponent(token)}`)
-            .then(res => res.ok ? res.json() : null)
+            .then(res => {                if (!res.ok) {
+                    if (res.status === 500) {
+                        throw new Error('Wewnętrzny błąd serwera. Spróbuj ponownie później.');
+                    } else if (res.status === 401 || res.status === 403) {
+                        throw new Error('Błąd autoryzacji. Możliwe, że Twoja sesja wygasła. Spróbuj się ponownie zalogować.');
+                    } else if (res.status === 404) {
+                        throw new Error('Nie znaleziono mappera.');
+                    } else {
+                        throw new Error(`Błąd HTTP: ${res.status}`);
+                    }
+                }
+                return res.json();
+            })
             .then(data => {
                 if (!cancelled && data && data.id) {
                     setFoundMapper({
@@ -126,8 +162,22 @@ export default function SearchInput() {
                     setFoundMapper(null);
                 }
             })
-            .catch(() => !cancelled && setFoundMapper(null))
-            .finally(() => !cancelled && setLoading(false));
+            .catch((err) => {
+                if (!cancelled) {
+                    console.error('Mapper search error:', err.message);
+                    if (err.message === 'Failed to fetch') {
+                        setError('Nie można połączyć się z serwerem. Sprawdź swoje połączenie internetowe lub spróbuj ponownie później.');
+                    } else {
+                        setError(`Błąd wyszukiwania mappera: ${err.message}`);
+                    }
+                    setFoundMapper(null);
+                }
+            })
+            .finally(() => {
+                if (!cancelled) {
+                    setLoading(false);
+                }
+            });
         return () => { cancelled = true; };
     }, [searchMappers, mapper, token]);
 
@@ -151,6 +201,26 @@ export default function SearchInput() {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    // Obserwuj stan połączenia z siecią
+    useEffect(() => {
+        const handleOnlineStatusChange = () => {
+            if (!navigator.onLine && (query || artist || mapper)) {
+                setError('Sieć jest niedostępna. Połączenie internetowe zostało przerwane.');
+            } else if (navigator.onLine && error?.includes('połączenie')) {
+                // Jeśli połączenie zostało przywrócone, wyczyść błąd
+                setError(null);
+            }
+        };
+
+        window.addEventListener('online', handleOnlineStatusChange);
+        window.addEventListener('offline', handleOnlineStatusChange);
+        
+        return () => {
+            window.removeEventListener('online', handleOnlineStatusChange);
+            window.removeEventListener('offline', handleOnlineStatusChange);
+        };
+    }, [query, artist, mapper, error]);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -339,9 +409,26 @@ export default function SearchInput() {
                             <span className="search-artist-mapper-country">({foundMapper.country})</span>
                         )}
                     </div>
-                </div>
-            )}            {loading && <div className="search-artist-loading">Loading...</div>}
-            {error && <div className="search-artist-error">{error}</div>}
+                </div>            )}            {loading && <div className="search-artist-loading">Loading...</div>}            {error && (
+                <NeonBorderBox 
+                    error 
+                    className="search-artist-error-box"
+                    title="Wystąpił błąd:"
+                    message={error}
+                    onRetry={error.includes('połączenie') || error.includes('sieć') ? () => {
+                        // Re-inicjalizacja zapytania
+                        setError(null);
+                        setLoading(true);
+                        setTimeout(() => {
+                            // Symulacja nowej próby
+                            const currentQuery = query;
+                            setQuery("");
+                            setTimeout(() => setQuery(currentQuery), 10);
+                        }, 300);
+                    } : null}
+                    onClose={() => setError(null)}
+                />
+            )}
             
             {results.length > 0 && (
                 <div className="search-artist-results-info">
