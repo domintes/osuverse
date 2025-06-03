@@ -145,9 +145,11 @@
     border-radius: 8px;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s, transform 0.3s, visibility 0s linear 0.3s;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0s linear 0.3s;
     transform: translateY(-5px);
     z-index: 50;
+    max-height: 0;
+    overflow: hidden;
   }
 
   &.show-difficulties .search-artist-beatmap-difficulties-details {
@@ -155,7 +157,8 @@
     opacity: 1;
     pointer-events: auto;
     transform: translateY(0);
-    transition: opacity 0.3s, transform 0.3s, visibility 0s;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, visibility 0s, max-height 0.4s ease-in-out;
+    max-height: 500px;
   }
 }
 
@@ -205,5 +208,4 @@
   100% {
     filter: drop-shadow(0 0 12px #7ee0ff66);
   }
-}
 }

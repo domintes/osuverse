@@ -453,8 +453,7 @@ function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFro
                     <span className="search-artist-beatmap-status text-sm px-2 py-1 rounded bg-gray-100">
                         {set.status}
                     </span>
-                </div>
-                {beatmaps.length > 0 && (
+                </div>                        {beatmaps.length > 0 && (
                     <>                        <button 
                             className="difficulty-toggle" 
                             onClick={(e) => {
@@ -483,9 +482,8 @@ function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFro
                                             title={bm.version}
                                         />
                                     ))}
-                            </div>
-                            {(isDifficultyVisible || singleDiff || isHovered) && (
-                                <div className="search-artist-beatmap-difficulties-details absolute left-0 right-0 bg-white/95 p-3 rounded-md shadow-lg z-10 mt-2">
+                            </div>                            {isDifficultyVisible && (
+                                <div className="search-artist-beatmap-difficulties-details">
                                     {beatmaps
                                         .slice()
                                         .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
