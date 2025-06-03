@@ -2,9 +2,10 @@
   width: 100%;
   max-width: 700px;
   margin: 0 auto;
-  background: #181a20;
+  background: rgba(47, 15, 58, 0.92);
   border-radius: 16px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+  box-shadow: 0 0 24px 0 #f264a4aa, 0 0 0 2px #fff, 0 0 56px 0 #2f0f3a55;
+  border: 2px solid #f264a4;
   padding: 24px 32px 32px 32px;
   position: relative;
 }
@@ -19,15 +20,16 @@ input[type="text"] {
   width: 100%;
   padding: 12px 16px;
   font-size: 1.2rem;
-  border: 2px solid #333;
+  border: 2px solid #3a1a4d;
   border-radius: 8px;
-  background: #23262f;
+  background: #2f0f3a;
   color: #fff;
   outline: none;
-  transition: border 0.2s;
+  transition: border 0.2s, box-shadow 0.2s;
 }
 input[type="text"]:focus {
-  border: 2px solid #00e676;
+  border: 2px solid #f264a4;
+  box-shadow: 0 0 12px #f264a466;
 }
 
 .selected-tags {

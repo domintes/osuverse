@@ -2,11 +2,11 @@
   position: relative;
   padding: 1.5rem 2rem;
   border-radius: 18px;
-  box-shadow: 0 0 32px 0 var(--neon-color, #ff4fd8), 0 0 0 2.5px #fff, 0 0 80px 0 #0a0f2a55;
-  border: 3px solid var(--neon-color, #ff4fd8);
+  box-shadow: 0 0 32px 0 var(--neon-color, #f264a4), 0 0 0 2.5px #fff, 0 0 80px 0 #2f0f3a55;
+  border: 3px solid var(--neon-color, #f264a4);
   overflow: hidden;
   margin: 1.5rem 0;
-  background: rgba(18, 20, 28, 0.92);
+  background: rgba(22, 14, 28, 0.92);
   min-width: 220px;
   min-height: 64px;
 }
@@ -34,8 +34,8 @@
 }
 
 .neon-border-box.neon-info .neon-border-grid {
-  background: repeating-linear-gradient(90deg, rgba(30,136,229,0.08) 0 1px, transparent 1px 16px),
-              repeating-linear-gradient(0deg, rgba(30,136,229,0.08) 0 1px, transparent 1px 16px);
+  background: repeating-linear-gradient(90deg, rgba(147,112,219,0.08) 0 1px, transparent 1px 16px),
+              repeating-linear-gradient(0deg, rgba(147,112,219,0.08) 0 1px, transparent 1px 16px);
 }
 
 .neon-border-content {
@@ -51,15 +51,15 @@
 
 .neon-border-box.neon-error {
   border-color: #ff1744;
-  box-shadow: 0 0 32px 0 #ff1744cc, 0 0 0 2.5px #fff, 0 0 80px 0 #0a0f2a55;
+  box-shadow: 0 0 32px 0 #ff1744cc, 0 0 0 2.5px #fff, 0 0 80px 0 #2f0f3a55;
 }
 
 .neon-border-box.neon-success {
   border-color: #00e676;
-  box-shadow: 0 0 32px 0 #00e676cc, 0 0 0 2.5px #fff, 0 0 80px 0 #0a0f2a55;
+  box-shadow: 0 0 32px 0 #00e676cc, 0 0 0 2.5px #fff, 0 0 80px 0 #2f0f3a55;
 }
 
 .neon-border-box.neon-info {
-  border-color: #1e88e5;
-  box-shadow: 0 0 32px 0 #1e88e5cc, 0 0 0 2.5px #fff, 0 0 80px 0 #0a0f2a55;
+  border-color: #9370DB;
+  box-shadow: 0 0 32px 0 #9370DBcc, 0 0 0 2.5px #fff, 0 0 80px 0 #2f0f3a55;
 }

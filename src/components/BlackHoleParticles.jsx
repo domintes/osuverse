@@ -13,8 +13,7 @@ const FloatingParticles = () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        class Particle {
-            constructor(x, y) {
+        class Particle {            constructor(x, y) {
                 this.x = x;
                 this.y = y;
                 this.size = Math.random() * 3 + 1;
@@ -22,6 +21,9 @@ const FloatingParticles = () => {
                 this.speedY = (Math.random() - 0.5) * 2;
                 this.life = Math.random() * 100 + 200;
                 this.opacity = 1;
+                // Osu! style colors
+                const colors = ['#f264a4', '#ffffff', '#9370DB', '#4D2F6C', '#FFC3E6'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
             }
             update() {
                 this.life--;
@@ -46,27 +48,53 @@ const FloatingParticles = () => {
                 if (this.life < 20) {
                     this.opacity -= 0.05;
                 }
-            }
-            draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(this.opacity, 0.1)})`;
+            }            draw() {
+                const color = this.color.replace(')', `,${Math.max(this.opacity, 0.1)})`).replace('rgb', 'rgba');
+                ctx.fillStyle = color;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
+                
+                // Add glow effect for some particles
+                if (this.size > 2.5) {
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
             }
-        }
-
-        function initParticles() {
+        }        function initParticles() {
+            // Add matrix-like vertical lines occasionally
             setInterval(() => {
-                if (particles.current.length < 150) {
+                const addMatrixLine = Math.random() > 0.85;
+                if (addMatrixLine) {
+                    const x = Math.random() * canvas.width;
+                    for (let i = 0; i < 10; i++) {
+                        particles.current.push(
+                            new Particle(x, Math.random() * canvas.height)
+                        );
+                    }
+                }
+                
+                if (particles.current.length < 180) {
                     particles.current.push(
                         new Particle(Math.random() * canvas.width, Math.random() * canvas.height)
                     );
                 }
             }, 100);
-        }
-
-        function animate() {
-            ctx.fillStyle = "rgba(0, 0, 0, 1)"; // Ensure background is always black
+        }        function animate() {
+            // Cyber-matrix dark background with slight gradient
+            const gradient = ctx.createRadialGradient(
+                canvas.width / 2, 
+                canvas.height / 2, 
+                0, 
+                canvas.width / 2, 
+                canvas.height / 2, 
+                canvas.width
+            );
+            gradient.addColorStop(0, "rgba(47, 15, 58, 1)");
+            gradient.addColorStop(1, "rgba(0, 0, 0, 1)");
+            ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             particles.current = particles.current.filter(particle =>

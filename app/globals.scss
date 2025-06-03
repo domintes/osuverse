@@ -39,7 +39,7 @@
 
 body, html {
   min-height: 100vh;
-  background: #0a0f2a;
+  background: linear-gradient(135deg, #2f0f3a 0%, #1a0a24 100%);
   color: #f5f5f5;
   font-family: 'Orbitron', 'Bruno Ace', 'Rubik Glitch', 'Cracked Code', 'Segoe UI', 'Arial', sans-serif;
   letter-spacing: 0.01em;
@@ -48,6 +48,10 @@ body, html {
   padding: 0;
   box-sizing: border-box;
   overflow-x: hidden;
+  background-image: 
+    linear-gradient(rgba(47, 15, 58, 0.9), rgba(0, 0, 0, 0.95)),
+    repeating-linear-gradient(90deg, rgba(242, 100, 164, 0.05) 0px, rgba(242, 100, 164, 0.05) 1px, transparent 1px, transparent 30px),
+    repeating-linear-gradient(0deg, rgba(242, 100, 164, 0.05) 0px, rgba(242, 100, 164, 0.05) 1px, transparent 1px, transparent 30px);
 }
 
 .app-body {
@@ -59,19 +63,22 @@ body, html {
 
 // Cyberpunk neon glow for focus
 :focus {
-  outline: 2px solid #7ee0ff;
-  box-shadow: 0 0 8px #7ee0ff99;
+  outline: 2px solid #ffaed7;
+  box-shadow: 0 0 8px #f264a499;
 }
 
 // Scrollbar styling
 ::-webkit-scrollbar {
   width: 10px;
-  background: #181a20;
+  background: #1e1420;
 }
 ::-webkit-scrollbar-thumb {
-  background: #23262f;
+  background: #4D2F6C;
   border-radius: 8px;
-  box-shadow: 0 0 8px #00e67644;
+  box-shadow: 0 0 8px #f264a466;
+  background-image: linear-gradient(45deg, rgba(242, 100, 164, 0.1) 25%, transparent 25%, 
+                    transparent 50%, rgba(242, 100, 164, 0.1) 50%, rgba(242, 100, 164, 0.1) 75%, 
+                    transparent 75%, transparent);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -82,26 +89,26 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a {
-  color: #00e676;
+  color: #f264a4;
   text-decoration: none;
   transition: color 0.2s;
 }
 a:hover {
   color: #fff;
-  text-shadow: 0 0 8px #00e67699;
+  text-shadow: 0 0 8px #f264a499;
 }
 
 // Neon border utility
 .neon-border {
   border: 2.5px solid #fff;
   border-radius: 18px;
-  box-shadow: 0 0 32px #00e676cc, 0 0 0 2px #fff, 0 0 80px 0 #0a0f2a55;
+  box-shadow: 0 0 32px #f264a4cc, 0 0 0 2px #fff, 0 0 80px 0 #2f0f3a55;
 }
 
 // Neon glow text
 .neon-text {
   color: #fff;
-  text-shadow: 0 0 8px #00e676, 0 0 24px #00e67699;
+  text-shadow: 0 0 8px #f264a4, 0 0 24px #f264a499;
 }
 
 // Animacje motion (przykład)

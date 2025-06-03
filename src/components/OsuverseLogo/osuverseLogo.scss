@@ -3,9 +3,7 @@
     align-items: center;
     gap: 20px;
     position: relative;
-    background: radial-gradient(circle at 20% 60%, #0a0f2a 60%, #1a2a4d 100%);
     border-radius: 18px;
-    box-shadow: 0 0 60px 10px #0a0f2a, 0 0 120px 0 #1a2a4d99;
     padding: 0.5rem 2rem;
 }
 
@@ -31,17 +29,17 @@
 }
 
 .wonderful-void {
-    z-index: 7;
-    width: 52px;
-    height: 52px;
-    position: absolute;
-    top: 7px;
-    left: 5px;
-    background: radial-gradient(circle, #000 60%, #1a2a4d 100%);
-    border-radius: 50%;
-    animation: glow 3s ease-in-out infinite, eventHorizon 8s linear infinite;
-    box-shadow: 0 0 40px 20px #1a2a4dcc, 0 0 80px 40px #0a0f2a99;
-    border: 2px solid #7ee0ff44;
+        z-index: 7;
+        opacity: 0.7;
+        background: radial-gradient(circle, #000 60%, #1a2a4d 100%);
+        border: 1px solid #7ee0ff44;
+        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        animation: 3s ease-in-out infinite glow, 8s linear infinite eventHorizon;
+        position: absolute;
+        top: 23px;
+        left: 35px;
 }
 
 @keyframes glow {

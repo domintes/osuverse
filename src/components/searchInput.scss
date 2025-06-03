@@ -1,8 +1,8 @@
 .search-artist-beatmap-item {
-    background: linear-gradient(90deg, #0a0f2a 80%, #1a2a4d 100%);
-    color: #c3e6ff;
-    box-shadow: 0 2px 16px 0 #1a2a4d99;
-    border: 1px solid #2c3678;
+    background: linear-gradient(90deg, #2f0f3a 80%, #3a1a4d 100%);
+    color: #ffcae6;
+    box-shadow: 0 2px 16px 0 #f264a455;
+    border: 1px solid #4D2F6C;
     margin: 12px 0;
     display: grid;
     align-items: center;
@@ -29,11 +29,11 @@
   height: auto;
   opacity: 1;
   filter: none;
-  box-shadow: 0 4px 32px 0 #1a2a4dcc;
+  box-shadow: 0 4px 32px 0 #f264a4cc;
   z-index: 2;
-  background: linear-gradient(90deg, #1a2a4d 80%, #4447b1 100%);
-  color: #7ee0ff;
-  border: 1px solid #4447b1;
+  background: linear-gradient(90deg, #3a1a4d 80%, #f264a4 100%);
+  color: #fff;
+  border: 1px solid #f264a4;
 }
 .search-artist-beatmap-item.collapsed:hover,
 .search-artist-beatmap-item.expanded {
