@@ -31,6 +31,7 @@ export default function SearchInput() {
     const [collections, setCollections] = useAtom(collectionsAtom);
     const [modalOpen, setModalOpen] = useState(false);
     const [modalTarget, setModalTarget] = useState(null); // { type: 'single'|'all', set, beatmap } or null
+    const [difficultyVisible, setDifficultyVisible] = useState({});
 
     const toggleDropdown = (id) => setDropdownOpen(prev => ({ ...prev, [id]: !prev[id] }));
 
@@ -160,6 +161,13 @@ export default function SearchInput() {
             delete newBeatmaps[beatmapId];
             return { ...prev, beatmaps: newBeatmaps };
         });
+    };
+
+    const toggleDifficulty = (id) => {
+        setDifficultyVisible(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
     };
 
     return (
@@ -303,9 +311,10 @@ export default function SearchInput() {
                         openAddModal={openAddModal}
                         handleRemoveFromCollection={handleRemoveFromCollection}
                         isBeatmapInCollections={isBeatmapInCollections}
-                        areAllBeatmapsInCollections={areAllBeatmapsInCollections}
-                        hoveredItem={hoveredItem}
+                        areAllBeatmapsInCollections={areAllBeatmapsInCollections}                        hoveredItem={hoveredItem}
                         setHoveredItem={setHoveredItem}
+                        toggleDifficulty={toggleDifficulty}
+                        isDifficultyVisible={difficultyVisible[set.id] || false}
                     />
                 ))}
             </div>
@@ -383,7 +392,7 @@ export default function SearchInput() {
     );
 }
 
-function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFromCollection, isBeatmapInCollections, areAllBeatmapsInCollections, hoveredItem, setHoveredItem }) {
+function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFromCollection, isBeatmapInCollections, areAllBeatmapsInCollections, hoveredItem, setHoveredItem, toggleDifficulty, isDifficultyVisible }) {
     const beatmaps = set.beatmaps || [];
     // Fallback logic for cover images
     const coverSources = [
@@ -397,11 +406,16 @@ function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFro
         '/favicon.ico'
     ].filter(Boolean);
     const [imgSrc, setImgSrc] = useState(coverSources[0]);
-    useEffect(() => { setImgSrc(coverSources[0]); }, [set.id]);
+    
+    useEffect(() => {
+        setImgSrc(coverSources[0]);
+    }, [set.id]);
+    
     const handleImgError = () => {
         const idx = coverSources.indexOf(imgSrc);
         if (idx < coverSources.length - 1) setImgSrc(coverSources[idx + 1]);
     };
+    
     return (
         <div
             key={set.id}
@@ -441,71 +455,82 @@ function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFro
                     </span>
                 </div>
                 {beatmaps.length > 0 && (
-                    <div className={`search-artist-beatmap-difficulties-wrapper${(singleDiff || isHovered) ? ' show-difficulties' : ''}`}>
-                        <div className="search-artist-beatmap-difficulties-squares flex gap-1">
-                            {beatmaps
-                                .slice()
-                                .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
-                                .map((bm) => (
-                                    <div
-                                        key={bm.id}
-                                        className="difficulty-rect border border-gray-300 transition-transform duration-150 hover:scale-110"
-                                        style={{
-                                            background: getDiffColor(bm.difficulty_rating),
-                                            width: '24px',
-                                            height: '12px',
-                                            borderRadius: '4px',
-                                        }}
-                                        title={bm.version}
-                                    />
-                                ))}
-                        </div>
-                        {(singleDiff || isHovered) && (
-                            <div className="search-artist-beatmap-difficulties-details absolute left-0 right-0 bg-white/95 p-3 rounded-md shadow-lg z-10 mt-2">
+                    <>                        <button 
+                            className="difficulty-toggle" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                toggleDifficulty(set.id);
+                            }} 
+                            aria-label="Toggle difficulty details"
+                        >
+                            {isDifficultyVisible ? '▲' : '▼'}
+                        </button>
+                        <div className={`search-artist-beatmap-difficulties-wrapper ${isDifficultyVisible ? 'show-difficulties' : ''}`}>
+                            <div className="search-artist-beatmap-difficulties-squares flex gap-1">
                                 {beatmaps
                                     .slice()
                                     .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
-                                    .map(bm => {
-                                        const inCollection = isBeatmapInCollections(bm.id);
-                                        return (
-                                            <div key={bm.id} className="flex items-center gap-2 mb-2 last:mb-0">
-                                                <span 
-                                                    className="inline-block w-3 h-3 rounded-sm" 
-                                                    style={{ background: getDiffColor(bm.difficulty_rating) }}
-                                                />
-                                                <a 
-                                                    href={`https://osu.ppy.sh/beatmaps/${bm.id}`} 
-                                                    target="_blank" 
-                                                    rel="noopener noreferrer" 
-                                                    className="font-medium text-blue-700 hover:underline"
-                                                >
-                                                    {bm.version}
-                                                </a>
-                                                <span className="text-xs text-gray-500">
-                                                    {bm.difficulty_rating.toFixed(2)}★
-                                                </span>
-                                                <button
-                                                    className={`ml-auto px-2 py-1 rounded text-xs ${inCollection ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}
-                                                    onClick={() => inCollection ? handleRemoveFromCollection(bm.id) : openAddModal(set, bm, 'single')}
-                                                >
-                                                    {inCollection ? 'Remove difficult' : 'Add to collection'}
-                                                </button>
-                                            </div>
-                                        );
-                                    })}
-                                {beatmaps.length > 1 && (
-                                    <div className="flex items-center gap-2 mt-2">
-                                        <button
-                                            className={`px-3 py-1 rounded text-xs ${areAllBeatmapsInCollections(beatmaps) ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}
-                                            onClick={() => openAddModal(set, null, 'all')}
-                                        >
-                                            {areAllBeatmapsInCollections(beatmaps) ? 'Remove all difficults' : 'Add all difficults'}
-                                        </button>
-                                    </div>
-                                )}
+                                    .map((bm) => (
+                                        <div
+                                            key={bm.id}
+                                            className="difficulty-rect border border-gray-300 transition-transform duration-150 hover:scale-110"
+                                            style={{
+                                                background: getDiffColor(bm.difficulty_rating),
+                                                width: '24px',
+                                                height: '12px',
+                                                borderRadius: '4px',
+                                            }}
+                                            title={bm.version}
+                                        />
+                                    ))}
                             </div>
-                        )}
-                    </div>
+                            {(isDifficultyVisible || singleDiff || isHovered) && (
+                                <div className="search-artist-beatmap-difficulties-details absolute left-0 right-0 bg-white/95 p-3 rounded-md shadow-lg z-10 mt-2">
+                                    {beatmaps
+                                        .slice()
+                                        .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
+                                        .map(bm => {
+                                            const inCollection = isBeatmapInCollections(bm.id);
+                                            return (
+                                                <div key={bm.id} className="flex items-center gap-2 mb-2 last:mb-0">
+                                                    <span 
+                                                        className="inline-block w-3 h-3 rounded-sm" 
+                                                        style={{ background: getDiffColor(bm.difficulty_rating) }}
+                                                    />
+                                                    <a 
+                                                        href={`https://osu.ppy.sh/beatmaps/${bm.id}`} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer" 
+                                                        className="font-medium text-blue-700 hover:underline"
+                                                    >
+                                                        {bm.version}
+                                                    </a>
+                                                    <span className="text-xs text-gray-500">
+                                                        {bm.difficulty_rating.toFixed(2)}★
+                                                    </span>
+                                                    <button
+                                                        className={`ml-auto px-2 py-1 rounded text-xs ${inCollection ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}
+                                                        onClick={() => inCollection ? handleRemoveFromCollection(bm.id) : openAddModal(set, bm, 'single')}
+                                                    >
+                                                        {inCollection ? 'Remove difficult' : 'Add to collection'}
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    {beatmaps.length > 1 && (
+                                        <div className="flex items-center gap-2 mt-2">
+                                            <button
+                                                className={`px-3 py-1 rounded text-xs ${areAllBeatmapsInCollections(beatmaps) ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}
+                                                onClick={() => openAddModal(set, null, 'all')}
+                                            >
+                                                {areAllBeatmapsInCollections(beatmaps) ? 'Remove all difficults' : 'Add all difficults'}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </>
                 )}
             </div>
         </div>
