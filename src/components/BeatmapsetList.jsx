@@ -45,7 +45,7 @@ function BeatmapsetListItem({ set, onAddToCollection }) {
             ))}
           </div>
         </div>
-        <button className="add-btn" onClick={() => onAddToCollection?.(set)}>Dodaj do kolekcji</button>
+        <button className="add-btn" onClick={() => onAddToCollection?.(set)}>Add to Collection</button>
       </div>
       
       {set.beatmaps && (

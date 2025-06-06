@@ -428,7 +428,7 @@ function BeatmapsetItem({
                         : onAddToCollection(set, diff);
                     }}
                   >
-                    {inCollection ? 'Usuń' : 'Dodaj'}
+                    {inCollection ? 'Remove' : 'Add'}
                   </button>
                 </div>
               );
@@ -451,8 +451,9 @@ function BeatmapsetItem({
                 }}
               >
                 {areAllBeatmapsInCollection(sortedBeatmaps) 
-                  ? 'Usuń wszystkie poziomy trudności' 
-                  : 'Dodaj wszystkie poziomy trudności'}
+                  ? 'Remove all difficulties'
+                  : 'Add all difficulties'
+                }
               </button>
             </div>
           )}

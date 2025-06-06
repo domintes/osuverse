@@ -128,7 +128,7 @@ export default function BeatmapModal({
           <button className="beatmap-modal-close" onClick={onClose}>×</button>
           
           <h2 className="beatmap-modal-title">
-            Dodaj do kolekcji
+            Add to collection
           </h2>
           
           <div className="beatmap-modal-preview">

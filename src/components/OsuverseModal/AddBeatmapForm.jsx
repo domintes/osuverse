@@ -48,7 +48,7 @@ const AddBeatmapForm = ({ beatmap, onSubmit, onCancel, initialState }) => {
 
   return (
     <form className="add-beatmap-form" onSubmit={handleSubmit}>
-      <h2>Dodaj beatmapę do kolekcji</h2>
+      <h2>Add beatmap to collection</h2>
       <div className="beatmap-preview">
         <div className="cover" style={{ backgroundImage: `url(${beatmap?.cover || ''})` }} />
         <div className="info">
@@ -78,7 +78,7 @@ const AddBeatmapForm = ({ beatmap, onSubmit, onCancel, initialState }) => {
               <button type="button" className="remove-tag-btn" onClick={() => handleRemoveTag(idx)} title="Usuń tag">×</button>
             </div>
           ))}
-          <button type="button" className="add-tag-btn" onClick={handleAddTag}>+ Dodaj tag</button>
+          <button type="button" className="add-tag-btn" onClick={handleAddTag}>+ Add tag</button>
         </div>
       </label>
       <label>Auto Generated Tags:
@@ -86,15 +86,15 @@ const AddBeatmapForm = ({ beatmap, onSubmit, onCancel, initialState }) => {
           {autoTags.map((t, idx) => (
             <span className="auto-tag" key={idx} title={t.section}>{t.tag}</span>
           ))}
-          {autoTags.length === 0 && <span className="auto-tag empty">Brak</span>}
+          {autoTags.length === 0 && <span className="auto-tag empty">None</span>}
         </div>
       </label>
-      <label>Notatki (opcjonalnie):
-        <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Dodaj własny opis lub notatkę..." />
+      <label>Notes (optional):
+        <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Add yours note.." />
       </label>
       <div className="form-actions">
-        <button type="submit" className="submit-btn">Dodaj</button>
-        <button type="button" className="cancel-btn" onClick={onCancel}>Anuluj</button>
+        <button type="submit" className="submit-btn">Add</button>
+        <button type="button" className="cancel-btn" onClick={onCancel}>Cancel</button>
       </div>
     </form>
   );
