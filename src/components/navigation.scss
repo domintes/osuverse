@@ -11,10 +11,11 @@ nav {
   background-image: 
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 16px),
     repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 16px);
-  height: 58px;
+  height: 62px;
   display: flex;
   align-items: center;
-  
+  background-color: #5e236d47;
+
   @media (max-width: 768px) {
     padding: 0.5rem 1rem;
   }

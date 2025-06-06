@@ -14,7 +14,7 @@
 }
 
 .osuverse-logo {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 900;
     color: #ffcae6;
     text-shadow: 0 0 12px #ea81fb, 0 0 24px #2f0f3a, 0 0 8px #b144b1;
@@ -43,8 +43,8 @@
         height: 44px;
         animation: 3s ease-in-out infinite glow, 8s linear infinite eventHorizon;
         position: absolute;
-        top: 23px;
-        left: 35px;
+        top: 4px;
+        left:6px;
 }
 
 @keyframes glow {
