@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { collectionsAtom } from '@/store/collectionAtom';
-import './beatmapModal.scss';
+import './addBeatmapModal.scss';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlusCircle } from 'lucide-react';
 

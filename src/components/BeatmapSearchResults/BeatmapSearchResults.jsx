@@ -7,15 +7,15 @@ import { collectionsAtom } from '@/store/collectionAtom';
 import classNames from 'classnames';
 import AddBeatmapModal from './AddBeatmapModal';
 import './beatmapSearchResults.scss';
-import './beatmapModal.scss';
+import './addBeatmapModal.scss';
 
-export default function BeatmapSearchResults({ 
-  results, 
-  currentPage, 
-  itemsPerPage, 
-  rowCount, 
+export default function BeatmapSearchResults({
+  results,
+  currentPage,
+  itemsPerPage,
+  rowCount,
   onPageChange,
-  totalResults 
+  totalResults
 }) {
   const [collections, setCollections] = useAtom(collectionsAtom);
   const [expandedSets, setExpandedSets] = useState({});
@@ -24,7 +24,7 @@ export default function BeatmapSearchResults({
 
   // Liczenie całkowitej liczby stron
   const totalPages = Math.ceil(totalResults / itemsPerPage);
-  
+
   // Obsługa rozwinięcia/zwinięcia szczegółów beatmapsetu
   const toggleExpanded = (id) => {
     setExpandedSets(prev => ({
@@ -43,49 +43,49 @@ export default function BeatmapSearchResults({
   };
   const handleAddBeatmapSubmit = (formData) => {
     if (!modalTarget) return;
-    
+
     const { set, beatmap, type } = modalTarget;
-    
+
     // Find default "Unsorted" collection if none is selected
     const defaultCollectionId = collections.collections.find(c => c.isSystemCollection && c.name === 'Unsorted')?.id;
-    
+
     // Use the selected collection or fall back to the default
     const collectionId = formData.collectionId || defaultCollectionId;
     const subcollectionId = formData.subcollectionId || null;
-    
+
     if (!collectionId) {
       console.error('No collection selected and no default collection found');
       return;
     }
-    
+
     setCollections(prev => {
       const newBeatmaps = { ...prev.beatmaps };
       const newTags = { ...prev.tags };
-      
+
       // Prepare tags with values
       const userTags = (formData.tags || []).map(tag => {
         if (typeof tag === 'object' && tag.tag) return tag;
         // default tag_value = 0
         return { tag: tag, tag_value: 0 };
       });
-      
+
       // Calculate beatmap_priority based on tag values sum
       const beatmap_priority = userTags.reduce((sum, t) => sum + (parseInt(t.tag_value) || 0), 0);
-      
+
       // Update tag statistics
       userTags.forEach(tagObj => {
         const tagName = tagObj.tag;
         if (!tagName) return;
-        
+
         if (!newTags[tagName]) {
           newTags[tagName] = { count: 0, beatmapIds: [] };
         }
       });
-      
+
       if (type === 'all') {
         set.beatmaps.forEach(bm => {
-          const beatmapData = { 
-            ...bm, 
+          const beatmapData = {
+            ...bm,
             setId: set.id,
             artist: set.artist,
             title: set.title,
@@ -97,14 +97,14 @@ export default function BeatmapSearchResults({
             collectionId,
             subcollectionId
           };
-          
+
           newBeatmaps[bm.id] = beatmapData;
-          
+
           // Update tag statistics
           userTags.forEach(tagObj => {
             const tagName = tagObj.tag;
             if (!tagName) return;
-            
+
             if (!newTags[tagName].beatmapIds.includes(bm.id)) {
               newTags[tagName].count++;
               newTags[tagName].beatmapIds.push(bm.id);
@@ -112,8 +112,8 @@ export default function BeatmapSearchResults({
           });
         });
       } else if (beatmap) {
-        const beatmapData = { 
-          ...beatmap, 
+        const beatmapData = {
+          ...beatmap,
           setId: set.id,
           artist: set.artist,
           title: set.title,
@@ -125,28 +125,28 @@ export default function BeatmapSearchResults({
           collectionId,
           subcollectionId
         };
-        
+
         newBeatmaps[beatmap.id] = beatmapData;
-        
+
         // Update tag statistics
         userTags.forEach(tagObj => {
           const tagName = tagObj.tag;
           if (!tagName) return;
-          
+
           if (!newTags[tagName].beatmapIds.includes(beatmap.id)) {
             newTags[tagName].count++;
             newTags[tagName].beatmapIds.push(beatmap.id);
           }
         });
       }
-      
-      return { 
-        ...prev, 
+
+      return {
+        ...prev,
         beatmaps: newBeatmaps,
         tags: newTags
       };
     });
-    
+
     closeModal();
   };
 
@@ -216,7 +216,7 @@ export default function BeatmapSearchResults({
           >
             First
           </button>
-          
+
           <button
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
@@ -224,7 +224,7 @@ export default function BeatmapSearchResults({
           >
             Previous
           </button>
-          
+
           <span className="beatmap-search-pagination-info">
             Page {currentPage} of {totalPages}
           </span>
@@ -236,7 +236,7 @@ export default function BeatmapSearchResults({
           >
             Next
           </button>
-          
+
           <button
             onClick={() => onPageChange(totalPages)}
             disabled={currentPage === totalPages}
@@ -244,9 +244,9 @@ export default function BeatmapSearchResults({
           >
             Last
           </button>
-        </div>      
-      )}      
-      
+        </div>
+      )}
+
       <AddBeatmapModal
         isOpen={modalOpen && modalTarget !== null}
         onClose={closeModal}
@@ -260,20 +260,20 @@ export default function BeatmapSearchResults({
 }
 
 // Komponent dla pojedynczego beatmapsetu
-function BeatmapsetItem({ 
-  set, 
-  expanded, 
-  toggleExpanded, 
-  onAddToCollection, 
-  onRemoveFromCollection, 
-  isBeatmapInCollection, 
+function BeatmapsetItem({
+  set,
+  expanded,
+  toggleExpanded,
+  onAddToCollection,
+  onRemoveFromCollection,
+  isBeatmapInCollection,
   areAllBeatmapsInCollection,
   getDiffColor,
   getDifficultyClass
 }) {
   // Sortujemy beatmapy według poziomu trudności
   const sortedBeatmaps = [...(set.beatmaps || [])].sort((a, b) => a.difficulty_rating - b.difficulty_rating);
-  
+
   // Fallback dla obrazków okładek
   const coverSources = [
     set.covers?.card,
@@ -287,7 +287,7 @@ function BeatmapsetItem({
 
   const [imgSrc, setImgSrc] = useState(coverSources[0]);
   const [hoverTimer, setHoverTimer] = useState(null);
-  
+
   // Czyszczenie timeoutów przy odmontowaniu komponentu
   useEffect(() => {
     return () => {
@@ -296,7 +296,7 @@ function BeatmapsetItem({
       }
     };
   }, [hoverTimer]);
-  
+
   const handleImgError = () => {
     const idx = coverSources.indexOf(imgSrc);
     if (idx < coverSources.length - 1) setImgSrc(coverSources[idx + 1]);
@@ -309,23 +309,23 @@ function BeatmapsetItem({
       setHoverTimer(null);
     }
   };
-  
+
   return (
-    <div 
+    <div
       className={classNames('beatmapset-item', { 'expanded': expanded })}
       onMouseLeave={handleMouseLeave}
     >
       <div className="beatmapset-cover">
-        <img 
-          src={imgSrc} 
-          alt={`${set.artist} - ${set.title}`} 
-          onError={handleImgError} 
+        <img
+          src={imgSrc}
+          alt={`${set.artist} - ${set.title}`}
+          onError={handleImgError}
         />
       </div>
-      
+
       <div className="beatmapset-info">
         <div className="beatmapset-title">
-          <a 
+          <a
             href={`https://osu.ppy.sh/beatmapsets/${set.id}`}
             target="_blank"
             rel="noopener noreferrer"
@@ -333,9 +333,9 @@ function BeatmapsetItem({
             {set.artist} - {set.title}
           </a>
         </div>
-        
+
         <div className="beatmapset-mapper">
-          mapped by <a 
+          mapped by <a
             href={`https://osu.ppy.sh/users/${set.user_id}`}
             target="_blank"
             rel="noopener noreferrer"
@@ -343,11 +343,11 @@ function BeatmapsetItem({
             {set.creator}
           </a>
         </div>
-        
+
         <div className="beatmapset-preview" onClick={() => toggleExpanded()}>
           <div className="beatmapset-difficulty-squares">
             {sortedBeatmaps.map(diff => (
-              <div 
+              <div
                 key={diff.id}
                 className={`beatmapset-difficulty-square difficulty-${getDifficultyClass(diff.difficulty_rating)}`}
                 title={`${diff.version} (${diff.difficulty_rating.toFixed(2)}★)`}
@@ -356,9 +356,9 @@ function BeatmapsetItem({
           </div>
         </div>
       </div>
-      
+
       {expanded && (
-        <motion.div 
+        <motion.div
           className="beatmapset-difficulties"
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -367,17 +367,17 @@ function BeatmapsetItem({
           onMouseLeave={(e) => {
             // Dodanie zabezpieczeń przed undefined
             const toElement = e.relatedTarget;
-            const isMovingToParent = toElement && 
-              ((toElement?.classList && toElement.classList.contains('beatmapset-item')) || 
-               (toElement?.closest && toElement.closest('.beatmapset-item')));
-              
+            const isMovingToParent = toElement &&
+              ((toElement?.classList && toElement.classList.contains('beatmapset-item')) ||
+                (toElement?.closest && toElement.closest('.beatmapset-item')));
+
             if (!isMovingToParent) {
               // Bezpieczne sprawdzanie, czy kursor jest nad elementem
               setTimeout(() => {
                 try {
                   const isStillOverItem = document.querySelector('.beatmapset-item:hover');
                   const isStillOverPanel = document.querySelector('.beatmapset-difficulties:hover');
-                  
+
                   if (!isStillOverItem && !isStillOverPanel) {
                     toggleExpanded();
                   }
@@ -392,23 +392,23 @@ function BeatmapsetItem({
             {sortedBeatmaps.map(diff => {
               const inCollection = isBeatmapInCollection(diff.id);
               return (
-                <div 
-                  key={diff.id} 
+                <div
+                  key={diff.id}
                   className="beatmapset-difficulty-item"
-                  style={{ 
-                    borderColor: getDiffColor(diff.difficulty_rating).background 
+                  style={{
+                    borderColor: getDiffColor(diff.difficulty_rating).background
                   }}
                 >
                   <div className="beatmapset-difficulty-info">
-                    <div 
+                    <div
                       className={`beatmapset-difficulty-indicator difficulty-${getDifficultyClass(diff.difficulty_rating)}`}
                       style={{ backgroundColor: getDiffColor(diff.difficulty_rating).background }}
                     ></div>
                     <span className="beatmapset-difficulty-stars">
                       {diff.difficulty_rating.toFixed(2)}★
                     </span>
-                    <a 
-                      href={`https://osu.ppy.sh/beatmaps/${diff.id}`} 
+                    <a
+                      href={`https://osu.ppy.sh/beatmaps/${diff.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="beatmapset-difficulty-name"
@@ -416,14 +416,14 @@ function BeatmapsetItem({
                       {diff.version}
                     </a>
                   </div>
-                  <button 
+                  <button
                     className={classNames('beatmapset-difficulty-action', {
                       'add': !inCollection,
                       'remove': inCollection
                     })}
                     onClick={(e) => {
                       e.stopPropagation();
-                      inCollection 
+                      inCollection
                         ? onRemoveFromCollection(diff.id)
                         : onAddToCollection(set, diff);
                     }}
@@ -434,7 +434,7 @@ function BeatmapsetItem({
               );
             })}
           </div>
-          
+
           {sortedBeatmaps.length > 1 && (
             <div className="beatmapset-add-all">
               <button
@@ -450,10 +450,9 @@ function BeatmapsetItem({
                   }
                 }}
               >
-                {areAllBeatmapsInCollection(sortedBeatmaps) 
+                {areAllBeatmapsInCollection(sortedBeatmaps)
                   ? 'Remove all difficulties'
-                  : 'Add all difficulties'
-                }
+                  : 'Add all difficulties'}
               </button>
             </div>
           )}
