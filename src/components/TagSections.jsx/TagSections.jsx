@@ -48,16 +48,22 @@ const getTagGroups = (beatmaps) => {
 const getAllBeatmaps = (collections) => {
     const beatmaps = [];
     const beatmapsData = collections.beatmaps || {};
+    const beatmapsetsData = collections.beatmapsets || {};
     
     // Pobierz wszystkie beatmapy z obiektu beatmaps
     Object.values(beatmapsData).forEach(beatmap => {
+        // Znajdź odpowiedni beatmapset używając setId
+        const beatmapset = beatmapsetsData[beatmap.setId] || {};
+        
+        // Pobierz artystę i mappera bezpośrednio z beatmapy, lub z beatmapsetu jako zapasowe źródło,
+        // lub ustaw 'Unknown' jeśli nie ma danych
         beatmaps.push({
             id: beatmap.id,
-            artist: beatmap.artist_name || 'Unknown',
-            mapper: beatmap.creator_name || 'Unknown',
+            artist: beatmap.artist || beatmapset.artist || 'Unknown',
+            mapper: beatmap.creator || beatmapset.creator || 'Unknown',
             starRating: beatmap.difficulty_rating || 0,
             // Zachowaj oryginalne tagi (mogą być w formie obiektów {tag, tag_value} lub stringów)
-            userTags: beatmap.tags || []
+            userTags: beatmap.userTags || beatmap.tags || []
         });
     });
     

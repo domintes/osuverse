@@ -6,10 +6,14 @@ import MainOsuverseDiv from '@/components/MainOsuverseDiv';
 import TagsSection from '@/components/TagSections.jsx/TagSections';
 import { Edit, Tag } from 'lucide-react';
 import './collections.scss';
+import { useAtom } from "jotai";
+import { collectionsAtom } from "@/store/collectionAtom";
 
 export default function Collections() {
   const [editMode, setEditMode] = useState(false);
+  const [collections, setCollections] = useAtom(collectionsAtom);
 
+  console.log(collections);
   return (
     <MainOsuverseDiv className="collections-container">      <div className="collections-header">
         <h1 style={{ fontSize: 32, color: '#ea81fb', textShadow: '0 0 16px #2f0f3a' }}>Collections</h1>
