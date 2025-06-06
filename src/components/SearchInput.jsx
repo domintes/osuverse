@@ -112,8 +112,9 @@ export default function SearchInput() {
             }
         }, 500);
 
-        return () => clearTimeout(timeout);
-    }, [query, artist, mapper, token, filters]);    useEffect(() => {
+        return () => clearTimeout(timeout);    }, [query, artist, mapper, token, filters]);
+
+    useEffect(() => {
         if (!searchMappers || !mapper || !token) {
             setFoundMapper(null);
             return;
@@ -131,7 +132,8 @@ export default function SearchInput() {
         }
 
         // Fetch mapper data
-        fetch(`/api/user?username=${encodeURIComponent(mapper)}&token=${encodeURIComponent(token)}`)            .then(res => {
+        fetch(`/api/user?username=${encodeURIComponent(mapper)}&token=${encodeURIComponent(token)}`)
+            .then(res => {
                 if (!res.ok) {
                     if (res.status === 500) {
                         throw new Error('Internal server error. Please try again later.');

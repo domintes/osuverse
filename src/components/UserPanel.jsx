@@ -23,10 +23,10 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange, ho
         <button className="user-panel-trigger" title="User settings">          <User />
           <span className="username-span">{user?.username}</span>
         </button>
-      </Dialog.Trigger>
-      <Dialog.Portal>
+      </Dialog.Trigger>      <Dialog.Portal>
         <Dialog.Overlay className="user-panel-overlay" />
         <Dialog.Content className="user-panel-content">
+          <Dialog.Title className="sr-only">User Settings Panel</Dialog.Title>
           <div className="user-panel-header">
             <span className="user-panel-avatar">
               <img src={user?.avatar_url} alt={user?.username} />
@@ -35,7 +35,7 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange, ho
             <Dialog.Close asChild>
               <button className="user-panel-close"><X /></button>
             </Dialog.Close>
-          </div>          <NeonBorderBox info className="neon-border-container">
+          </div><NeonBorderBox info className="neon-border-container">
             <div className="flex-container">
               <LucideImage size={20} />
               <span>Change avatar (soon)</span>

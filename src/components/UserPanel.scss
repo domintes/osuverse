@@ -6,6 +6,19 @@
   animation: fadeIn 0.2s;
 }
 
+/* Screen reader only - visible for assistive technologies but hidden visually */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .user-panel-content {
   background: linear-gradient(120deg, #2f0f3a 60%, #3a1a4d 100%);
   border-radius: 18px;
