@@ -54,18 +54,32 @@ const BeatmapItem = ({ beatmap, collections, onEdit, onDelete, onToggleFavorite 
                 <div className="beatmap-details">
                     <span className="beatmap-difficulty">{beatmap.version} ({beatmap.difficulty_rating.toFixed(2)}★)</span>
                     <span className="beatmap-creator">mapped by {beatmap.creator}</span>
-                </div>
-                <div className="beatmap-tags">
-                    {beatmap.userTags?.map((tag, idx) => (
-                        <div
-                            key={idx}
-                            className={`beatmap-tag ${tag.tag_value > 0 ? 'positive' : tag.tag_value < 0 ? 'negative' : ''}`}
-                            title={`Priority value: ${tag.tag_value}`}
-                        >
-                            {tag.tag}
-                            {tag.tag_value !== 0 && <span className="tag-value">{tag.tag_value}</span>}
-                        </div>
-                    ))}
+                </div>                <div className="beatmap-tags">
+                    {Array.isArray(beatmap.userTags) 
+                        ? beatmap.userTags.map((tag, idx) => {
+                            if (typeof tag === 'string') {
+                                // Nowy format z prostymi stringami
+                                return (
+                                    <div key={idx} className="beatmap-tag">
+                                        {tag}
+                                    </div>
+                                );
+                            } else {
+                                // Stary format z obiektami {tag, tag_value}
+                                return (
+                                    <div
+                                        key={idx}
+                                        className={`beatmap-tag ${tag.tag_value > 0 ? 'positive' : tag.tag_value < 0 ? 'negative' : ''}`}
+                                        title={`Priority value: ${tag.tag_value}`}
+                                    >
+                                        {tag.tag}
+                                        {tag.tag_value !== 0 && <span className="tag-value">{tag.tag_value}</span>}
+                                    </div>
+                                );
+                            }
+                        })
+                        : null
+                    }
                 </div>
             </div>
             {renderPriorityIndicator(beatmap.beatmap_priority || 0)}

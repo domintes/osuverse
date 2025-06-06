@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { PlusCircle } from 'lucide-react';
 import { collectionsAtom } from '@/store/collectionAtom';
+import { selectedTagsAtom } from '@/store/selectedTagsAtom';
 import './userCollectionsPanel.scss';
 import './userCollections.scss';
 import NeonBorderBox from './NeonBorderBox';
@@ -34,6 +35,9 @@ export default function UserCollectionsPanel({ editMode }) {
     const [expandedCollection, setExpandedCollection] = useState(null);
     const [expandedSubcollection, setExpandedSubcollection] = useState(null);
     const [editingBeatmap, setEditingBeatmap] = useState(null);
+    
+    // Dostęp do wybranych tagów z TagSections
+    const [selectedTags] = useAtom(selectedTagsAtom);
 
     // Importowanie hooków
     const { 
@@ -396,10 +400,10 @@ export default function UserCollectionsPanel({ editMode }) {
                         validationStates={validationStates}
                         newSubcollectionNames={newSubcollectionNames}
                         sortMode={sortMode}
-                        sortDirection={sortDirection}
-                        showTagSelector={showTagSelector}
+                        sortDirection={sortDirection}                        showTagSelector={showTagSelector}
                         availableTags={availableTags}
                         activeTags={activeTags}
+                        globalTags={selectedTags}
                         dragOverCollectionId={dragOverCollectionId}
                         onDragStart={handleDragStart}
                         onDragOver={handleDragOver}

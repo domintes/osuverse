@@ -6,10 +6,23 @@
 
 // Funkcja pobierająca beatmapy przypisane do kolekcji lub podkolekcji
 export const getBeatmapsForCollection = (collections, collectionId, subcollectionId = null) => {
-    return Object.values(collections.beatmaps || {}).filter(beatmap =>
+    // Pobierz beatmapy na podstawie ID kolekcji/podkolekcji
+    const beatmaps = Object.values(collections.beatmaps || {}).filter(beatmap =>
         beatmap.collectionId === collectionId &&
         (subcollectionId === null || beatmap.subcollectionId === subcollectionId)
     );
+    
+    // Wzbogać beatmapy o dodatkowe metadane z beatmapsets
+    return beatmaps.map(beatmap => {
+        const beatmapset = collections.beatmapsets?.[beatmap.setId] || {};
+        return {
+            ...beatmap,
+            artist_name: beatmapset.artist_name || beatmap.artist_name || 'Unknown',
+            creator_name: beatmapset.creator_name || beatmap.creator_name || 'Unknown',
+            // Zamień tagi z formatu [{tag, tag_value}] na zwykły string
+            userTags: (beatmap.tags || []).map(tagObj => tagObj.tag)
+        };
+    });
 };
 
 // Funkcja sprawdzająca, czy beatmapa jest w ulubionych

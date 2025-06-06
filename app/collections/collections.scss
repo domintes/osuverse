@@ -8,10 +8,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   padding: 10px 0;
 
   h1 {
     margin: 0;
   }
+}
+
+/* Styl dla kontenera sekcji tagów */
+.tag-sections-container {
+  margin-bottom: 30px;
 }

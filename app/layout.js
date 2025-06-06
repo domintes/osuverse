@@ -10,7 +10,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="app-body vsc-initialized">
+      <body suppressHydrationWarning={true} className="app-body vsc-initialized">
         <OsuverseBackground />
         <Navigation />
         <main>

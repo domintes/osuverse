@@ -26,9 +26,9 @@ const CollectionItem = ({
     newSubcollectionNames,
     sortMode,
     sortDirection,
-    showTagSelector,
-    availableTags,
+    showTagSelector,    availableTags,
     activeTags,
+    globalTags,
     dragOverCollectionId,
     onDragStart,
     onDragOver,
@@ -158,13 +158,13 @@ const CollectionItem = ({
                                     onToggleSortDirection={onToggleSortDirection}
                                     onToggleTagSelector={onToggleTagSelector}
                                     onToggleTagFilter={onToggleTagFilter}
-                                />
-                                <BeatmapList
+                                />                                <BeatmapList
                                     collections={collections}
                                     collectionId={collection.id}
                                     subcollectionId={subcollection.id}
                                     sortBeatmaps={sortBeatmaps}
                                     filterBeatmapsByTags={filterBeatmapsByTags}
+                                    globalTags={collection.globalTags || []}
                                     onEdit={onEditBeatmap}
                                     onDelete={onDeleteBeatmap}
                                     onToggleFavorite={onToggleFavorite}
@@ -217,13 +217,13 @@ const CollectionItem = ({
                         onToggleSortDirection={onToggleSortDirection}
                         onToggleTagSelector={onToggleTagSelector}
                         onToggleTagFilter={onToggleTagFilter}
-                    />
-                    <BeatmapList
+                    />                    <BeatmapList
                         collections={collections}
                         collectionId={collection.id}
                         subcollectionId={null}
                         sortBeatmaps={sortBeatmaps}
                         filterBeatmapsByTags={filterBeatmapsByTags}
+                        globalTags={globalTags}
                         onEdit={onEditBeatmap}
                         onDelete={onDeleteBeatmap}
                         onToggleFavorite={onToggleFavorite}

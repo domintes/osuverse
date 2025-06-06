@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import UserCollectionsPanel from '@/components/UserCollectionsPanel';
 import MainOsuverseDiv from '@/components/MainOsuverseDiv';
+import TagsSection from '@/components/TagSections.jsx/TagSections';
 import { Edit, Tag } from 'lucide-react';
 import './collections.scss';
 
@@ -10,8 +11,7 @@ export default function Collections() {
   const [editMode, setEditMode] = useState(false);
 
   return (
-    <MainOsuverseDiv className="collections-container">
-      <div className="collections-header">
+    <MainOsuverseDiv className="collections-container">      <div className="collections-header">
         <h1 style={{ fontSize: 32, color: '#ea81fb', textShadow: '0 0 16px #2f0f3a' }}>Collections</h1>
         <button 
           className={`edit-mode-toggle ${editMode ? 'active' : ''}`}
@@ -40,6 +40,10 @@ export default function Collections() {
           )}
         </button>
       </div>
+      
+      {/* Komponent sekcji tagów - wyświetlany tylko w trybie wyświetlania */}
+      {!editMode && <TagsSection />}
+      
       <UserCollectionsPanel editMode={editMode} />
     </MainOsuverseDiv>
   );

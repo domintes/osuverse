@@ -1,6 +1,7 @@
 import React from 'react'
 import { useAtom } from 'jotai'
-import { collectionAtom, selectedTagsAtom } from '../state/atoms'
+import { collectionsAtom } from '../../store/collectionAtom'
+import { selectedTagsAtom } from '../../store/selectedTagsAtom'
 import './tagSections.scss';
 
 
@@ -27,28 +28,65 @@ const getTagGroups = (beatmaps) => {
         if (stars < 5.71) range = '4.99-5.70*'
         else if (stars < 6.60) range = '5.71-6.59*'
         else range = '6.60-7.69*'
-        groups.Stars[range] = (groups.Stars[range] || 0) + 1
-
-        // User Tags
+        groups.Stars[range] = (groups.Stars[range] || 0) + 1        // User Tags
         const userTags = map.userTags || []
-        userTags.forEach(tag => {
-            groups['User Tags'][tag] = (groups['User Tags'][tag] || 0) + 1
-        })
+        if (Array.isArray(userTags)) {
+            userTags.forEach(tag => {
+                // Sprawdź czy to string czy obiekt z tagiem
+                const tagName = typeof tag === 'string' ? tag : (tag && tag.tag ? tag.tag : null);
+                if (tagName) {
+                    groups['User Tags'][tagName] = (groups['User Tags'][tagName] || 0) + 1;
+                }
+            });
+        }
     })
 
     return groups
+}
+
+// Funkcja pobierająca wszystkie beatmapy z kolekcji i podkolekcji
+const getAllBeatmaps = (collections) => {
+    const beatmaps = [];
+    const beatmapsData = collections.beatmaps || {};
+    
+    // Pobierz wszystkie beatmapy z obiektu beatmaps
+    Object.values(beatmapsData).forEach(beatmap => {
+        beatmaps.push({
+            id: beatmap.id,
+            artist: beatmap.artist_name || 'Unknown',
+            mapper: beatmap.creator_name || 'Unknown',
+            starRating: beatmap.difficulty_rating || 0,
+            // Zachowaj oryginalne tagi (mogą być w formie obiektów {tag, tag_value} lub stringów)
+            userTags: beatmap.tags || []
+        });
+    });
+    
+    return beatmaps;
 }
 
 // Czy tag pasuje do beatmapy
 const doesTagMatch = (map, selectedTags) => {
     return selectedTags.every(tag => {
         const lower = tag.toLowerCase()
+        
+        // Bezpieczne przetwarzanie tagów użytkownika
+        const userTags = [];
+        if (Array.isArray(map.userTags)) {
+            map.userTags.forEach(t => {
+                if (typeof t === 'string') {
+                    userTags.push(t.toLowerCase());
+                } else if (t && typeof t === 'object' && t.tag) {
+                    userTags.push(t.tag.toLowerCase());
+                }
+            });
+        }
+            
         return (
             map.artist?.toLowerCase() === lower ||
             map.mapper?.toLowerCase() === lower ||
-            (map.userTags || []).map(t => t.toLowerCase()).includes(lower) ||
+            userTags.includes(lower) ||
             (
-                lower.includes('star') &&
+                lower.includes('*') &&
                 (
                     (lower === '4.99-5.70*' && map.starRating < 5.71) ||
                     (lower === '5.71-6.59*' && map.starRating >= 5.71 && map.starRating < 6.6) ||
@@ -60,19 +98,20 @@ const doesTagMatch = (map, selectedTags) => {
 }
 
 const TagsSection = () => {
-    const [collection] = useAtom(collectionAtom)
+    const [collections] = useAtom(collectionsAtom)
     const [selectedTags, setSelectedTags] = useAtom(selectedTagsAtom)
     // Add state for toggling tag group visibility
     const [visibleGroups, setVisibleGroups] = React.useState({
+        'User Tags': true,
         Artists: true,
         Mappers: true,
-        Stars: true,
-        'User Tags': true
-    })
-
+        Stars: true
+    })    // Pobierz wszystkie beatmapy ze wszystkich kolekcji
+    const allBeatmaps = getAllBeatmaps(collections)
+    
     const filtered = selectedTags.length
-        ? collection.filter(map => doesTagMatch(map, selectedTags))
-        : collection
+        ? allBeatmaps.filter(map => doesTagMatch(map, selectedTags))
+        : allBeatmaps
 
     const tagGroups = getTagGroups(filtered)
 
@@ -89,16 +128,15 @@ const TagsSection = () => {
         setVisibleGroups(prev => ({ ...prev, [group]: !prev[group] }))
     }
 
-    return (
-        <div>
-            <div style={{ display: 'flex', gap: '1.5rem', marginBottom: 16 }}>
+    return (        <div className="tag-sections-container">
+            <h2 className="tag-sections-title">Collection Tags Filter</h2>
+            <div className="tag-groups-toggle">
                 {Object.keys(tagGroups).map(groupName => (
-                    <label key={groupName} style={{ fontFamily: 'Orbitron', fontSize: 15 }}>
+                    <label key={groupName} className="tag-group-toggle">
                         <input
                             type="checkbox"
                             checked={visibleGroups[groupName]}
                             onChange={() => toggleGroup(groupName)}
-                            style={{ marginRight: 6 }}
                         />
                         {groupName}
                     </label>
@@ -106,9 +144,9 @@ const TagsSection = () => {
             </div>
             {Object.entries(tagGroups).map(([groupName, tags]) => (
                 visibleGroups[groupName] && (
-                    <div key={groupName}>
-                        <h3 style={{ fontFamily: 'Orbitron', fontSize: '17px', marginBottom: '8px', marginTop: '24px' }}>{groupName}</h3>
-                        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    <div key={groupName} className="tag-group">
+                        <h3 className="tag-group-title">{groupName}</h3>
+                        <div className="tags-list">
                             {Object.entries(tags).map(([tag, count]) => {
                                 const isActive = selectedTags.includes(tag)
                                 return (
@@ -117,7 +155,7 @@ const TagsSection = () => {
                                         className={`tag-button ${isActive ? 'tag-button-active' : ''}`}
                                         onClick={() => toggleTag(tag)}
                                     >
-                                        {tag} ({count})
+                                        {groupName === 'User Tags' ? `#${tag}` : tag} ({count})
                                     </button>
                                 )
                             })}

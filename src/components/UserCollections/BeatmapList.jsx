@@ -15,12 +15,13 @@ const BeatmapList = ({
     subcollectionId, 
     sortBeatmaps,
     filterBeatmapsByTags,
+    globalTags = [],
     onEdit,
     onDelete,
     onToggleFavorite 
 }) => {
     let beatmaps = getBeatmapsForCollection(collections, collectionId, subcollectionId);
-    beatmaps = filterBeatmapsByTags(beatmaps);
+    beatmaps = filterBeatmapsByTags(beatmaps, globalTags);
     beatmaps = sortBeatmaps(beatmaps);
 
     if (beatmaps.length === 0) {
