@@ -38,9 +38,8 @@ const OsuverseModal = ({ modalId, children }) => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.96, opacity: 0 }}
                 transition={{ duration: 0.22 }}
-              >
-                <Dialog.Close asChild>
-                  <button className="osuverse-modal-close" aria-label="Zamknij modal">
+              >                <Dialog.Close asChild>
+                  <button className="osuverse-modal-close" aria-label="Close modal">
                     <X size={32} />
                   </button>
                 </Dialog.Close>

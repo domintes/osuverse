@@ -6,7 +6,9 @@ import MainOsuverseDiv from '@/components/MainOsuverseDiv';
 import BeatmapSearchResults from '@/components/BeatmapSearchResults/BeatmapSearchResults';
 import { useAtom } from 'jotai';
 import { authAtom } from '@/store/authAtom';
+import OsuversePopup from '@/components/OsuversePopup/OsuversePopup';
 import '@/components/BeatmapSearchResults/beatmapSearchResults.scss';
+import '@/components/OsuversePopup/osuversePopup.scss';
 import './search.scss';
 
 export default function SearchPage() {
@@ -43,15 +45,14 @@ export default function SearchPage() {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
-            });
-            if (!res.ok) throw new Error('Błąd podczas wyszukiwania');
+            });            if (!res.ok) throw new Error('Error during search');
 
             const data = await res.json();
             setResults(data.beatmaps || []);
             setCurrentPage(1);
         } catch (err) {
-            console.error('Błąd wyszukiwania:', err);
-            setError('Nie udało się pobrać wyników. Spróbuj ponownie później.');
+            console.error('Search error:', err);
+            setError('Failed to fetch results. Please try again later.');
             setResults([]);
         } finally {
             setLoading(false);
@@ -176,19 +177,10 @@ export default function SearchPage() {
                 <div className="beatmap-search-error">
                     {error}
                 </div>
-            )}
-
-            {results.length > 0 && (
+            )}            {results.length > 0 && (
                 <div className="beatmap-search-results-info">
                     Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, results.length)} of {results.length} results
-                    <div className="beatmap-search-instructions">
-                        <div className="beatmap-search-instructions-title">Jak używać:</div>
-                        <ul className="beatmap-search-instructions-list">
-                            <li>Kliknij na beatmapę, aby rozwinąć wszystkie poziomy trudności</li>
-                            <li>Możesz dodać pojedynczy poziom trudności lub całą beatmapę do kolekcji</li>
-                            <li>Po kliknięciu &quot;Dodaj&quot; możesz przypisać własne tagi do beatmapy</li>
-                        </ul>
-                    </div>
+                    <OsuversePopup buttonClassName="beatmap-search-help-button" />
                 </div>
             )}
 

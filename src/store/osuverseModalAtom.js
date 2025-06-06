@@ -1,4 +1,4 @@
 import { atomWithStorage } from 'jotai/utils';
 
-// Przechowuje stan wszystkich modali (otwarte/zamknięte, dane formularzy, itp.)
+// Stores the state of all modals (open/closed, form data, etc.)
 export const osuverseModalAtom = atomWithStorage('osuverseModals', {});

@@ -146,7 +146,7 @@
 
 .beatmap-search-instructions {
   margin-top: 12px;
-  padding: 12px;
+  padding: 10px 15px;
   background: rgba(47, 15, 58, 0.3);
   border: 1px solid rgba(234, 129, 251, 0.3);
   border-radius: 8px;
@@ -154,6 +154,23 @@
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.beatmap-search-help-button {
+  margin-left: 10px;
+  background-color: rgba(47, 15, 58, 0.3);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: rgba(234, 129, 251, 0.3);
+    transform: scale(1.1);
+  }
 }
 
 .beatmap-search-instructions-title {

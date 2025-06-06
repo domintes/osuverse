@@ -88,25 +88,23 @@ export default function SearchInput() {
                 const res = await fetch(`/api/search?${params.toString()}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                  if (!res.ok) {
-                    if (res.status === 500) {
-                        throw new Error('Wewnętrzny błąd serwera. Spróbuj ponownie później.');
+                  if (!res.ok) {                    if (res.status === 500) {
+                        throw new Error('Internal server error. Please try again later.');
                     } else if (res.status === 401 || res.status === 403) {
-                        throw new Error('Błąd autoryzacji. Możliwe, że Twoja sesja wygasła. Spróbuj się ponownie zalogować.');
+                        throw new Error('Authorization error. Your session may have expired. Please try logging in again.');
                     } else if (res.status === 404) {
-                        throw new Error('Nie znaleziono beatmapy lub endpoint API nie istnieje.');
+                        throw new Error('Beatmap not found or API endpoint does not exist.');
                     } else {
-                        const errorData = await res.json().catch(() => ({ error: `Błąd HTTP: ${res.status}` }));
-                        throw new Error(errorData.error || 'Błąd pobierania beatmap');
+                        const errorData = await res.json().catch(() => ({ error: `HTTP Error: ${res.status}` }));
+                        throw new Error(errorData.error || 'Error fetching beatmap');
                     }
                 }
                 
                 const data = await res.json();
                 setResults(data.beatmaps);
             } catch (err) {
-                console.error('Search error:', err.message);
-                if (err.message === 'Failed to fetch') {
-                    setError('Nie można połączyć się z serwerem. Sprawdź swoje połączenie internetowe lub spróbuj ponownie później.');
+                console.error('Search error:', err.message);                if (err.message === 'Failed to fetch') {
+                    setError('Cannot connect to the server. Check your internet connection or try again later.');
                 } else {
                     setError(err.message);
                 }
@@ -127,9 +125,8 @@ export default function SearchInput() {
         setLoading(true);
         setError(null);
         
-        // Sprawdzenie, czy sieć jest dostępna
-        if (!navigator.onLine) {
-            setError('Sieć jest niedostępna. Sprawdź swoje połączenie internetowe.');
+        // Sprawdzenie, czy sieć jest dostępna        if (!navigator.onLine) {
+            setError('Network is unavailable. Check your internet connection.');
             setLoading(false);
             return;
         }
@@ -137,13 +134,13 @@ export default function SearchInput() {
         fetch(`/api/user?username=${encodeURIComponent(mapper)}&token=${encodeURIComponent(token)}`)
             .then(res => {                if (!res.ok) {
                     if (res.status === 500) {
-                        throw new Error('Wewnętrzny błąd serwera. Spróbuj ponownie później.');
+                        throw new Error('Internal server error. Please try again later.');
                     } else if (res.status === 401 || res.status === 403) {
-                        throw new Error('Błąd autoryzacji. Możliwe, że Twoja sesja wygasła. Spróbuj się ponownie zalogować.');
+                        throw new Error('Authorization error. Your session may have expired. Please try logging in again.');
                     } else if (res.status === 404) {
-                        throw new Error('Nie znaleziono mappera.');
+                        throw new Error('Mapper not found.');
                     } else {
-                        throw new Error(`Błąd HTTP: ${res.status}`);
+                        throw new Error(`HTTP Error: ${res.status}`);
                     }
                 }
                 return res.json();
@@ -164,11 +161,10 @@ export default function SearchInput() {
             })
             .catch((err) => {
                 if (!cancelled) {
-                    console.error('Mapper search error:', err.message);
-                    if (err.message === 'Failed to fetch') {
-                        setError('Nie można połączyć się z serwerem. Sprawdź swoje połączenie internetowe lub spróbuj ponownie później.');
+                    console.error('Mapper search error:', err.message);                    if (err.message === 'Failed to fetch') {
+                        setError('Cannot connect to the server. Check your internet connection or try again later.');
                     } else {
-                        setError(`Błąd wyszukiwania mappera: ${err.message}`);
+                        setError(`Mapper search error: ${err.message}`);
                     }
                     setFoundMapper(null);
                 }
@@ -204,11 +200,10 @@ export default function SearchInput() {
 
     // Obserwuj stan połączenia z siecią
     useEffect(() => {
-        const handleOnlineStatusChange = () => {
-            if (!navigator.onLine && (query || artist || mapper)) {
-                setError('Sieć jest niedostępna. Połączenie internetowe zostało przerwane.');
-            } else if (navigator.onLine && error?.includes('połączenie')) {
-                // Jeśli połączenie zostało przywrócone, wyczyść błąd
+        const handleOnlineStatusChange = () => {            if (!navigator.onLine && (query || artist || mapper)) {
+                setError('Network is unavailable. Internet connection was interrupted.');
+            } else if (navigator.onLine && error?.includes('connect')) {
+                // If connection was restored, clear the error
                 setError(null);
             }
         };
@@ -409,13 +404,12 @@ export default function SearchInput() {
                             <span className="search-artist-mapper-country">({foundMapper.country})</span>
                         )}
                     </div>
-                </div>            )}            {loading && <div className="search-artist-loading">Loading...</div>}            {error && (
-                <NeonBorderBox 
+                </div>            )}            {loading && <div className="search-artist-loading">Loading...</div>}            {error && (                <NeonBorderBox 
                     error 
                     className="search-artist-error-box"
-                    title="Wystąpił błąd:"
+                    title="An error occurred:"
                     message={error}
-                    onRetry={error.includes('połączenie') || error.includes('sieć') ? () => {
+                    onRetry={error.includes('connect') || error.includes('network') ? () => {
                         // Re-inicjalizacja zapytania
                         setError(null);
                         setLoading(true);

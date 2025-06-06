@@ -5,7 +5,6 @@ import '../components/MatrixBackground.scss';
 const MatrixBackground = () => {
   const containerRef = useRef(null);
   const columnsRef = useRef([]);
-
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -26,14 +25,18 @@ const MatrixBackground = () => {
       column.className = 'matrix-column';
       column.style.left = `${i * 20 + Math.random() * 10}px`;
       
-      const duration = Math.random() * 3 + 2;
-      const delay = Math.random() * 2;
+      // Vary speed more significantly to create more dynamic effect
+      const duration = Math.random() * 4 + 3; // 3-7 seconds
+      const delay = Math.random() * 3; // 0-3 seconds delay
       
       column.style.animationDuration = `${duration}s`;
       column.style.animationDelay = `${delay}s`;
       
-      // Generate random characters
-      const charCount = Math.floor(Math.random() * 15) + 5;
+      // Generate random characters - more characters for longer columns
+      const viewportHeight = window.innerHeight;
+      // Calculate character count based on viewport height
+      const charCount = Math.floor((viewportHeight / 20) * (0.5 + Math.random() * 0.5));
+      
       for (let j = 0; j < charCount; j++) {
         const char = characters.charAt(Math.floor(Math.random() * characters.length));
         column.innerHTML += char + '<br>';
@@ -56,14 +59,17 @@ const MatrixBackground = () => {
           const column = document.createElement('div');
           column.className = 'matrix-column';
           column.style.left = `${i * 20 + Math.random() * 10}px`;
-          
-          const duration = Math.random() * 3 + 2;
-          const delay = Math.random() * 2;
+            const duration = Math.random() * 4 + 3; // 3-7 seconds
+          const delay = Math.random() * 3; // 0-3 seconds delay
           
           column.style.animationDuration = `${duration}s`;
           column.style.animationDelay = `${delay}s`;
           
-          const charCount = Math.floor(Math.random() * 15) + 5;
+          // Generate random characters - more characters for longer columns
+          const viewportHeight = window.innerHeight;
+          // Calculate character count based on viewport height
+          const charCount = Math.floor((viewportHeight / 20) * (0.5 + Math.random() * 0.5));
+          
           for (let j = 0; j < charCount; j++) {
             const char = characters.charAt(Math.floor(Math.random() * characters.length));
             column.innerHTML += char + '<br>';
