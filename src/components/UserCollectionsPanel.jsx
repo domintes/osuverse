@@ -2,20 +2,22 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { useAtom } from 'jotai';
-import { PlusCircle, Edit, Trash2, GripVertical, X, ChevronDown, ChevronUp, Filter, SortAsc, SortDesc, Tag, Star } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, GripVertical, X, ChevronDown, ChevronUp, Filter, SortAsc, SortDesc, Tag } from 'lucide-react';
+import { BsMegaphoneFill } from 'react-icons/bs';
+import { AiOutlineStar, AiFillStar } from 'react-icons/ai';
 import { collectionsAtom } from '@/store/collectionAtom';
 import './userCollectionsPanel.scss';
+import './userCollections.scss';
 import NeonBorderBox from './NeonBorderBox';
-import BeatmapModal from './BeatmapSearchResults/BeatmapModal';
+import AddBeatmapModal from './BeatmapSearchResults/AddBeatmapModal';
 
-export default function UserCollectionsPanel() {
+export default function UserCollectionsPanel({ editMode }) {
     const [collections, setCollections] = useAtom(collectionsAtom);
     const [newCollectionName, setNewCollectionName] = useState('');
     const [newSubcollectionNames, setNewSubcollectionNames] = useState({});
     const [draggedItem, setDraggedItem] = useState(null);
     const [draggedSubcollection, setDraggedSubcollection] = useState(null);
     const [dragOverCollectionId, setDragOverCollectionId] = useState(null);
-    const [editMode, setEditMode] = useState(false); // Change default to false to show beatmaps by default
     const [editingCollectionId, setEditingCollectionId] = useState(null);
     const [editingSubcollectionId, setEditingSubcollectionId] = useState(null);
     const [editingName, setEditingName] = useState('');
@@ -25,7 +27,7 @@ export default function UserCollectionsPanel() {
         subcollections: {}
     });
     const dragPointRef = useRef({ y: 0 });
-    
+
     // Stan dla filtrowania i sortowania beatmap
     const [activeTags, setActiveTags] = useState([]);
     const [expandedCollection, setExpandedCollection] = useState(null);
@@ -39,82 +41,82 @@ export default function UserCollectionsPanel() {
     // Funkcja filtrująca beatmapy według aktywnych tagów
     const filterBeatmapsByTags = (beatmaps) => {
         if (activeTags.length === 0) return beatmaps;
-        
+
         return beatmaps.filter(beatmap => {
             const beatmapTags = beatmap.userTags?.map(t => t.tag) || [];
             return activeTags.every(tag => beatmapTags.includes(tag));
         });
     };
-    
+
     // Funkcja sortująca beatmapy według różnych kryteriów
     const sortBeatmaps = (beatmaps) => {
         return [...beatmaps].sort((a, b) => {
             if (sortMode === 'priority') {
                 const priorityA = a.beatmap_priority || 0;
                 const priorityB = b.beatmap_priority || 0;
-                return sortDirection === 'desc' 
-                    ? priorityB - priorityA 
+                return sortDirection === 'desc'
+                    ? priorityB - priorityA
                     : priorityA - priorityB;
-            } 
-            
+            }
+
             if (sortMode === 'name') {
                 const nameA = `${a.artist} - ${a.title}`.toLowerCase();
                 const nameB = `${b.artist} - ${b.title}`.toLowerCase();
-                return sortDirection === 'desc' 
-                    ? nameB.localeCompare(nameA) 
+                return sortDirection === 'desc'
+                    ? nameB.localeCompare(nameA)
                     : nameA.localeCompare(nameB);
             }
-            
+
             // Default sort by date added (assumes newer beatmaps have higher IDs)
-            return sortDirection === 'desc' 
-                ? b.id - a.id 
+            return sortDirection === 'desc'
+                ? b.id - a.id
                 : a.id - b.id;
         });
     };
-    
+
     // Funkcja przełączająca tag w filtrze
     const toggleTagFilter = (tag) => {
-        setActiveTags(prev => 
+        setActiveTags(prev =>
             prev.includes(tag)
                 ? prev.filter(t => t !== tag)
                 : [...prev, tag]
         );
     };
-    
+
     // Funkcja przełączająca tryb sortowania
     const toggleSortMode = () => {
         if (sortMode === 'priority') setSortMode('name');
         else if (sortMode === 'name') setSortMode('date');
         else setSortMode('priority');
     };
-    
+
     // Funkcja przełączająca kierunek sortowania
     const toggleSortDirection = () => {
         setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
     };
-    
+
     // Funkcja pobierająca beatmapy przypisane do kolekcji lub podkolekcji
     const getBeatmapsForCollection = (collectionId, subcollectionId = null) => {
-        return Object.values(collections.beatmaps || {}).filter(beatmap => 
-            beatmap.collectionId === collectionId && 
+        return Object.values(collections.beatmaps || {}).filter(beatmap =>
+            beatmap.collectionId === collectionId &&
             (subcollectionId === null || beatmap.subcollectionId === subcollectionId)
         );
     };
-    
+
     // Funkcja pobierająca wszystkie tagi używane w kolekcji
     const getTagsForCollection = (collectionId, subcollectionId = null) => {
         const beatmaps = getBeatmapsForCollection(collectionId, subcollectionId);
         const tags = new Set();
-        
+
         beatmaps.forEach(beatmap => {
             (beatmap.userTags || []).forEach(tagObj => {
                 if (tagObj.tag) tags.add(tagObj.tag);
             });
         });
-        
+
         return Array.from(tags);
     };
-    
+
     // Funkcja rozwijająca/zwijająca kolekcję
     const toggleExpandCollection = (collectionId) => {
         if (expandedCollection === collectionId) {
@@ -128,7 +130,7 @@ export default function UserCollectionsPanel() {
             setAvailableTags(collectionTags);
         }
     };
-    
+
     // Funkcja rozwijająca/zwijająca podkolekcję
     const toggleExpandSubcollection = (subcollectionId) => {
         if (expandedSubcollection === subcollectionId) {
@@ -145,21 +147,21 @@ export default function UserCollectionsPanel() {
     const handleEditBeatmap = (beatmap) => {
         setEditingBeatmap(beatmap);
     };
-    
+
     // Funkcja zapisująca zmiany w beatmapie
     const handleBeatmapEditSubmit = (formData) => {
         if (!editingBeatmap) return;
-        
+
         const beatmapId = editingBeatmap.id;
         const userTags = formData.tags || [];
-        
+
         // Calculate beatmap_priority based on tag values sum
         const beatmap_priority = userTags.reduce((sum, t) => sum + (parseInt(t.tag_value) || 0), 0);
-        
+
         setCollections(prev => {
             const newBeatmaps = { ...prev.beatmaps };
             const newTags = { ...prev.tags };
-            
+
             // Remove beatmap from previous tags
             const oldTags = (prev.beatmaps[beatmapId]?.userTags || []).map(t => t.tag);
             oldTags.forEach(tagName => {
@@ -168,24 +170,24 @@ export default function UserCollectionsPanel() {
                     newTags[tagName].beatmapIds = newTags[tagName].beatmapIds.filter(id => id !== beatmapId);
                 }
             });
-            
+
             // Add beatmap to new tags
             userTags.forEach(tagObj => {
                 const tagName = tagObj.tag;
                 if (!tagName) return;
-                
+
                 if (!newTags[tagName]) {
                     newTags[tagName] = { count: 0, beatmapIds: [] };
                 }
-                
+
                 if (!newTags[tagName].beatmapIds.includes(beatmapId)) {
                     newTags[tagName].count++;
                     newTags[tagName].beatmapIds.push(beatmapId);
                 }
             });
-            
+
             // Update beatmap
-            newBeatmaps[beatmapId] = { 
+            newBeatmaps[beatmapId] = {
                 ...prev.beatmaps[beatmapId],
                 userTags,
                 notes: formData.notes || '',
@@ -193,23 +195,23 @@ export default function UserCollectionsPanel() {
                 collectionId: formData.collectionId || prev.beatmaps[beatmapId].collectionId,
                 subcollectionId: formData.subcollectionId || prev.beatmaps[beatmapId].subcollectionId
             };
-            
+
             return {
                 ...prev,
                 beatmaps: newBeatmaps,
                 tags: newTags
             };
         });
-        
+
         setEditingBeatmap(null);
     };
-    
+
     // Funkcja usuwająca beatmapę z kolekcji
     const handleRemoveBeatmap = (beatmapId) => {
         setCollections(prev => {
             const newBeatmaps = { ...prev.beatmaps };
             const newTags = { ...prev.tags };
-            
+
             // Remove beatmap from tags
             const beatmap = prev.beatmaps[beatmapId];
             if (beatmap) {
@@ -221,10 +223,10 @@ export default function UserCollectionsPanel() {
                     }
                 });
             }
-            
+
             // Remove beatmap
             delete newBeatmaps[beatmapId];
-            
+
             return {
                 ...prev,
                 beatmaps: newBeatmaps,
@@ -233,11 +235,46 @@ export default function UserCollectionsPanel() {
         });
     };
 
+    // Funkcja obsługująca dodanie/usunięcie beatmapy z ulubionych
+    const toggleFavorite = (beatmap) => {
+        // Pobierz kolekcję "Favorites"
+        const favoritesCollection = collections.collections.find(c => c.name === 'Favorites');
+        if (!favoritesCollection) return;
+
+        // Sprawdź czy beatmapa jest już w ulubionych
+        const isFavorited = Object.values(collections.beatmaps).some(b =>
+            b.id === beatmap.id && b.collectionId === favoritesCollection.id
+        );
+
+        if (isFavorited) {
+            // Usuń z ulubionych
+            handleRemoveBeatmap(beatmap.id);
+        } else {
+            // Dodaj do ulubionych
+            const newBeatmap = { ...beatmap };
+
+            setCollections(prev => {
+                // Dodaj beatmapę do kolekcji ulubionych
+                return {
+                    ...prev,
+                    beatmaps: {
+                        ...prev.beatmaps,
+                        [beatmap.id]: {
+                            ...beatmap,
+                            collectionId: favoritesCollection.id,
+                            subcollectionId: null
+                        }
+                    }
+                };
+            });
+        }
+    };
+
     const removeCollection = (collectionId) => {
         // Don't allow removing system collections
         const collection = collections.collections.find(c => c.id === collectionId);
         if (collection?.isSystemCollection) return;
-        
+
         setCollections(prev => ({
             ...prev,
             collections: prev.collections.filter(c => c.id !== collectionId)
@@ -274,7 +311,7 @@ export default function UserCollectionsPanel() {
         if (editingCollectionId) {
             setCollections(prev => ({
                 ...prev,
-                collections: prev.collections.map(c => 
+                collections: prev.collections.map(c =>
                     c.id === editingCollectionId ? { ...c, name: editingName } : c
                 )
             }));
@@ -306,7 +343,7 @@ export default function UserCollectionsPanel() {
 
     const addCollection = () => {
         if (!newCollectionName.trim()) return;
-        
+
         setCollections(prev => ({
             ...prev,
             collections: [...prev.collections, {
@@ -351,9 +388,9 @@ export default function UserCollectionsPanel() {
 
     const handleSubcollectionDragStart = (e, collection, subcollection) => {
         e.stopPropagation();
-        setDraggedSubcollection({ 
+        setDraggedSubcollection({
             subcollection,
-            fromCollectionId: collection.id 
+            fromCollectionId: collection.id
         });
         e.dataTransfer.effectAllowed = 'move';
         dragPointRef.current = { y: e.clientY };
@@ -364,7 +401,7 @@ export default function UserCollectionsPanel() {
             const newCollections = [...prev.collections];
             const draggedIndex = newCollections.findIndex(c => c.id === draggedId);
             const targetIndex = newCollections.findIndex(c => c.id === targetId);
-            
+
             if (draggedIndex === -1 || targetIndex === -1) return prev;
 
             // Get the target element's position
@@ -375,8 +412,8 @@ export default function UserCollectionsPanel() {
             const targetCenter = targetRect.top + targetRect.height / 2;
 
             // Only reorder if mouse is above/below center based on drag direction
-            const shouldReorder = draggedIndex < targetIndex ? 
-                mouseY > targetCenter : 
+            const shouldReorder = draggedIndex < targetIndex ?
+                mouseY > targetCenter :
                 mouseY < targetCenter;
 
             if (!shouldReorder) return prev;
@@ -413,8 +450,8 @@ export default function UserCollectionsPanel() {
                 const targetCenter = targetRect.top + targetRect.height / 2;
 
                 // Only reorder if mouse is above/below center based on drag direction
-                const shouldReorder = draggedIndex < targetIndex ? 
-                    mouseY > targetCenter : 
+                const shouldReorder = draggedIndex < targetIndex ?
+                    mouseY > targetCenter :
                     mouseY < targetCenter;
 
                 if (!shouldReorder) return collection;
@@ -472,7 +509,7 @@ export default function UserCollectionsPanel() {
         const targetCollection = collections.collections.find(c => c.id === targetCollectionId);
         if (!targetCollection) return true;
 
-        return !targetCollection.subcollections.some(s => 
+        return !targetCollection.subcollections.some(s =>
             s.name.toLowerCase() === subcollection.name.toLowerCase()
         );
     };
@@ -480,12 +517,12 @@ export default function UserCollectionsPanel() {
     const handleDragOver = useCallback((e, targetCollection) => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
-        
+
         if (draggedItem && draggedItem.id !== targetCollection.id) {
             setDragOverCollectionId(targetCollection.id);
             reorderCollections(draggedItem.id, targetCollection.id, e.clientY);
         }
-        
+
         if (draggedSubcollection && draggedSubcollection.fromCollectionId !== targetCollection.id) {
             setDragOverCollectionId(targetCollection.id);
         }
@@ -496,7 +533,7 @@ export default function UserCollectionsPanel() {
         e.stopPropagation();
         e.dataTransfer.dropEffect = 'move';
 
-        if (draggedSubcollection && 
+        if (draggedSubcollection &&
             draggedSubcollection.subcollection.id !== targetSubcollection.id) {
             reorderSubcollections(
                 collection.id,
@@ -515,10 +552,10 @@ export default function UserCollectionsPanel() {
 
     const handleDrop = (e, targetCollection) => {
         e.preventDefault();
-        
-        if (draggedSubcollection && 
+
+        if (draggedSubcollection &&
             draggedSubcollection.fromCollectionId !== targetCollection.id) {
-            
+
             if (!canMoveSubcollection(draggedSubcollection.subcollection, targetCollection.id)) {
                 // Show temporary error message
                 setErrors(prev => ({
@@ -541,7 +578,7 @@ export default function UserCollectionsPanel() {
                 targetCollection.id
             );
         }
-        
+
         handleDragEnd();
     };
 
@@ -549,15 +586,15 @@ export default function UserCollectionsPanel() {
         if (!name.trim()) {
             return { isValid: false, message: 'Collection name cannot be empty' };
         }
-        
-        const exists = collections.collections.some(c => 
+
+        const exists = collections.collections.some(c =>
             c.name.toLowerCase() === name.trim().toLowerCase()
         );
-        
+
         if (exists && isNew) {
             return { isValid: false, message: 'Collection with this name already exists' };
         }
-        
+
         return { isValid: true, message: '' };
     };
 
@@ -567,7 +604,7 @@ export default function UserCollectionsPanel() {
         }
         const collection = collections.collections.find(c => c.id === collectionId);
         if (!collection) return { isValid: true, message: '' };
-        const exists = collection.subcollections.some(s => 
+        const exists = collection.subcollections.some(s =>
             s.name.trim().toLowerCase() === name.trim().toLowerCase()
         );
         if (exists && isNew) {
@@ -606,28 +643,49 @@ export default function UserCollectionsPanel() {
                 addSubcollection(collectionId);
             }
         }
-    };    // Funkcja renderująca wskaźnik priorytetu
+    };
+
+    // Funkcja renderująca wskaźnik priorytetu
     const renderPriorityIndicator = (priority) => {
         let colorClass = 'priority-neutral';
         if (priority > 3) colorClass = 'priority-high';
         else if (priority > 0) colorClass = 'priority-medium';
         else if (priority < -3) colorClass = 'priority-very-low';
         else if (priority < 0) colorClass = 'priority-low';
-        
+
         return (
             <div className={`priority-indicator ${colorClass}`}>
-                <Star size={16} />
+                <BsMegaphoneFill size={16} />
                 <span>{priority}</span>
             </div>
         );
     };
-      // Funkcja renderująca beatmapę
+
+    // Funkcja renderująca beatmapę
     const renderBeatmap = (beatmap) => {
+        // Sprawdź czy beatmapa jest w ulubionych
+        const favoritesCollection = collections.collections.find(c => c.name === 'Favorites');
+        const isFavorited = favoritesCollection && Object.values(collections.beatmaps).some(b =>
+            b.id === beatmap.id && b.collectionId === favoritesCollection.id
+        );
+
         return (
             <div className="beatmap-item" key={beatmap.id}>
-                <div 
-                    className="beatmap-cover" 
-                    style={{backgroundImage: `url(${beatmap.cover})`}}
+                {/* Przycisk gwiazdki (ulubione) */}
+                <button
+                    className={`favorite-button ${isFavorited ? 'active' : ''}`}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(beatmap);
+                    }}
+                    title={isFavorited ? "Remove from favorites" : "Add to favorites"}
+                >
+                    {isFavorited ? <AiFillStar size={18} /> : <AiOutlineStar size={18} />}
+                </button>
+
+                <div
+                    className="beatmap-cover"
+                    style={{ backgroundImage: `url(${beatmap.cover})` }}
                 />
                 <div className="beatmap-info">
                     <div className="beatmap-title">{beatmap.artist} - {beatmap.title}</div>
@@ -637,8 +695,8 @@ export default function UserCollectionsPanel() {
                     </div>
                     <div className="beatmap-tags">
                         {beatmap.userTags?.map((tag, idx) => (
-                            <div 
-                                key={idx} 
+                            <div
+                                key={idx}
                                 className={`beatmap-tag ${tag.tag_value > 0 ? 'positive' : tag.tag_value < 0 ? 'negative' : ''}`}
                                 title={`Priority value: ${tag.tag_value}`}
                             >
@@ -650,14 +708,14 @@ export default function UserCollectionsPanel() {
                 </div>
                 {renderPriorityIndicator(beatmap.beatmap_priority || 0)}
                 <div className="beatmap-actions">
-                    <button 
-                        className="beatmap-edit" 
+                    <button
+                        className="beatmap-edit"
                         onClick={() => handleEditBeatmap(beatmap)}
                         title="Edit tags and collection"
                     >
                         <Edit size={16} />
                     </button>
-                    <button 
+                    <button
                         className="beatmap-delete"
                         onClick={() => handleRemoveBeatmap(beatmap.id)}
                         title="Remove from collection"
@@ -668,30 +726,30 @@ export default function UserCollectionsPanel() {
             </div>
         );
     };
-    
+
     // Renderowanie listy beatmap dla kolekcji/podkolekcji
     const renderBeatmapList = (collectionId, subcollectionId = null) => {
         let beatmaps = getBeatmapsForCollection(collectionId, subcollectionId);
         beatmaps = filterBeatmapsByTags(beatmaps);
         beatmaps = sortBeatmaps(beatmaps);
-        
+
         if (beatmaps.length === 0) {
             return <div className="empty-beatmaps">No beatmaps found in this collection.</div>;
         }
-        
+
         return (
             <div className="beatmaps-container">
                 {beatmaps.map(renderBeatmap)}
             </div>
         );
     };
-    
+
     // Renderowanie kontrolek sortowania i filtrowania
     const renderSortFilterControls = () => {
         return (
             <div className="sort-filter-controls">
                 <div className="sorting-controls">
-                    <button 
+                    <button
                         className="sort-mode-toggle"
                         onClick={toggleSortMode}
                         title="Change sort criteria"
@@ -701,7 +759,7 @@ export default function UserCollectionsPanel() {
                         {sortMode === 'name' && 'Name'}
                         {sortMode === 'date' && 'Date Added'}
                     </button>
-                    <button 
+                    <button
                         className="sort-direction-toggle"
                         onClick={toggleSortDirection}
                         title="Change sort direction"
@@ -709,7 +767,7 @@ export default function UserCollectionsPanel() {
                         {sortDirection === 'desc' ? <SortDesc size={16} /> : <SortAsc size={16} />}
                     </button>
                 </div>
-                
+
                 <div className="filter-controls">
                     <button
                         className="filter-toggle"
@@ -719,12 +777,12 @@ export default function UserCollectionsPanel() {
                         <Filter size={16} />
                         <span>Filter{activeTags.length > 0 && ` (${activeTags.length})`}</span>
                     </button>
-                    
+
                     {showTagSelector && (
                         <div className="tag-selector">
                             <div className="tag-selector-header">
                                 <h4>Filter by Tags</h4>
-                                <button 
+                                <button
                                     className="tag-selector-close"
                                     onClick={() => setShowTagSelector(false)}
                                 >×</button>
@@ -735,7 +793,7 @@ export default function UserCollectionsPanel() {
                                 ) : (
                                     availableTags.map((tag, idx) => (
                                         <label key={idx} className="tag-checkbox">
-                                            <input 
+                                            <input
                                                 type="checkbox"
                                                 checked={activeTags.includes(tag)}
                                                 onChange={() => toggleTagFilter(tag)}
@@ -751,11 +809,10 @@ export default function UserCollectionsPanel() {
             </div>
         );
     };
-    
-    // Renderowanie szczegółów kolekcji lub podkolekcji
+
     const renderCollectionDetails = (collectionId, subcollectionId = null) => {
         if (!collectionId) return null;
-        
+
         return (
             <div className="collection-details">
                 {renderSortFilterControls()}
@@ -763,4 +820,265 @@ export default function UserCollectionsPanel() {
             </div>
         );
     };
+
+    // Funkcja renderująca listę kolekcji
+    const renderCollections = () => {
+        return (
+            <div className="collections-list">
+                {collections.collections
+                    .sort((a, b) => {
+                        // Unsorted zawsze na górze
+                        if (a.isSystemCollection) return -1;
+                        if (b.isSystemCollection) return 1;
+                        return a.order - b.order;
+                    })
+                    .map(collection => (
+                        <NeonBorderBox
+                            key={collection.id}
+                            data-collection-id={collection.id}
+                            className={`collection-item ${dragOverCollectionId === collection.id ? 'drag-over' : ''}`}
+                            draggable={!collection.isSystemCollection}
+                            onDragStart={(e) => handleDragStart(collection, e)}
+                            onDragOver={(e) => handleDragOver(e, collection)}
+                            onDragEnd={handleDragEnd}
+                            onDrop={(e) => handleDrop(e, collection)}
+                        >                            <div className="collection-header">
+                                <div className="collection-info">
+                                    <div className="collection-name-container">
+                                        {editingCollectionId === collection.id ? (
+                                            <input
+                                                type="text"
+                                                value={editingName}
+                                                onChange={(e) => setEditingName(e.target.value)}
+                                                onKeyDown={handleKeyPress}
+                                                onBlur={saveEdit}
+                                                autoFocus
+                                                className="edit-name-input"
+                                            />
+                                        ) : (
+                                            <div
+                                                className="collection-name"
+                                                onClick={() => toggleExpandCollection(collection.id)}
+                                            >
+                                                {expandedCollection === collection.id ? (
+                                                    <ChevronDown size={16} />
+                                                ) : (
+                                                    <ChevronUp size={16} />
+                                                )}
+                                                <span>{collection.name}</span>
+                                                <span className="beatmap-count">
+                                                    ({Object.values(collections.beatmaps).filter(b =>
+                                                        b.collectionId === collection.id && !b.subcollectionId).length})
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="collection-actions">                                    {editMode && (
+                                    <button
+                                        onClick={() => startEditing(collection.id, 'collection', collection.name)}
+                                        className="edit-btn"
+                                        title="Edit collection name"
+                                    >
+                                        <Edit size={16} />
+                                    </button>
+                                )}
+
+                                    {!collection.isSystemCollection && editMode && (
+                                        <div className="drag-handle">
+                                            <GripVertical size={16} />
+                                        </div>
+                                    )}
+                                    {!collection.isSystemCollection && editMode && (
+                                        <button
+                                            onClick={() => removeCollection(collection.id)}
+                                            className="remove-btn"
+                                            title="Delete collection"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+
+                            {expandedCollection === collection.id && !editMode && (
+                                renderCollectionDetails(collection.id)
+                            )}
+
+                            {(expandedCollection === collection.id || editMode) && (
+                                <div className="subcollections">
+                                    {collection.subcollections.map(subcollection => (
+                                        <div
+                                            key={subcollection.id}
+                                            data-subcollection-id={subcollection.id}
+                                            className={`subcollection-item`}
+                                            draggable
+                                            onDragStart={(e) => handleSubcollectionDragStart(e, collection, subcollection)}
+                                            onDragOver={(e) => handleSubcollectionDragOver(e, collection, subcollection)}
+                                            onDragEnd={handleDragEnd}
+                                        >
+                                            <div className="subcollection-header">                                                <div className="subcollection-info">
+                                                {editMode && (
+                                                    <div className="drag-handle">
+                                                        <GripVertical size={16} />
+                                                    </div>
+                                                )}<div className="subcollection-name-container">
+                                                    {editingSubcollectionId === subcollection.id ? (
+                                                        <input
+                                                            type="text"
+                                                            value={editingName}
+                                                            onChange={(e) => setEditingName(e.target.value)}
+                                                            onKeyDown={handleKeyPress}
+                                                            onBlur={saveEdit}
+                                                            autoFocus
+                                                            className="edit-name-input"
+                                                        />
+                                                    ) : (
+                                                        <div
+                                                            className="subcollection-name"
+                                                            onClick={() => toggleExpandSubcollection(subcollection.id)}
+                                                        >
+                                                            {expandedSubcollection === subcollection.id ? (
+                                                                <ChevronDown size={14} />
+                                                            ) : (
+                                                                <ChevronUp size={14} />
+                                                            )}
+                                                            <span>{subcollection.name}</span>
+                                                            <span className="beatmap-count">
+                                                                ({Object.values(collections.beatmaps).filter(b =>
+                                                                    b.collectionId === collection.id &&
+                                                                    b.subcollectionId === subcollection.id).length})
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                                <div className="subcollection-actions">
+                                                    {editMode && (
+                                                        <>
+                                                            <button
+                                                                onClick={() => startEditing(subcollection.id, 'subcollection', subcollection.name)}
+                                                                className="edit-btn"
+                                                                title="Edit subcollection name"
+                                                            >
+                                                                <Edit size={14} />
+                                                            </button>
+
+                                                            <button
+                                                                onClick={() => removeSubcollection(collection.id, subcollection.id)}
+                                                                className="remove-btn"
+                                                                title="Delete subcollection"
+                                                            >
+                                                                <Trash2 size={14} />
+                                                            </button>
+
+                                                            <div className="drag-handle">
+                                                                <GripVertical size={14} />
+                                                            </div>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {expandedSubcollection === subcollection.id && !editMode && (
+                                                renderCollectionDetails(collection.id, subcollection.id)
+                                            )}
+                                        </div>
+                                    ))}
+
+                                    {editMode && (
+                                        <div className="add-subcollection">
+                                            <div className="input-container">
+                                                <input
+                                                    type="text"
+                                                    placeholder="New subcollection name"
+                                                    value={newSubcollectionNames[collection.id] || ''}
+                                                    onChange={(e) => setNewSubcollectionNames({
+                                                        ...newSubcollectionNames,
+                                                        [collection.id]: e.target.value
+                                                    })}
+                                                    onKeyPress={(e) => handleSubcollectionInputKeyPress(e, collection.id)}
+                                                    className="new-subcollection-input"
+                                                />
+                                                <button
+                                                    onClick={() => addSubcollection(collection.id)}
+                                                    className="add-btn"
+                                                    title="Add subcollection"
+                                                >
+                                                    <PlusCircle size={16} />
+                                                </button>
+                                            </div>
+                                            {validationStates.subcollections[collection.id]?.isValid === false && (
+                                                <div className="validation-error">
+                                                    {validationStates.subcollections[collection.id]?.message}
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {errors[`drop-${collection.id}`] && (
+                                <div className="error-message">
+                                    {errors[`drop-${collection.id}`]}
+                                </div>
+                            )}
+                        </NeonBorderBox>
+                    ))}
+
+                {editMode && (
+                    <div className="add-collection">
+                        <div className="input-container">
+                            <input
+                                type="text"
+                                placeholder="New collection name"
+                                value={newCollectionName}
+                                onChange={(e) => setNewCollectionName(e.target.value)}
+                                onKeyPress={handleCollectionInputKeyPress}
+                                className="new-collection-input"
+                            />
+                            <button
+                                onClick={addCollection}
+                                className="add-btn"
+                                title="Add collection"
+                            >
+                                <PlusCircle size={16} />
+                            </button>
+                        </div>
+                        {!validationStates.collection.isValid && (
+                            <div className="validation-error">
+                                {validationStates.collection.message}
+                            </div>
+                        )}
+                    </div>
+                )}
+                {editingBeatmap && (
+                    <AddBeatmapModal
+                        isOpen={!!editingBeatmap}
+                        onClose={() => setEditingBeatmap(null)}
+                        beatmapset={{
+                            artist: editingBeatmap.artist,
+                            title: editingBeatmap.title,
+                            creator: editingBeatmap.creator,
+                            covers: { cover: editingBeatmap.cover }
+                        }}
+                        beatmap={{
+                            version: editingBeatmap.version,
+                            difficulty_rating: editingBeatmap.difficulty_rating
+                        }}
+                        initialTags={editingBeatmap.userTags || []}
+                        onSubmit={handleBeatmapEditSubmit}
+                    />
+                )}
+            </div>
+        );
+    };
+
+    // Renderowanie całego komponentu
+    return (
+        <div className="user-collections-panel">
+            {renderCollections()}
+        </div>
+    );
 }

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import { collectionsAtom } from '@/store/collectionAtom';
 import classNames from 'classnames';
-import BeatmapModal from './BeatmapModal';
+import AddBeatmapModal from './AddBeatmapModal';
 import './beatmapSearchResults.scss';
 import './beatmapModal.scss';
 
@@ -244,8 +244,7 @@ export default function BeatmapSearchResults({
           >
             Last
           </button>
-        </div>
-      )}      <BeatmapModal
+        </div>      )}      <AddBeatmapModal
         isOpen={modalOpen && modalTarget !== null}
         onClose={closeModal}
         beatmapset={modalTarget?.set}

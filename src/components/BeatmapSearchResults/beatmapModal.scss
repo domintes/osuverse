@@ -407,3 +407,86 @@
     color: #fff;
   }
 }
+
+.beatmap-modal-new-collection-btn {
+  background: rgba(234, 129, 251, 0.2);
+  border: 1px solid rgba(234, 129, 251, 0.5);
+  border-radius: 8px;
+  color: #ea81fb;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(234, 129, 251, 0.3);
+    border-color: #ea81fb;
+  }
+  
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.beatmap-modal-new-collection {
+  margin: 10px 0;
+  
+  .beatmap-modal-new-collection-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(234, 129, 251, 0.5);
+    padding: 10px;
+    color: #fff;
+    border-radius: 8px;
+    
+    &:focus {
+      border-color: #ea81fb;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(234, 129, 251, 0.3);
+    }
+  }
+  
+  .beatmap-modal-error {
+    color: #ff5252;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
+  .beatmap-modal-new-collection-actions {
+    display: flex;
+    margin-top: 10px;
+    gap: 10px;
+    
+    button {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &.beatmap-modal-new-collection-create {
+        background: rgba(234, 129, 251, 0.7);
+        border: 1px solid rgba(234, 129, 251, 0.8);
+        color: white;
+        
+        &:hover {
+          background: rgba(234, 129, 251, 0.9);
+        }
+      }
+      
+      &.beatmap-modal-new-collection-cancel {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.8);
+        
+        &:hover {
+          background: rgba(0, 0, 0, 0.3);
+          border-color: rgba(255, 255, 255, 0.3);
+        }
+      }
+    }
+  }
+}
