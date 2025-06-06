@@ -132,7 +132,7 @@ export default function BeatmapSearchResults({
     <div className="beatmap-search-results-container">
       <div className={`beatmap-search-results beatmap-search-results-${rowCount}-columns`}>
         {results.length === 0 ? (
-          <div className="beatmap-search-results-empty">Brak wyników wyszukiwania.</div>
+          <div className="beatmap-search-results-empty">Any results foundn't</div>
         ) : (
           results.map(set => (
             <BeatmapsetItem

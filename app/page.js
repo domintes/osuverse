@@ -67,21 +67,6 @@ export default function Home() {
     <MainOsuverseDiv className="home-container">
       <div>
         <OsuverseLogo />
-        
-        <h1
-          style={{
-            fontSize: 40,
-            fontFamily:
-              "Orbitron, Bruno Ace, Rubik Glitch, Cracked Code, Arial",
-            letterSpacing: 2,
-            color: "#ea81fb",
-            textShadow: "0 0 24px #2f0f3a, 0 0 8px #ea81fb",
-            marginBottom: 20,
-          }}
-        >
-          Osuverse
-        </h1>
-        
         <form onSubmit={handleSearch} className="beatmap-search-form">
           <div className="beatmap-search-form-inputs">
             <div className="beatmap-search-input-group">

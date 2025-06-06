@@ -78,17 +78,15 @@ export default function SearchInput() {
                     ...(mapper && { mapper }),
                     ...(filters.status !== 'all' && { status: filters.status }),
                     ...(filters.mode !== 'all' && { mode: filters.mode })
-                });
-
-                // Sprawdzenie, czy sieć jest dostępna
+                });                // Sprawdzenie, czy sieć jest dostępna
                 if (!navigator.onLine) {
-                    throw new Error('Sieć jest niedostępna. Sprawdź swoje połączenie internetowe.');
-                }
-
-                const res = await fetch(`/api/search?${params.toString()}`, {
+                    throw new Error('Network is unavailable. Check your internet connection.');
+                }                const res = await fetch(`/api/search?${params.toString()}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                  if (!res.ok) {                    if (res.status === 500) {
+                
+                if (!res.ok) {
+                    if (res.status === 500) {
                         throw new Error('Internal server error. Please try again later.');
                     } else if (res.status === 401 || res.status === 403) {
                         throw new Error('Authorization error. Your session may have expired. Please try logging in again.');
@@ -101,9 +99,9 @@ export default function SearchInput() {
                 }
                 
                 const data = await res.json();
-                setResults(data.beatmaps);
-            } catch (err) {
-                console.error('Search error:', err.message);                if (err.message === 'Failed to fetch') {
+                setResults(data.beatmaps);            } catch (err) {
+                console.error('Search error:', err.message);
+                if (err.message === 'Failed to fetch') {
                     setError('Cannot connect to the server. Check your internet connection or try again later.');
                 } else {
                     setError(err.message);
@@ -125,14 +123,16 @@ export default function SearchInput() {
         setLoading(true);
         setError(null);
         
-        // Sprawdzenie, czy sieć jest dostępna        if (!navigator.onLine) {
+        // Check if the network is available
+        if (!navigator.onLine) {
             setError('Network is unavailable. Check your internet connection.');
             setLoading(false);
             return;
         }
 
-        fetch(`/api/user?username=${encodeURIComponent(mapper)}&token=${encodeURIComponent(token)}`)
-            .then(res => {                if (!res.ok) {
+        // Fetch mapper data
+        fetch(`/api/user?username=${encodeURIComponent(mapper)}&token=${encodeURIComponent(token)}`)            .then(res => {
+                if (!res.ok) {
                     if (res.status === 500) {
                         throw new Error('Internal server error. Please try again later.');
                     } else if (res.status === 401 || res.status === 403) {
@@ -161,7 +161,8 @@ export default function SearchInput() {
             })
             .catch((err) => {
                 if (!cancelled) {
-                    console.error('Mapper search error:', err.message);                    if (err.message === 'Failed to fetch') {
+                    console.error('Mapper search error:', err.message);
+                    if (err.message === 'Failed to fetch') {
                         setError('Cannot connect to the server. Check your internet connection or try again later.');
                     } else {
                         setError(`Mapper search error: ${err.message}`);
