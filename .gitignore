@@ -43,3 +43,6 @@ osuverse_old/*
 *.tsbuildinfo
 next-env.d.ts
 Start.bat
+
+#MD
+README4AI.md
