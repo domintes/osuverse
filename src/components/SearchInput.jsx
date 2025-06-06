@@ -434,13 +434,8 @@ export default function SearchInput() {
                 <div className="search-artist-results-info">
                     Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, results.length)} of {results.length} results
                 </div>
-            )}<div
-                className="search-artist-results"
-                style={{
-                    display: 'grid',
-                    gridTemplateColumns: `repeat(${rowCount}, minmax(0, 1fr))`,
-                    gap: '1rem'
-                }}
+            )}            <div
+                className={`search-artist-results search-artist-results-${rowCount}-columns`}
             >
                 {currentItems.map(set => (
                     <BeatmapItem
@@ -554,18 +549,10 @@ function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFro
         if (idx < coverSources.length - 1) setImgSrc(coverSources[idx + 1]);
     };
     
-    return (
-        <div
+    return (        <div
             key={set.id}
             className="search-artist-beatmap-item"
-            style={{
-                backgroundImage: `url(${imgSrc})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                backgroundColor: 'rgba(0,28,54,0.85)',
-                backgroundBlendMode: 'darken',
-            }}
+            style={{'--beatmap-bg-image': `url(${imgSrc})`}}
             onMouseEnter={() => setHoveredItem(set.id)}
             onMouseLeave={() => setHoveredItem(null)}
         >
@@ -573,7 +560,7 @@ function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFro
                     src={imgSrc}
                     alt={`${set.title} Beatmap Background`}
                     onError={handleImgError}
-                    style={{ background: '#101a2b' }}
+                    className="beatmap-thumbnail-img"
                 />
             </div>
             <div className="search-artist-beatmap-info">                <div className="search-artist-beatmap-title">
@@ -604,16 +591,9 @@ function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFro
                                 {beatmaps
                                     .slice()
                                     .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
-                                    .map((bm) => (
-                                        <div
+                                    .map((bm) => (                                            <div
                                             key={bm.id}
-                                            className="difficulty-rect"
-                                            style={{
-                                                background: getDiffColor(bm.difficulty_rating),
-                                                width: '24px',
-                                                height: '12px',
-                                                borderRadius: '4px',
-                                            }}
+                                            className={`difficulty-rect difficulty-${getDifficultyClass(bm.difficulty_rating)}`}
                                             title={bm.version}
                                         />
                                     ))}
@@ -624,10 +604,8 @@ function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFro
                                         .sort((a, b) => a.difficulty_rating - b.difficulty_rating)
                                         .map(bm => {
                                             const inCollection = isBeatmapInCollections(bm.id);
-                                            return (                                <div key={bm.id} className="search-artist-beatmap-difficulty">
-                                                    <span 
-                                                        className="search-artist-beatmap-difficulty-indicator" 
-                                                        style={{ background: getDiffColor(bm.difficulty_rating) }}
+                                            return (                                <div key={bm.id} className="search-artist-beatmap-difficulty">                                                    <span 
+                                                        className={`search-artist-beatmap-difficulty-indicator difficulty-${getDifficultyClass(bm.difficulty_rating)}`}
                                                     />
                                                     <a 
                                                         href={`https://osu.ppy.sh/beatmaps/${bm.id}`} 
@@ -675,4 +653,13 @@ function getDiffColor(star) {
     if (star < 5.3) return '#ffa726';
     if (star < 6.5) return '#ef5350';
     return '#616161';
+}
+
+function getDifficultyClass(star) {
+    if (star < 2) return 'easy';
+    if (star < 2.7) return 'normal';
+    if (star < 4) return 'hard';
+    if (star < 5.3) return 'insane';
+    if (star < 6.5) return 'expert';
+    return 'extreme';
 }

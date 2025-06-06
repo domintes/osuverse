@@ -20,9 +20,8 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange, ho
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <button className="user-panel-trigger" title="User settings">
-          <User />
-          <span style={{ marginLeft: 8 }}>{user?.username}</span>
+        <button className="user-panel-trigger" title="User settings">          <User />
+          <span className="username-span">{user?.username}</span>
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
@@ -36,33 +35,29 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange, ho
             <Dialog.Close asChild>
               <button className="user-panel-close"><X /></button>
             </Dialog.Close>
-          </div>
-          <NeonBorderBox info style={{ margin: '1rem 0' }}>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+          </div>          <NeonBorderBox info className="neon-border-container">
+            <div className="flex-container">
               <LucideImage size={20} />
               <span>Change avatar (soon)</span>
             </div>
-          </NeonBorderBox>
-          <NeonBorderBox color="#ff4fd8" style={{ margin: '1rem 0' }}>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+          </NeonBorderBox>          <NeonBorderBox color="#ff4fd8" className="neon-border-container">
+            <div className="flex-container">
               <Download size={20} />
               <button onClick={onExport}>Export your data</button>
             </div>
-          </NeonBorderBox>
-          <NeonBorderBox error style={{ margin: '1rem 0' }}>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+          </NeonBorderBox>          <NeonBorderBox error className="neon-border-container">
+            <div className="flex-container">
               <LogOut size={20} />
               <button onClick={onLogout}>Remove OAuth & all data</button>
             </div>
-          </NeonBorderBox>
-          <NeonBorderBox info style={{ margin: '1rem 0' }}>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+          </NeonBorderBox>          <NeonBorderBox info className="neon-border-container">
+            <div className="flex-container">
               <Settings size={20} />
               <span>Customize homepage:</span>
             </div>
             <div className="user-panel-homepage-options">
               {homepageOptions.map(opt => (
-                <label key={opt.key} style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '8px 0' }}>
+                <label key={opt.key}>
                   <input
                     type="checkbox"
                     checked={homepageConfig[opt.key]}

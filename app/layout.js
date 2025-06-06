@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
       <body className="app-body vsc-initialized">
         <OsuverseBackground />
         <Navigation />
-        <main style={{ flex: 1, padding: '1rem' }}>
+        <main>
           {children}
         </main>
       </body>

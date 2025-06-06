@@ -84,7 +84,7 @@ const OsuverseMainSearchBox = () => {
         className="tag-suggestion"
         onClick={() => handleTagSelect(tag)}
       >
-        #{tag} <span style={{ opacity: 0.7 }}>({count})</span>
+        #{tag} <span className="tag-suggestion-count">({count})</span>
       </div>
     ));
   };
