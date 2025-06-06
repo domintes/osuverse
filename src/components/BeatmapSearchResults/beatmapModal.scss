@@ -165,7 +165,8 @@
 .beatmap-modal-tags {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  margin-top: 8px;
 }
 
 .beatmap-modal-tag-row {
@@ -373,5 +374,36 @@
   
   &:hover {
     background: rgba(126, 224, 255, 0.1);
+  }
+}
+
+.beatmap-modal-collections {
+  margin-bottom: 16px;
+}
+
+.beatmap-modal-select {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(47, 15, 58, 0.5);
+  border: 1px solid #ea81fb;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 16px;
+  margin-top: 8px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ea81fb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 20px;
+  
+  &:focus {
+    outline: none;
+    border-color: #f5b8ff;
+    box-shadow: 0 0 0 3px rgba(234, 129, 251, 0.3);
+  }
+  
+  option {
+    background-color: #2f0f3a;
+    color: #fff;
   }
 }

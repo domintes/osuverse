@@ -2,10 +2,11 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { useAtom } from 'jotai';
-import { PlusCircle, Edit, Trash2, GripVertical, X } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, GripVertical, X, ChevronDown, ChevronUp, Filter, SortAsc, SortDesc, Tag, Star } from 'lucide-react';
 import { collectionsAtom } from '@/store/collectionAtom';
 import './userCollectionsPanel.scss';
 import NeonBorderBox from './NeonBorderBox';
+import BeatmapModal from './BeatmapSearchResults/BeatmapModal';
 
 export default function UserCollectionsPanel() {
     const [collections, setCollections] = useAtom(collectionsAtom);
@@ -14,7 +15,7 @@ export default function UserCollectionsPanel() {
     const [draggedItem, setDraggedItem] = useState(null);
     const [draggedSubcollection, setDraggedSubcollection] = useState(null);
     const [dragOverCollectionId, setDragOverCollectionId] = useState(null);
-    const [editMode, setEditMode] = useState(true);
+    const [editMode, setEditMode] = useState(false); // Change default to false to show beatmaps by default
     const [editingCollectionId, setEditingCollectionId] = useState(null);
     const [editingSubcollectionId, setEditingSubcollectionId] = useState(null);
     const [editingName, setEditingName] = useState('');
@@ -24,8 +25,219 @@ export default function UserCollectionsPanel() {
         subcollections: {}
     });
     const dragPointRef = useRef({ y: 0 });
+    
+    // Stan dla filtrowania i sortowania beatmap
+    const [activeTags, setActiveTags] = useState([]);
+    const [expandedCollection, setExpandedCollection] = useState(null);
+    const [expandedSubcollection, setExpandedSubcollection] = useState(null);
+    const [sortMode, setSortMode] = useState('priority'); // 'priority', 'name', 'date'
+    const [sortDirection, setSortDirection] = useState('desc'); // 'asc', 'desc'
+    const [editingBeatmap, setEditingBeatmap] = useState(null);
+    const [showTagSelector, setShowTagSelector] = useState(false);
+    const [availableTags, setAvailableTags] = useState([]);
+
+    // Funkcja filtrująca beatmapy według aktywnych tagów
+    const filterBeatmapsByTags = (beatmaps) => {
+        if (activeTags.length === 0) return beatmaps;
+        
+        return beatmaps.filter(beatmap => {
+            const beatmapTags = beatmap.userTags?.map(t => t.tag) || [];
+            return activeTags.every(tag => beatmapTags.includes(tag));
+        });
+    };
+    
+    // Funkcja sortująca beatmapy według różnych kryteriów
+    const sortBeatmaps = (beatmaps) => {
+        return [...beatmaps].sort((a, b) => {
+            if (sortMode === 'priority') {
+                const priorityA = a.beatmap_priority || 0;
+                const priorityB = b.beatmap_priority || 0;
+                return sortDirection === 'desc' 
+                    ? priorityB - priorityA 
+                    : priorityA - priorityB;
+            } 
+            
+            if (sortMode === 'name') {
+                const nameA = `${a.artist} - ${a.title}`.toLowerCase();
+                const nameB = `${b.artist} - ${b.title}`.toLowerCase();
+                return sortDirection === 'desc' 
+                    ? nameB.localeCompare(nameA) 
+                    : nameA.localeCompare(nameB);
+            }
+            
+            // Default sort by date added (assumes newer beatmaps have higher IDs)
+            return sortDirection === 'desc' 
+                ? b.id - a.id 
+                : a.id - b.id;
+        });
+    };
+    
+    // Funkcja przełączająca tag w filtrze
+    const toggleTagFilter = (tag) => {
+        setActiveTags(prev => 
+            prev.includes(tag)
+                ? prev.filter(t => t !== tag)
+                : [...prev, tag]
+        );
+    };
+    
+    // Funkcja przełączająca tryb sortowania
+    const toggleSortMode = () => {
+        if (sortMode === 'priority') setSortMode('name');
+        else if (sortMode === 'name') setSortMode('date');
+        else setSortMode('priority');
+    };
+    
+    // Funkcja przełączająca kierunek sortowania
+    const toggleSortDirection = () => {
+        setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    };
+    
+    // Funkcja pobierająca beatmapy przypisane do kolekcji lub podkolekcji
+    const getBeatmapsForCollection = (collectionId, subcollectionId = null) => {
+        return Object.values(collections.beatmaps || {}).filter(beatmap => 
+            beatmap.collectionId === collectionId && 
+            (subcollectionId === null || beatmap.subcollectionId === subcollectionId)
+        );
+    };
+    
+    // Funkcja pobierająca wszystkie tagi używane w kolekcji
+    const getTagsForCollection = (collectionId, subcollectionId = null) => {
+        const beatmaps = getBeatmapsForCollection(collectionId, subcollectionId);
+        const tags = new Set();
+        
+        beatmaps.forEach(beatmap => {
+            (beatmap.userTags || []).forEach(tagObj => {
+                if (tagObj.tag) tags.add(tagObj.tag);
+            });
+        });
+        
+        return Array.from(tags);
+    };
+    
+    // Funkcja rozwijająca/zwijająca kolekcję
+    const toggleExpandCollection = (collectionId) => {
+        if (expandedCollection === collectionId) {
+            setExpandedCollection(null);
+            setExpandedSubcollection(null);
+        } else {
+            setExpandedCollection(collectionId);
+            setExpandedSubcollection(null);
+            // Pobierz dostępne tagi dla kolekcji
+            const collectionTags = getTagsForCollection(collectionId);
+            setAvailableTags(collectionTags);
+        }
+    };
+    
+    // Funkcja rozwijająca/zwijająca podkolekcję
+    const toggleExpandSubcollection = (subcollectionId) => {
+        if (expandedSubcollection === subcollectionId) {
+            setExpandedSubcollection(null);
+        } else {
+            setExpandedSubcollection(subcollectionId);
+            // Pobierz dostępne tagi dla podkolekcji
+            const subcollectionTags = getTagsForCollection(expandedCollection, subcollectionId);
+            setAvailableTags(subcollectionTags);
+        }
+    };
+
+    // Funkcja obsługująca edycję beatmapy (tagów)
+    const handleEditBeatmap = (beatmap) => {
+        setEditingBeatmap(beatmap);
+    };
+    
+    // Funkcja zapisująca zmiany w beatmapie
+    const handleBeatmapEditSubmit = (formData) => {
+        if (!editingBeatmap) return;
+        
+        const beatmapId = editingBeatmap.id;
+        const userTags = formData.tags || [];
+        
+        // Calculate beatmap_priority based on tag values sum
+        const beatmap_priority = userTags.reduce((sum, t) => sum + (parseInt(t.tag_value) || 0), 0);
+        
+        setCollections(prev => {
+            const newBeatmaps = { ...prev.beatmaps };
+            const newTags = { ...prev.tags };
+            
+            // Remove beatmap from previous tags
+            const oldTags = (prev.beatmaps[beatmapId]?.userTags || []).map(t => t.tag);
+            oldTags.forEach(tagName => {
+                if (tagName && newTags[tagName]) {
+                    newTags[tagName].count = Math.max(0, newTags[tagName].count - 1);
+                    newTags[tagName].beatmapIds = newTags[tagName].beatmapIds.filter(id => id !== beatmapId);
+                }
+            });
+            
+            // Add beatmap to new tags
+            userTags.forEach(tagObj => {
+                const tagName = tagObj.tag;
+                if (!tagName) return;
+                
+                if (!newTags[tagName]) {
+                    newTags[tagName] = { count: 0, beatmapIds: [] };
+                }
+                
+                if (!newTags[tagName].beatmapIds.includes(beatmapId)) {
+                    newTags[tagName].count++;
+                    newTags[tagName].beatmapIds.push(beatmapId);
+                }
+            });
+            
+            // Update beatmap
+            newBeatmaps[beatmapId] = { 
+                ...prev.beatmaps[beatmapId],
+                userTags,
+                notes: formData.notes || '',
+                beatmap_priority,
+                collectionId: formData.collectionId || prev.beatmaps[beatmapId].collectionId,
+                subcollectionId: formData.subcollectionId || prev.beatmaps[beatmapId].subcollectionId
+            };
+            
+            return {
+                ...prev,
+                beatmaps: newBeatmaps,
+                tags: newTags
+            };
+        });
+        
+        setEditingBeatmap(null);
+    };
+    
+    // Funkcja usuwająca beatmapę z kolekcji
+    const handleRemoveBeatmap = (beatmapId) => {
+        setCollections(prev => {
+            const newBeatmaps = { ...prev.beatmaps };
+            const newTags = { ...prev.tags };
+            
+            // Remove beatmap from tags
+            const beatmap = prev.beatmaps[beatmapId];
+            if (beatmap) {
+                (beatmap.userTags || []).forEach(tagObj => {
+                    const tagName = tagObj.tag;
+                    if (tagName && newTags[tagName]) {
+                        newTags[tagName].count = Math.max(0, newTags[tagName].count - 1);
+                        newTags[tagName].beatmapIds = newTags[tagName].beatmapIds.filter(id => id !== beatmapId);
+                    }
+                });
+            }
+            
+            // Remove beatmap
+            delete newBeatmaps[beatmapId];
+            
+            return {
+                ...prev,
+                beatmaps: newBeatmaps,
+                tags: newTags
+            };
+        });
+    };
 
     const removeCollection = (collectionId) => {
+        // Don't allow removing system collections
+        const collection = collections.collections.find(c => c.id === collectionId);
+        if (collection?.isSystemCollection) return;
+        
         setCollections(prev => ({
             ...prev,
             collections: prev.collections.filter(c => c.id !== collectionId)
@@ -394,188 +606,161 @@ export default function UserCollectionsPanel() {
                 addSubcollection(collectionId);
             }
         }
+    };    // Funkcja renderująca wskaźnik priorytetu
+    const renderPriorityIndicator = (priority) => {
+        let colorClass = 'priority-neutral';
+        if (priority > 3) colorClass = 'priority-high';
+        else if (priority > 0) colorClass = 'priority-medium';
+        else if (priority < -3) colorClass = 'priority-very-low';
+        else if (priority < 0) colorClass = 'priority-low';
+        
+        return (
+            <div className={`priority-indicator ${colorClass}`}>
+                <Star size={16} />
+                <span>{priority}</span>
+            </div>
+        );
     };
-
-    return (
-        <div className="collections-panel">
-            <div className="edit-mode-toggle">
-                <button 
-                    onClick={() => setEditMode(!editMode)}
-                    className={`toggle-button ${editMode ? '' : 'active'}`}
-                >
-                    {editMode ? 'Disable Edit Mode ' : 'Enable Edit Mode'}
-                </button>
-            </div>
-
-            <div className="collections-list">
-                {collections.collections
-                    .sort((a, b) => a.order - b.order)
-                    .map(collection => (
-                    <div
-                        key={collection.id}
-                        data-collection-id={collection.id}
-                        className={`collection-item ${dragOverCollectionId === collection.id ? 'drag-over' : ''}`}
-                        onDragOver={(e) => handleDragOver(e, collection)}
-                        onDragEnd={handleDragEnd}
-                        onDrop={(e) => handleDrop(e, collection)}
+      // Funkcja renderująca beatmapę
+    const renderBeatmap = (beatmap) => {
+        return (
+            <div className="beatmap-item" key={beatmap.id}>
+                <div 
+                    className="beatmap-cover" 
+                    style={{backgroundImage: `url(${beatmap.cover})`}}
+                />
+                <div className="beatmap-info">
+                    <div className="beatmap-title">{beatmap.artist} - {beatmap.title}</div>
+                    <div className="beatmap-details">
+                        <span className="beatmap-difficulty">{beatmap.version} ({beatmap.difficulty_rating.toFixed(2)}★)</span>
+                        <span className="beatmap-creator">mapped by {beatmap.creator}</span>
+                    </div>
+                    <div className="beatmap-tags">
+                        {beatmap.userTags?.map((tag, idx) => (
+                            <div 
+                                key={idx} 
+                                className={`beatmap-tag ${tag.tag_value > 0 ? 'positive' : tag.tag_value < 0 ? 'negative' : ''}`}
+                                title={`Priority value: ${tag.tag_value}`}
+                            >
+                                {tag.tag}
+                                {tag.tag_value !== 0 && <span className="tag-value">{tag.tag_value}</span>}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                {renderPriorityIndicator(beatmap.beatmap_priority || 0)}
+                <div className="beatmap-actions">
+                    <button 
+                        className="beatmap-edit" 
+                        onClick={() => handleEditBeatmap(beatmap)}
+                        title="Edit tags and collection"
                     >
-                        <div className="collection-header">
-                            {editMode && editingCollectionId === collection.id ? (
-                                <input
-                                    type="text"
-                                    value={editingName}
-                                    onChange={(e) => setEditingName(e.target.value)}
-                                    onKeyDown={handleKeyPress}
-                                    onBlur={saveEdit}
-                                    className="edit-input"
-                                    autoFocus
-                                />
-                            ) : (
-                                <span className="collection-name">{collection.name}</span>
-                            )}
-                            <div className="collection-actions">
-                                {editMode && (
-                                    <>
-                                <Edit 
-                                    className="edit-icon" 
-                                    onClick={() => startEditing(collection.id, 'collection', collection.name)} 
-                                />
-                                <Trash2 
-                                    className="delete-icon" 
-                                    onClick={() => removeCollection(collection.id)} 
-                                />
-                                <div
-                                    draggable
-                                    onDragStart={(e) => handleDragStart(collection, e)}
-                                    className="drag-handle-wrapper"
-                                >
-                                    <GripVertical className="drag-handle" />
-                                </div>
-                                    </>
-                                    )}
-                            </div>
-                        </div>
-                        
-                        <div className="subcollections">
-                            {collection.subcollections
-                                .sort((a, b) => a.order - b.order)
-                                .map(sub => (
-                                <div 
-                                    key={sub.id}
-                                    data-subcollection-id={sub.id}
-                                    className={`subcollection-item ${
-                                        draggedSubcollection?.subcollection.id === sub.id ? 'dragging' : ''
-                                    }`}
-                                    onDragOver={(e) => handleSubcollectionDragOver(e, collection, sub)}
-                                    onDragEnd={handleDragEnd}
-                                >
-                                    <div className="subcollection-content">
-                                        {editMode && editingSubcollectionId === sub.id ? (
-                                            <input
-                                                type="text"
-                                                value={editingName}
-                                                onChange={(e) => setEditingName(e.target.value)}
-                                                onKeyDown={handleKeyPress}
-                                                onBlur={saveEdit}
-                                                className="edit-input"
-                                                autoFocus
-                                            />
-                                        ) : (
-                                            <span>{sub.name}</span>
-                                        )}
-                                        <div className="subcollection-actions">
-                                            {editMode && (
-                                                <>
-                                                    <Edit 
-                                                        className="edit-icon" 
-                                                        onClick={() => startEditing(sub.id, 'subcollection', sub.name)} 
-                                                    />
-                                                    <Trash2 
-                                                        className="delete-icon" 
-                                                        onClick={() => removeSubcollection(collection.id, sub.id)} 
-                                                    />
-                                            <div
-                                                draggable
-                                                onDragStart={(e) => handleSubcollectionDragStart(e, collection, sub)}
-                                                className="drag-handle-wrapper"
-                                            >
-                                                <GripVertical className="drag-handle" />
-                                            </div>
-                                                </>
-                                                )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                            
-                            {editMode && (
-                                <div className="add-subcollection">
-                                    <div className="input-wrapper">
-                                        <input
-                                            type="text"
-                                            value={newSubcollectionNames[collection.id] || ''}
-                                            onChange={(e) => setNewSubcollectionNames(prev => ({
-                                                ...prev,
-                                                [collection.id]: e.target.value
-                                            }))}
-                                            onKeyDown={(e) => handleSubcollectionInputKeyPress(e, collection.id)}
-                                            placeholder="Subcollection name"
-                                            className={`subcollection-input ${validationStates.subcollections[collection.id]?.isValid === false ? 'error' : ''}`}
-                                        />
-                                        {validationStates.subcollections[collection.id]?.isValid === false && (
-                                            <NeonBorderBox error style={{ marginTop: 8, marginBottom: 8 }}>
-                                                {validationStates.subcollections[collection.id].message}
-                                            </NeonBorderBox>
-                                        )}
-                                    </div>
-                                    <button
-                                        onClick={() => addSubcollection(collection.id)}
-                                        className="add-button"
-                                    >
-                                        <PlusCircle />
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                        {errors[`drop-${collection.id}`] && (
-                            <div className="drop-error-message">
-                                {errors[`drop-${collection.id}`]}
-                                <X
-                                    className="error-close"
-                                    onClick={() => setErrors(prev => {
-                                        const newErrors = { ...prev };
-                                        delete newErrors[`drop-${collection.id}`];
-                                        return newErrors;
-                                    })}
-                                />
-                            </div>
-                        )}
-                    </div>
-                ))}
-            </div>
-
-            {editMode && (
-                <div className="add-collection">
-                    <div className="input-wrapper">
-                        <input
-                            type="text"
-                            value={newCollectionName}
-                            onChange={(e) => setNewCollectionName(e.target.value)}
-                            onKeyDown={handleCollectionInputKeyPress}
-                            placeholder="Collection name"
-                            className={`collection-input ${validationStates.collection.isValid === false ? 'error' : ''}`}
-                        />
-                        {validationStates.collection.isValid === false && (
-                            <NeonBorderBox error style={{ marginTop: 8, marginBottom: 8 }}>
-                                {validationStates.collection.message}
-                            </NeonBorderBox>
-                        )}
-                    </div>
-                    <button onClick={addCollection} className="add-button">
-                        <PlusCircle />
+                        <Edit size={16} />
+                    </button>
+                    <button 
+                        className="beatmap-delete"
+                        onClick={() => handleRemoveBeatmap(beatmap.id)}
+                        title="Remove from collection"
+                    >
+                        <Trash2 size={16} />
                     </button>
                 </div>
-            )}
-        </div>
-    );
+            </div>
+        );
+    };
+    
+    // Renderowanie listy beatmap dla kolekcji/podkolekcji
+    const renderBeatmapList = (collectionId, subcollectionId = null) => {
+        let beatmaps = getBeatmapsForCollection(collectionId, subcollectionId);
+        beatmaps = filterBeatmapsByTags(beatmaps);
+        beatmaps = sortBeatmaps(beatmaps);
+        
+        if (beatmaps.length === 0) {
+            return <div className="empty-beatmaps">No beatmaps found in this collection.</div>;
+        }
+        
+        return (
+            <div className="beatmaps-container">
+                {beatmaps.map(renderBeatmap)}
+            </div>
+        );
+    };
+    
+    // Renderowanie kontrolek sortowania i filtrowania
+    const renderSortFilterControls = () => {
+        return (
+            <div className="sort-filter-controls">
+                <div className="sorting-controls">
+                    <button 
+                        className="sort-mode-toggle"
+                        onClick={toggleSortMode}
+                        title="Change sort criteria"
+                    >
+                        <span>Sort by: </span>
+                        {sortMode === 'priority' && 'Priority'}
+                        {sortMode === 'name' && 'Name'}
+                        {sortMode === 'date' && 'Date Added'}
+                    </button>
+                    <button 
+                        className="sort-direction-toggle"
+                        onClick={toggleSortDirection}
+                        title="Change sort direction"
+                    >
+                        {sortDirection === 'desc' ? <SortDesc size={16} /> : <SortAsc size={16} />}
+                    </button>
+                </div>
+                
+                <div className="filter-controls">
+                    <button
+                        className="filter-toggle"
+                        onClick={() => setShowTagSelector(!showTagSelector)}
+                        title="Filter by tags"
+                    >
+                        <Filter size={16} />
+                        <span>Filter{activeTags.length > 0 && ` (${activeTags.length})`}</span>
+                    </button>
+                    
+                    {showTagSelector && (
+                        <div className="tag-selector">
+                            <div className="tag-selector-header">
+                                <h4>Filter by Tags</h4>
+                                <button 
+                                    className="tag-selector-close"
+                                    onClick={() => setShowTagSelector(false)}
+                                >×</button>
+                            </div>
+                            <div className="tag-list">
+                                {availableTags.length === 0 ? (
+                                    <div className="no-tags">No tags available.</div>
+                                ) : (
+                                    availableTags.map((tag, idx) => (
+                                        <label key={idx} className="tag-checkbox">
+                                            <input 
+                                                type="checkbox"
+                                                checked={activeTags.includes(tag)}
+                                                onChange={() => toggleTagFilter(tag)}
+                                            />
+                                            <span>{tag}</span>
+                                        </label>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    };
+    
+    // Renderowanie szczegółów kolekcji lub podkolekcji
+    const renderCollectionDetails = (collectionId, subcollectionId = null) => {
+        if (!collectionId) return null;
+        
+        return (
+            <div className="collection-details">
+                {renderSortFilterControls()}
+                {renderBeatmapList(collectionId, subcollectionId)}
+            </div>
+        );
+    };
 }

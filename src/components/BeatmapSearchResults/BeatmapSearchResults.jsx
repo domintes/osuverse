@@ -41,54 +41,110 @@ export default function BeatmapSearchResults({
     setModalOpen(false);
     setModalTarget(null);
   };
-
   const handleAddBeatmapSubmit = (formData) => {
     if (!modalTarget) return;
     
     const { set, beatmap, type } = modalTarget;
     
+    // Find default "Unsorted" collection if none is selected
+    const defaultCollectionId = collections.collections.find(c => c.isSystemCollection && c.name === 'Unsorted')?.id;
+    
+    // Use the selected collection or fall back to the default
+    const collectionId = formData.collectionId || defaultCollectionId;
+    const subcollectionId = formData.subcollectionId || null;
+    
+    if (!collectionId) {
+      console.error('No collection selected and no default collection found');
+      return;
+    }
+    
     setCollections(prev => {
       const newBeatmaps = { ...prev.beatmaps };
+      const newTags = { ...prev.tags };
       
-      // Przygotuj tagi z wartościami
+      // Prepare tags with values
       const userTags = (formData.tags || []).map(tag => {
         if (typeof tag === 'object' && tag.tag) return tag;
-        // domyślny tag_value = 0
-        return { tag, tag_value: 0 };
+        // default tag_value = 0
+        return { tag: tag, tag_value: 0 };
       });
       
-      // Wylicz beatmap_priority na podstawie sumy tag_value
-      const beatmap_priority = userTags.reduce((sum, t) => sum + (t.tag_value || 0), 0);
+      // Calculate beatmap_priority based on tag values sum
+      const beatmap_priority = userTags.reduce((sum, t) => sum + (parseInt(t.tag_value) || 0), 0);
+      
+      // Update tag statistics
+      userTags.forEach(tagObj => {
+        const tagName = tagObj.tag;
+        if (!tagName) return;
+        
+        if (!newTags[tagName]) {
+          newTags[tagName] = { count: 0, beatmapIds: [] };
+        }
+      });
       
       if (type === 'all') {
         set.beatmaps.forEach(bm => {
-          newBeatmaps[bm.id] = { 
+          const beatmapData = { 
             ...bm, 
             setId: set.id,
             artist: set.artist,
             title: set.title,
             creator: set.creator,
             cover: set.covers?.cover || set.covers?.card,
-            userTags,
-            notes: formData.notes,
-            beatmap_priority
+            userTags: userTags,
+            notes: formData.notes || '',
+            beatmap_priority,
+            collectionId,
+            subcollectionId
           };
+          
+          newBeatmaps[bm.id] = beatmapData;
+          
+          // Update tag statistics
+          userTags.forEach(tagObj => {
+            const tagName = tagObj.tag;
+            if (!tagName) return;
+            
+            if (!newTags[tagName].beatmapIds.includes(bm.id)) {
+              newTags[tagName].count++;
+              newTags[tagName].beatmapIds.push(bm.id);
+            }
+          });
         });
       } else if (beatmap) {
-        newBeatmaps[beatmap.id] = { 
+        const beatmapData = { 
           ...beatmap, 
           setId: set.id,
           artist: set.artist,
           title: set.title,
           creator: set.creator,
           cover: set.covers?.cover || set.covers?.card,
-          userTags,
-          notes: formData.notes,
-          beatmap_priority
+          userTags: userTags,
+          notes: formData.notes || '',
+          beatmap_priority,
+          collectionId,
+          subcollectionId
         };
+        
+        newBeatmaps[beatmap.id] = beatmapData;
+        
+        // Update tag statistics
+        userTags.forEach(tagObj => {
+          const tagName = tagObj.tag;
+          if (!tagName) return;
+          
+          if (!newTags[tagName].beatmapIds.includes(beatmap.id)) {
+            newTags[tagName].count++;
+            newTags[tagName].beatmapIds.push(beatmap.id);
+          }
+        });
       }
       
-      return { ...prev, beatmaps: newBeatmaps };
+      return { 
+        ...prev, 
+        beatmaps: newBeatmaps,
+        tags: newTags
+      };
     });
     
     closeModal();

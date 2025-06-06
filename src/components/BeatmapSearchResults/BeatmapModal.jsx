@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAtom } from 'jotai';
+import { collectionsAtom } from '@/store/collectionAtom';
 import './beatmapModal.scss';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -16,6 +18,11 @@ export default function BeatmapModal({
     initialTags.map(tag => typeof tag === 'string' ? { tag, tag_value: 0 } : tag)
   );
   const [notes, setNotes] = useState('');
+  const [selectedCollection, setSelectedCollection] = useState(null);
+  const [selectedSubcollection, setSelectedSubcollection] = useState(null);
+  
+  // Get collections from the atom
+  const [collectionsData] = useAtom(collectionsAtom);
 
   const handleAddTag = () => {
     setTags([...tags, { tag: '', tag_value: 0 }]);
@@ -43,10 +50,25 @@ export default function BeatmapModal({
       )
     );
   };
-  
+    // Initialize with the first collection if none is selected
+  useEffect(() => {
+    if (!selectedCollection && collectionsData.collections.length > 0) {
+      setSelectedCollection(collectionsData.collections[0].id);
+    }
+  }, [collectionsData.collections, selectedCollection]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ tags, notes });
+    
+    // Use "Unsorted" collection if none is selected
+    const collectionId = selectedCollection || collectionsData.collections.find(c => c.name === 'Unsorted')?.id;
+    
+    onSubmit({ 
+      tags, 
+      notes, 
+      collectionId, 
+      subcollectionId: selectedSubcollection 
+    });
   };
 
   // Automatycznie wygenerowane tagi (na podstawie beatmapy)
@@ -126,8 +148,45 @@ export default function BeatmapModal({
               )}
             </div>
           </div>
-          
-          <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
+            <div className="beatmap-modal-field">
+              <label>Select Collection:</label>
+              <div className="beatmap-modal-collections">
+                <select 
+                  value={selectedCollection || ''} 
+                  onChange={e => {
+                    setSelectedCollection(e.target.value);
+                    setSelectedSubcollection(null); // Reset subcollection when collection changes
+                  }}
+                  className="beatmap-modal-select"
+                >
+                  {collectionsData.collections.map(collection => (
+                    <option key={collection.id} value={collection.id}>{collection.name}</option>
+                  ))}
+                </select>
+                
+                {selectedCollection && 
+                  collectionsData.collections.find(c => c.id === selectedCollection)?.subcollections?.length > 0 && (
+                  <div className="beatmap-modal-field">
+                    <label>Select Subcollection (optional):</label>
+                    <select
+                      value={selectedSubcollection || ''}
+                      onChange={e => setSelectedSubcollection(e.target.value || null)}
+                      className="beatmap-modal-select"
+                    >
+                      <option value="">None (Add to main collection)</option>
+                      {collectionsData.collections
+                        .find(c => c.id === selectedCollection)
+                        .subcollections.map(sub => (
+                          <option key={sub.id} value={sub.id}>{sub.name}</option>
+                        ))
+                      }
+                    </select>
+                  </div>
+                )}
+              </div>
+            </div>
+            
             <div className="beatmap-modal-field">
               <label>Custom User Tags:</label>
               <div className="beatmap-modal-tags">
