@@ -20,15 +20,17 @@ const getTagGroups = (beatmaps) => {
 
         // Mapper
         const mapper = map.mapper || 'Unknown'
-        groups.Mappers[mapper] = (groups.Mappers[mapper] || 0) + 1
-
-        // Star Range
+        groups.Mappers[mapper] = (groups.Mappers[mapper] || 0) + 1        // Star Range
         const stars = map.starRating || 0
         let range = ''
-        if (stars < 5.71) range = '4.99-5.70*'
-        else if (stars < 6.60) range = '5.71-6.59*'
-        else range = '6.60-7.69*'
-        groups.Stars[range] = (groups.Stars[range] || 0) + 1        // User Tags
+        if (stars < 5.71) {
+            range = '4.99-5.70*'
+        } else if (stars < 6.60) {
+            range = '5.71-6.59*'
+        } else {
+            range = '6.60-7.69*'
+        }
+        groups.Stars[range] = (groups.Stars[range] || 0) + 1// User Tags
         const userTags = map.userTags || []
         if (Array.isArray(userTags)) {
             userTags.forEach(tag => {
@@ -61,9 +63,15 @@ const getAllBeatmaps = (collections) => {
             id: beatmap.id,
             artist: beatmap.artist || beatmapset.artist || 'Unknown',
             mapper: beatmap.creator || beatmapset.creator || 'Unknown',
+            // Zachowaj też nazwy pól dla kompatybilności
+            artist_name: beatmap.artist || beatmapset.artist || 'Unknown',
+            creator_name: beatmap.creator || beatmapset.creator || 'Unknown',
             starRating: beatmap.difficulty_rating || 0,
+            difficulty_rating: beatmap.difficulty_rating || 0,
             // Zachowaj oryginalne tagi (mogą być w formie obiektów {tag, tag_value} lub stringów)
-            userTags: beatmap.userTags || beatmap.tags || []
+            userTags: beatmap.userTags || beatmap.tags || [],
+            collectionId: beatmap.collectionId,
+            subcollectionId: beatmap.subcollectionId
         });
     });
     
@@ -73,7 +81,7 @@ const getAllBeatmaps = (collections) => {
 // Czy tag pasuje do beatmapy
 const doesTagMatch = (map, selectedTags) => {
     return selectedTags.every(tag => {
-        const lower = tag.toLowerCase()
+        const lower = tag.toLowerCase();
         
         // Bezpieczne przetwarzanie tagów użytkownika
         const userTags = [];
@@ -86,10 +94,14 @@ const doesTagMatch = (map, selectedTags) => {
                 }
             });
         }
+        
+        // Obsługa różnych możliwych nazw pól dla artysty i twórcy
+        const artist = (map.artist || map.artist_name || '').toLowerCase();
+        const creator = (map.creator || map.creator_name || map.mapper || '').toLowerCase();
             
         return (
-            map.artist?.toLowerCase() === lower ||
-            map.mapper?.toLowerCase() === lower ||
+            artist === lower ||
+            creator === lower ||
             userTags.includes(lower) ||
             (
                 lower.includes('*') &&

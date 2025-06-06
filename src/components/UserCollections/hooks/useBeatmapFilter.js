@@ -28,11 +28,11 @@ export const useBeatmapFilter = () => {
                     }
                 });
             }
-            
-            const beatmapArtist = beatmap.artist_name || beatmap.artist || '';
-            const beatmapMapper = beatmap.creator_name || beatmap.mapper || '';
+              const beatmapArtist = beatmap.artist || beatmap.artist_name || '';
+            const beatmapMapper = beatmap.creator || beatmap.creator_name || beatmap.mapper || '';
             const starRating = beatmap.difficulty_rating || 0;
-              return allActiveTags.every(tag => {
+            
+            return allActiveTags.every(tag => {
                 // Konwersja tagu do małych liter dla porównania
                 const tagLower = tag.toLowerCase();
                 

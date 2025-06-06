@@ -11,16 +11,23 @@ export const getBeatmapsForCollection = (collections, collectionId, subcollectio
         beatmap.collectionId === collectionId &&
         (subcollectionId === null || beatmap.subcollectionId === subcollectionId)
     );
-    
-    // Wzbogać beatmapy o dodatkowe metadane z beatmapsets
+      // Wzbogać beatmapy o dodatkowe metadane z beatmapsets
     return beatmaps.map(beatmap => {
         const beatmapset = collections.beatmapsets?.[beatmap.setId] || {};
+        
+        // Zachowaj oryginalne userTags i nie modyfikuj ich formatu
+        // Jeśli beatmap.userTags istnieje, użyj ich, w przeciwnym razie sprawdź beatmap.tags
+        const userTags = beatmap.userTags || beatmap.tags || [];
+        
         return {
             ...beatmap,
-            artist_name: beatmapset.artist_name || beatmap.artist_name || 'Unknown',
-            creator_name: beatmapset.creator_name || beatmap.creator_name || 'Unknown',
-            // Zamień tagi z formatu [{tag, tag_value}] na zwykły string
-            userTags: (beatmap.tags || []).map(tagObj => tagObj.tag)
+            artist: beatmap.artist || beatmapset.artist || 'Unknown',
+            creator: beatmap.creator || beatmapset.creator || 'Unknown',
+            // Zachowaj oryginalne nazwy pól dla kompatybilności wstecznej
+            artist_name: beatmap.artist || beatmapset.artist || 'Unknown',
+            creator_name: beatmap.creator || beatmapset.creator || 'Unknown',
+            // Zachowaj oryginalne tagi w niezmienionej formie
+            userTags: userTags
         };
     });
 };
