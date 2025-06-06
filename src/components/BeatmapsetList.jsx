@@ -14,60 +14,19 @@ export default function BeatmapsetList({ beatmapsets, onAddToCollection }) {
 }
 
 function BeatmapsetListItem({ set, onAddToCollection }) {
-  const [expanded, setExpanded] = useState(false);
-  const [hoverTimer, setHoverTimer] = useState(null);
+  const [showDifficulties, setShowDifficulties] = useState(false);
+  
   const handleMouseEnter = () => {
-    // Anuluj poprzedni timer jeśli istnieje
-    if (hoverTimer) {
-      clearTimeout(hoverTimer);
-    }
-      const timer = setTimeout(() => {
-      setExpanded(true);
-    }, 1000); // 1000ms (1s) opóźnienie przed rozwinięciem zgodnie z wymaganiem
-    setHoverTimer(timer);
+    setShowDifficulties(true);
   };
   
-  // Czyszczenie timeoutów przy odmontowaniu komponentu
-  useEffect(() => {
-    return () => {
-      if (hoverTimer) {
-        clearTimeout(hoverTimer);
-      }
-    };
-  }, [hoverTimer]);
-  const handleMouseLeave = (e) => {
-    // Sprawdź, czy opuszczamy element i nie wchodzimy na panel trudności
-    if (hoverTimer) {
-      clearTimeout(hoverTimer);
-      setHoverTimer(null);
-    }
-    
-    // Sprawdź, czy nie najeżdżamy na panel trudności
-    const toElement = e.relatedTarget;
-    const isMovingToDifficulties = toElement && 
-      (toElement.classList.contains('difficulties-panel') || 
-       toElement.closest('.difficulties-panel'));
-    
-    // Dodatkowe zabezpieczenie przed przypadkowym zwinięciem
-    // Jeśli nie przechodzimy na panel trudności, ustaw timeout przed zwinięciem
-    if (!isMovingToDifficulties) {
-      // Opóźnienie przed zwinięciem, aby zapobiec migotaniu przy szybkim ruchu kursora
-      setTimeout(() => {
-        // Sprawdzenie ponownie, czy panel nie powinien pozostać rozwinięty
-        // (jeśli użytkownik w międzyczasie wrócił kursorem)
-        const isStillOverElement = document.querySelector('.beatmapset-list-item:hover') === e.currentTarget;
-        const isStillOverPanel = document.querySelector('.difficulties-panel:hover') !== null;
-        
-        if (!isStillOverElement && !isStillOverPanel) {
-          setExpanded(false);
-        }
-      }, 100);
-    }
+  const handleMouseLeave = () => {
+    setShowDifficulties(false);
   };
   
   return (
     <motion.div
-      className={`beatmapset-list-item${expanded ? ' expanded' : ''}`}
+      className={`beatmapset-item-box${showDifficulties ? ' expanded' : ''}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       initial={{ opacity: 0, scale: 0.98 }}
@@ -75,9 +34,9 @@ function BeatmapsetListItem({ set, onAddToCollection }) {
       exit={{ opacity: 0, scale: 0.98 }}
       transition={{ duration: 0.18 }}
     >
-      <div className="beatmapset-main">
-        <div className="cover" style={{ backgroundImage: `url(${set.covers?.cover || set.cover || ''})` }} />
-        <div className="info">
+      <div className="beatmapset-content">
+        <div className="beatmapset-cover" style={{ backgroundImage: `url(${set.covers?.cover || set.cover || ''})` }} />
+        <div className="beatmapset-info">
           <div className="title">{set.artist} – {set.title}</div>
           <div className="mapper">mapped by <span>{set.creator}</span></div>
           <div className="tags">
@@ -87,37 +46,22 @@ function BeatmapsetListItem({ set, onAddToCollection }) {
           </div>
         </div>
         <button className="add-btn" onClick={() => onAddToCollection?.(set)}>Dodaj do kolekcji</button>
-      </div>      {expanded && (        <motion.div
-          className="difficulties-panel"
-          initial={{ opacity: 0, y: -15 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -15 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}          onMouseLeave={(e) => {
-            // Sprawdź, czy opuszczamy panel i nie wchodzimy z powrotem na beatmapset-item
-            const toElement = e.relatedTarget;
-            const isMovingToParent = toElement && 
-              (toElement.classList.contains('beatmapset-list-item') || 
-               toElement.closest('.beatmapset-list-item') === e.currentTarget.parentNode);
-              
-            // Dodatkowe zabezpieczenie przed przypadkowym zwinięciem
-            if (!isMovingToParent) {
-              // Opóźnienie przed zwinięciem, aby zapobiec migotaniu przy szybkim ruchu kursora
-              setTimeout(() => {
-                // Sprawdzenie ponownie, czy panel powinien pozostać rozwinięty
-                const isStillOverItem = document.querySelector('.beatmapset-list-item:hover') === e.currentTarget.parentNode;
-                const isStillOverPanel = document.querySelector('.difficulties-panel:hover') !== null;
-                
-                if (!isStillOverItem && !isStillOverPanel) {
-                  setExpanded(false);
-                }
-              }, 100);
-            }
+      </div>
+      
+      {set.beatmaps && (
+        <motion.div
+          className="beatmap-difficulty-list"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ 
+            opacity: showDifficulties ? 1 : 0,
+            height: showDifficulties ? 'auto' : 0
           }}
+          transition={{ duration: 0.2 }}
         >
-          <div className="difficulties-list">
-            {set.beatmaps?.map(diff => (
+          <div className="difficulties-container">
+            {set.beatmaps.map(diff => (
               <div 
-                className="difficulty-rect" 
+                className="beatmapset-difficulty-item" 
                 key={diff.id} 
                 title={diff.version} 
                 style={{ 
