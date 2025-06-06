@@ -7,7 +7,7 @@ export default function OsuverseLogo() {
         <div className="osuverse-logo-container">
             <div className="wonderful-void"></div>
             <div className="osuverse-logo">
-                <span className="osuniverse-logo-letter-first">O</span>
+                <img src="/favicon.ico" alt="O" className="osuniverse-logo-favicon" />
                 <span className="osuniverse-logo-letter">S</span>
                 <span className="osuniverse-logo-letter">U</span>
                 <span className="osuniverse-logo-letter">V</span>

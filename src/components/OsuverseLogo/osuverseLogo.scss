@@ -25,6 +25,18 @@
     filter: drop-shadow(0 0 8px #2f0f3a);
 }
 
+.osuniverse-logo-favicon {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    position: relative;
+    top: 0;
+    left: -2px;
+    margin-right: -2px;
+    z-index: 10;
+    filter: drop-shadow(0 0 8px #ea81fb) brightness(1.1);
+}
+
 .osuniverse-logo-letter-first {
     z-index: 10;
     font-weight: 900;
@@ -39,12 +51,12 @@
         background: radial-gradient(circle, #000 60%, #2f0f3a 100%);
         border: 1px solid #ea81fb44;
         border-radius: 50%;
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
         animation: 3s ease-in-out infinite glow, 8s linear infinite eventHorizon;
         position: absolute;
         top: 4px;
-        left:6px;
+        left: 14px;
 }
 
 @keyframes glow {
