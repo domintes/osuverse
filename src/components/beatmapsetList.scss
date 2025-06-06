@@ -23,12 +23,17 @@
 .beatmapset-list-item {
   background: #23262f;
   border-radius: 14px;
-  box-shadow: 0 2px 12px #000a;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.2s, background 0.2s;
+  transition: box-shadow 0.3s, background 0.3s, transform 0.2s;
   position: relative;
   overflow: visible;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+  }
   
   @media (max-width: 480px) {
     border-radius: 10px;
@@ -36,8 +41,8 @@
 }
 .beatmapset-list-item.expanded {
   background: #181a20;
-  box-shadow: 0 4px 24px #00e67633;
-  z-index: 2;
+  box-shadow: 0 6px 30px rgba(0, 230, 118, 0.25);
+  z-index: 5;
 }
 .beatmapset-main {
   display: flex;
@@ -131,25 +136,54 @@
   color: #181a20;
 }
 .difficulties-panel {
-  background: #181a20;
+  background: #1a1d25; /* Nieprzeźroczyste tło */
   border-radius: 0 0 14px 14px;
-  box-shadow: 0 4px 24px #00e67622;
+  box-shadow: 0 4px 24px rgba(0, 230, 118, 0.3);
   padding: 12px 24px 18px 114px;
   position: absolute;
   left: 0;
   right: 0;
+  width: 100%;
   top: 100%;
-  z-index: 3;
-  animation: fadeIn 0.18s;
+  z-index: 10;
+  animation: slideDown 0.25s ease-out forwards; /* Płynniejsza animacja */
+  border-top: 1px solid rgba(0, 230, 118, 0.3);
+  
+  @media (max-width: 768px) {
+    padding: 10px 18px 14px 92px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 8px 14px 10px 72px;
+  }
 }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Dodajemy nowe animacje dla płynniejszych efektów */
+@keyframes slideDown {
+  0% { opacity: 0; transform: translateY(-15px); clip-path: polygon(0 0, 100% 0, 100% 0, 0 0); }
+  30% { clip-path: polygon(0 0, 100% 0, 100% 20%, 0 20%); }
+  100% { opacity: 1; transform: translateY(0); clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 4px 20px rgba(0, 230, 118, 0.2); }
+  50% { box-shadow: 0 4px 30px rgba(0, 230, 118, 0.4); }
+  100% { box-shadow: 0 4px 20px rgba(0, 230, 118, 0.2); }
+}
 .difficulties-list {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
+  margin-top: 4px;
+  padding: 6px 0;
+  
+  @media (max-width: 480px) {
+    gap: 8px;
+  }
 }
 .difficulty-rect {
   background: #23262f;
@@ -160,13 +194,24 @@
   text-align: center;
   font-size: 0.98rem;
   font-weight: 500;
-  box-shadow: 0 1px 4px #0005;
-  border: 2px solid #00e67644;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(0, 230, 118, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  transition: background 0.2s, border 0.2s;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.5);
+  }
+  
+  @media (max-width: 480px) {
+    min-width: 70px;
+    padding: 6px 10px 4px 10px;
+  }
 }
 .difficulty-rect .stars {
   font-size: 0.92rem;
@@ -174,6 +219,6 @@
   margin-top: 2px;
 }
 .difficulty-rect:hover {
-  background: #00e67622;
-  border: 2px solid #00e676;
+  background: rgba(0, 230, 118, 0.15);
+  border-color: rgba(0, 230, 118, 0.8);
 }

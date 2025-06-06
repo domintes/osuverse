@@ -24,7 +24,7 @@ export default function SearchPage() {
         mode: 'all'
     });
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [itemsPerPage, setItemsPerPage] = useState(20);
     const [rowCount, setRowCount] = useState(2);
     const token = useAtom(authAtom)[0];
 
