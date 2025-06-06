@@ -11,6 +11,9 @@ nav {
   background-image: 
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 16px),
     repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 16px);
+  height: 58px;
+  display: flex;
+  align-items: center;
   
   @media (max-width: 768px) {
     padding: 0.5rem 1rem;
@@ -29,6 +32,7 @@ nav {
     flex-direction: row;
     gap: 2rem;
     align-items: center;
+    width: 100%;
     
     @media (max-width: 768px) {
       gap: 1rem;
@@ -42,7 +46,43 @@ nav {
 
   li {
     margin-bottom: 0;
-  }  a {
+  }
+  
+  .logo-container {
+    display: flex;
+    align-items: center;
+    margin-right: 1rem;
+    
+    .logo-link {
+      background: none;
+      box-shadow: none;
+      border: none;
+      padding: 0;
+      transition: filter 0.3s;
+      
+      &:hover {
+        filter: brightness(1.2) drop-shadow(0 0 10px rgba(234, 129, 251, 0.7));
+        background: none;
+        border: none;
+      }
+      
+      &.active {
+        background: none !important;
+        box-shadow: none !important;
+        border: none !important;
+        filter: brightness(1.2) drop-shadow(0 0 15px rgba(242, 100, 164, 0.8));
+      }
+    }
+  }
+  
+  .user-panel-container {
+    margin-left: auto;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+  }
+
+  a {
     color: #ffcae6;
     text-decoration: none;
     padding: 0.5rem 1.2rem;
@@ -95,7 +135,6 @@ nav {
     text-decoration: none;
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
     box-shadow: 0 2px 12px 0 #f264a433, 0 0 16px 0 #2f0f3a55;
-    margin-left: 1rem;
     border: 1px solid #f264a4;
     
     @media (max-width: 768px) {
@@ -123,32 +162,6 @@ nav {
     justify-content: space-between;
     width: 100%;
     z-index: 72;
-    .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-      
-      a {
-        color: #f264a4;
-        background: none;
-        box-shadow: none;
-        border: none;
-        padding: 0;
-        
-        &:hover {
-          text-shadow: 0 0 8px #f264a499, 0 0 16px #f264a466;
-          background: none;
-          border: none;
-        }
-      }
-      
-      @media (max-width: 768px) {
-        font-size: 1.3rem;
-      }
-      
-      @media (max-width: 480px) {
-        font-size: 1.2rem;
-      }
-    }
     
     .hamburger {
       display: none;
@@ -235,6 +248,31 @@ nav {
     
     &.visible {
       display: block;
+    }
+  }
+  
+  .navbar-search-form {
+    width: 100%;
+    
+    .navbar-search-input {
+      background: rgba(47, 15, 58, 0.7);
+      border: 1px solid #f264a466;
+      border-radius: 8px;
+      color: #ffcae6;
+      padding: 0.4rem 1rem;
+      width: 100%;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      
+      &:focus {
+        border-color: #f264a4;
+        box-shadow: 0 0 8px 0 #f264a455;
+        outline: none;
+      }
+      
+      &::placeholder {
+        color: #ffcae680;
+      }
     }
   }
 }

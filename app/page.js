@@ -6,7 +6,6 @@ import { useAtom } from 'jotai';
 import { authAtom } from '@/store/authAtom';
 import OsuverseDiv from '../src/components/OsuverseDiv';
 import MainOsuverseDiv from "../src/components/MainOsuverseDiv";
-import OsuverseLogo from '../src/components/OsuverseLogo/OsuverseLogo';
 import BeatmapSearchResults from '@/components/BeatmapSearchResults/BeatmapSearchResults';
 import OsuversePopup from '@/components/OsuversePopup/OsuversePopup';
 import '@/components/BeatmapSearchResults/beatmapSearchResults.scss';
@@ -66,7 +65,6 @@ export default function Home() {
   return (
     <MainOsuverseDiv className="home-container">
       <div>
-        <OsuverseLogo />
         <form onSubmit={handleSearch} className="beatmap-search-form">
           <div className="beatmap-search-form-inputs">
             <div className="beatmap-search-input-group">

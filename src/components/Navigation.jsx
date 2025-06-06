@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import './navigation.scss';
 import OsuverseMainSearchBox from './OsuverseMainSearchBox';
+import OsuverseLogo from './OsuverseLogo/OsuverseLogo';
 
 export default function Navigation() {
   const [user, setUser] = useState(null);
@@ -97,21 +98,14 @@ export default function Navigation() {
     setUser(null);
     router.refresh();
   };
-
   return (
     <nav>
       <div className="navbar-container">
         <ul className={`nav-links ${mobileMenuOpen ? 'open' : ''}`}>
-          <li>
-            <Link href="/" className={pathname === '/' ? 'active' : ''} onClick={handleNavLinkClick}>Home</Link>
-          </li>
-          <li>
-            <Link href="/search" className={pathname === '/search' ? 'active' : ''} onClick={handleNavLinkClick}>Search</Link>
-          </li>
-          {/* OsuverseMainSearchBox w navbarze, tuż za Search */}          <li className="search-container">
-            <div ref={searchBoxRef} className={`search-dropdown ${showSearchBox ? 'visible' : 'hidden'}`}>
-              <OsuverseMainSearchBox />
-            </div>
+          <li className="logo-container">
+            <Link href="/" className={pathname === '/' ? 'active logo-link' : 'logo-link'} onClick={handleNavLinkClick}>
+              <OsuverseLogo />
+            </Link>
           </li>
           <li>
             <Link href="/collections" className={pathname === '/collections' ? 'active' : ''} onClick={handleNavLinkClick}>Collections</Link>
@@ -119,7 +113,24 @@ export default function Navigation() {
           <li>
             <Link href="/about" className={pathname === '/about' ? 'active' : ''} onClick={handleNavLinkClick}>About</Link>
           </li>
-          <li style={{ marginLeft: 'auto' }}>
+          <li>
+            <Link href="/search" className={pathname === '/search' ? 'active' : ''} onClick={handleNavLinkClick}>Search</Link>
+          </li>
+          {/* Formularz wyszukiwania w navbarze */}
+          <li className="search-container">
+            <div ref={searchBoxRef} className={`search-dropdown ${showSearchBox ? 'visible' : 'hidden'}`}>
+              <OsuverseMainSearchBox />
+            </div>
+            <form className="navbar-search-form">
+              <input
+                type="text"
+                placeholder="Search beatmaps..."
+                className="navbar-search-input"
+                onClick={() => setShowSearchBox(true)}
+              />
+            </form>
+          </li>
+          <li className="user-panel-container">
             {mounted && (
               user ? (
                 <UserPanel

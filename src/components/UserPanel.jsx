@@ -16,14 +16,18 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange, ho
     { key: 'showSearch', label: 'Show search box', color: 'green' },
     { key: 'showRanked', label: 'Show only ranked beatmaps on home', color: 'purple' },
     { key: 'showCustomSection', label: 'Show custom section', color: 'orange' },
-  ];
-  return (
+  ];  return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
-        <button className="user-panel-trigger" title="User settings">          <User />
+        <button className="user-panel-button" title="User settings">
+          {user?.avatar_url ? (
+            <img src={user.avatar_url} alt={user.username} className="user-panel-avatar-img" />
+          ) : (
+            <User />
+          )}
           <span className="username-span">{user?.username}</span>
         </button>
-      </Dialog.Trigger>      <Dialog.Portal>
+      </Dialog.Trigger><Dialog.Portal>
         <Dialog.Overlay className="user-panel-overlay" />
         <Dialog.Content className="user-panel-content">
           <Dialog.Title className="sr-only">User Settings Panel</Dialog.Title>
