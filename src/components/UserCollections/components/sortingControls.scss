@@ -1,0 +1,83 @@
+.sorting-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background-color: rgba(19, 16, 32, 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(88, 91, 105, 0.3);
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.sorting-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sorting-label {
+  font-size: 0.9rem;
+  color: #c3e6ff;
+  white-space: nowrap;
+}
+
+.sorting-select {
+  padding: 0.4rem 0.8rem;
+  background-color: rgba(30, 10, 36, 0.7);
+  border: 1px solid rgba(88, 91, 105, 0.5);
+  border-radius: 4px;
+  color: #ea81fb;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover, &:focus {
+    border-color: rgba(234, 129, 251, 0.5);
+    outline: none;
+  }
+  
+  option {
+    background-color: #2f0f3a;
+  }
+}
+
+.sorting-order {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.sorting-order-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid rgba(88, 91, 105, 0.5);
+  background-color: rgba(30, 10, 36, 0.7);
+  color: #c3e6ff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: rgba(234, 129, 251, 0.5);
+    color: #ea81fb;
+  }
+  
+  &.active {
+    background-color: rgba(58, 26, 77, 0.7);
+    border-color: rgba(234, 129, 251, 0.5);
+    color: #ea81fb;
+  }
+}
+
+.sorting-icon {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}

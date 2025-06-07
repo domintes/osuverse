@@ -1,8 +1,10 @@
 'use client';
 
-import React from 'react';
-import BeatmapItem from './BeatmapItem';
+import React, { useState, useEffect } from 'react';
+import BeatmapsetList from './components/BeatmapsetList';
+import SortingControls from './components/SortingControls';
 import { getBeatmapsForCollection } from './utils/collectionUtils';
+import { doesBeatmapMatchTags } from '../../utils/tagUtils';
 import '../../components/userCollections.scss';
 import './userCollections.scss';
 
@@ -13,33 +15,44 @@ const BeatmapList = ({
     collections, 
     collectionId, 
     subcollectionId, 
-    sortBeatmaps,
     filterBeatmapsByTags,
     globalTags = [],
     onEdit,
     onDelete,
-    onToggleFavorite 
+    onToggleFavorite,
+    groupByBeatmapset = true
 }) => {
+    // Stan sortowania
+    const [sortBy, setSortBy] = useState('artist');
+    const [sortOrder, setSortOrder] = useState('asc');
+    
+    // Pobieranie i przetwarzanie beatmap
     let beatmaps = getBeatmapsForCollection(collections, collectionId, subcollectionId);
     beatmaps = filterBeatmapsByTags(beatmaps, globalTags);
-    beatmaps = sortBeatmaps(beatmaps);
 
     if (beatmaps.length === 0) {
         return <div className="empty-beatmaps">No beatmaps found in this collection.</div>;
     }
 
     return (
-        <div className="beatmaps-container">
-            {beatmaps.map(beatmap => (
-                <BeatmapItem
-                    key={beatmap.id}
-                    beatmap={beatmap}
-                    collections={collections}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
-                    onToggleFavorite={onToggleFavorite}
-                />
-            ))}
+        <div className="beatmaps-list-container">
+            {/* Kontrolki sortowania */}
+            <SortingControls 
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                onSortChange={setSortBy}
+                onOrderChange={setSortOrder}
+            />
+            
+            {/* Lista beatmapsetów */}
+            <BeatmapsetList
+                beatmaps={beatmaps}
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                onToggleFavorite={onToggleFavorite}
+            />
         </div>
     );
 };

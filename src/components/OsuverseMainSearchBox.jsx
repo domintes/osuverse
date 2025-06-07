@@ -7,7 +7,7 @@ import { collectionsAtom } from '../store/collectionAtom';
 import OsuverseModal from './OsuverseModal/OsuverseModal';
 import AddBeatmapForm from './OsuverseModal/AddBeatmapForm';
 import { osuverseModalAtom } from '../store/osuverseModalAtom';
-import BeatmapsetList from './BeatmapsetList';
+import BeatmapsetList from './MainBeatmapsetList';
 import './beatmapsetList.scss';
 import OsuverseDiv from './OsuverseDiv';
 

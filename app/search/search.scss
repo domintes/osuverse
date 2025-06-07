@@ -1,10 +1,9 @@
 .beatmap-search-form {
-  display: flex;
-  flex-direction: column;
   gap: 1rem;
   margin-bottom: 2rem;
   width: 100%;
-  
+  display: grid;
+  grid-template-columns: 1fr auto;
   @media (max-width: 768px) {
     margin-bottom: 1.5rem;
   }
@@ -12,12 +11,6 @@
   @media (max-width: 480px) {
     margin-bottom: 1rem;
   }
-}
-
-.beatmap-search-form-inputs {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
 }
 
 .beatmap-search-input-group,

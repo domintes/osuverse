@@ -1,188 +1,91 @@
-import React from 'react'
-import { useAtom } from 'jotai'
-import { collectionsAtom } from '../../store/collectionAtom'
-import { selectedTagsAtom } from '../../store/selectedTagsAtom'
+import React, { useMemo } from 'react';
+import { useAtom } from 'jotai';
+import { collectionsAtom } from '../../store/collectionAtom';
+import { getAllBeatmapsFromCollections } from '../../utils/beatmapUtils';
+import { groupTagsByCategory } from '../../utils/tagUtils';
+import { useTagFiltering } from './hooks/useTagFiltering';
+
+// Komponenty
+import TagGroup from './components/TagGroup';
+import TagGroupToggle from './components/TagGroupToggle';
+
+// Style
 import './tagSections.scss';
 
-
-const getTagGroups = (beatmaps) => {
-    const groups = {
-        Artists: {},
-        Mappers: {},
-        Stars: {},
-        'User Tags': {}
-    }
-
-    beatmaps.forEach(map => {
-        // Artist
-        const artist = map.artist || 'Unknown'
-        groups.Artists[artist] = (groups.Artists[artist] || 0) + 1
-
-        // Mapper
-        const mapper = map.mapper || 'Unknown'
-        groups.Mappers[mapper] = (groups.Mappers[mapper] || 0) + 1        // Star Range
-        const stars = map.starRating || 0
-        let range = ''
-        if (stars < 5.71) {
-            range = '4.99-5.70*'
-        } else if (stars < 6.60) {
-            range = '5.71-6.59*'
-        } else {
-            range = '6.60-7.69*'
-        }
-        groups.Stars[range] = (groups.Stars[range] || 0) + 1// User Tags
-        const userTags = map.userTags || []
-        if (Array.isArray(userTags)) {
-            userTags.forEach(tag => {
-                // Sprawdź czy to string czy obiekt z tagiem
-                const tagName = typeof tag === 'string' ? tag : (tag && tag.tag ? tag.tag : null);
-                if (tagName) {
-                    groups['User Tags'][tagName] = (groups['User Tags'][tagName] || 0) + 1;
-                }
-            });
-        }
-    })
-
-    return groups
-}
-
-// Funkcja pobierająca wszystkie beatmapy z kolekcji i podkolekcji
-const getAllBeatmaps = (collections) => {
-    const beatmaps = [];
-    const beatmapsData = collections.beatmaps || {};
-    const beatmapsetsData = collections.beatmapsets || {};
-    
-    // Pobierz wszystkie beatmapy z obiektu beatmaps
-    Object.values(beatmapsData).forEach(beatmap => {
-        // Znajdź odpowiedni beatmapset używając setId
-        const beatmapset = beatmapsetsData[beatmap.setId] || {};
-        
-        // Pobierz artystę i mappera bezpośrednio z beatmapy, lub z beatmapsetu jako zapasowe źródło,
-        // lub ustaw 'Unknown' jeśli nie ma danych
-        beatmaps.push({
-            id: beatmap.id,
-            artist: beatmap.artist || beatmapset.artist || 'Unknown',
-            mapper: beatmap.creator || beatmapset.creator || 'Unknown',
-            // Zachowaj też nazwy pól dla kompatybilności
-            artist_name: beatmap.artist || beatmapset.artist || 'Unknown',
-            creator_name: beatmap.creator || beatmapset.creator || 'Unknown',
-            starRating: beatmap.difficulty_rating || 0,
-            difficulty_rating: beatmap.difficulty_rating || 0,
-            // Zachowaj oryginalne tagi (mogą być w formie obiektów {tag, tag_value} lub stringów)
-            userTags: beatmap.userTags || beatmap.tags || [],
-            collectionId: beatmap.collectionId,
-            subcollectionId: beatmap.subcollectionId
-        });
-    });
-    
-    return beatmaps;
-}
-
-// Czy tag pasuje do beatmapy
-const doesTagMatch = (map, selectedTags) => {
-    return selectedTags.every(tag => {
-        const lower = tag.toLowerCase();
-        
-        // Bezpieczne przetwarzanie tagów użytkownika
-        const userTags = [];
-        if (Array.isArray(map.userTags)) {
-            map.userTags.forEach(t => {
-                if (typeof t === 'string') {
-                    userTags.push(t.toLowerCase());
-                } else if (t && typeof t === 'object' && t.tag) {
-                    userTags.push(t.tag.toLowerCase());
-                }
-            });
-        }
-        
-        // Obsługa różnych możliwych nazw pól dla artysty i twórcy
-        const artist = (map.artist || map.artist_name || '').toLowerCase();
-        const creator = (map.creator || map.creator_name || map.mapper || '').toLowerCase();
-            
-        return (
-            artist === lower ||
-            creator === lower ||
-            userTags.includes(lower) ||
-            (
-                lower.includes('*') &&
-                (
-                    (lower === '4.99-5.70*' && map.starRating < 5.71) ||
-                    (lower === '5.71-6.59*' && map.starRating >= 5.71 && map.starRating < 6.6) ||
-                    (lower === '6.60-7.69*' && map.starRating >= 6.6)
-                )
-            )
-        )
-    })
-}
-
+/**
+ * Główny komponent sekcji tagów
+ */
 const TagsSection = () => {
-    const [collections] = useAtom(collectionsAtom)
-    const [selectedTags, setSelectedTags] = useAtom(selectedTagsAtom)
-    // Add state for toggling tag group visibility
-    const [visibleGroups, setVisibleGroups] = React.useState({
-        'User Tags': true,
-        Artists: true,
-        Mappers: true,
-        Stars: true
-    })    // Pobierz wszystkie beatmapy ze wszystkich kolekcji
-    const allBeatmaps = getAllBeatmaps(collections)
-    
-    const filtered = selectedTags.length
-        ? allBeatmaps.filter(map => doesTagMatch(map, selectedTags))
-        : allBeatmaps
-
-    const tagGroups = getTagGroups(filtered)
-
-    const toggleTag = (tag) => {
-        setSelectedTags(prev =>
-            prev.includes(tag)
-                ? prev.filter(t => t !== tag)
-                : [...prev, tag]
+  const [collections] = useAtom(collectionsAtom);
+  
+  // Hook do filtrowania tagów
+  const {
+    selectedTags,
+    visibleGroups,
+    filteredBeatmaps,
+    toggleTag,
+    toggleGroupVisibility,
+    updateAllBeatmaps,
+    clearAllTags
+  } = useTagFiltering();
+  
+  // Pobranie wszystkich beatmap
+  const allBeatmaps = useMemo(() => {
+    const beatmaps = getAllBeatmapsFromCollections(collections);
+    // Zaaktualizuj beatmapy w hooku filtrowania
+    updateAllBeatmaps(beatmaps);
+    return beatmaps;
+  }, [collections, updateAllBeatmaps]);
+  
+  // Pogrupowanie tagów po kategoriach
+  const tagGroups = useMemo(() => {
+    return groupTagsByCategory(filteredBeatmaps);
+  }, [filteredBeatmaps]);
+  
+  return (
+    <div className="tag-sections-container">
+      <h2 className="tag-sections-title">Collection Tags Filter</h2>
+      
+      {/* Przełączniki widoczności grup tagów */}
+      <div className="tag-groups-toggle">
+        {Object.keys(tagGroups).map(groupName => (
+          <TagGroupToggle
+            key={groupName}
+            name={groupName}
+            isVisible={visibleGroups[groupName] || false}
+            onToggle={toggleGroupVisibility}
+          />
+        ))}
+      </div>
+      
+      {/* Grupy tagów */}
+      {Object.entries(tagGroups).map(([groupName, tags]) => (
+        visibleGroups[groupName] && (
+          <TagGroup
+            key={groupName}
+            name={groupName}
+            tags={tags}
+            selectedTags={selectedTags}
+            onTagToggle={toggleTag}
+          />
         )
-    }
-
-    // Toggle visibility of tag group
-    const toggleGroup = (group) => {
-        setVisibleGroups(prev => ({ ...prev, [group]: !prev[group] }))
-    }
-
-    return (        <div className="tag-sections-container">
-            <h2 className="tag-sections-title">Collection Tags Filter</h2>
-            <div className="tag-groups-toggle">
-                {Object.keys(tagGroups).map(groupName => (
-                    <label key={groupName} className="tag-group-toggle">
-                        <input
-                            type="checkbox"
-                            checked={visibleGroups[groupName]}
-                            onChange={() => toggleGroup(groupName)}
-                        />
-                        {groupName}
-                    </label>
-                ))}
-            </div>
-            {Object.entries(tagGroups).map(([groupName, tags]) => (
-                visibleGroups[groupName] && (
-                    <div key={groupName} className="tag-group">
-                        <h3 className="tag-group-title">{groupName}</h3>
-                        <div className="tags-list">
-                            {Object.entries(tags).map(([tag, count]) => {
-                                const isActive = selectedTags.includes(tag)
-                                return (
-                                    <button
-                                        key={tag}
-                                        className={`tag-button ${isActive ? 'tag-button-active' : ''}`}
-                                        onClick={() => toggleTag(tag)}
-                                    >
-                                        {groupName === 'User Tags' ? `#${tag}` : tag} ({count})
-                                    </button>
-                                )
-                            })}
-                        </div>
-                    </div>
-                )
-            ))}
+      ))}
+      
+      {/* Informacja o liczbie wyfiltrowanych beatmap */}
+      {selectedTags.length > 0 && (
+        <div className="tag-filter-info">
+          Showing {filteredBeatmaps.length} of {allBeatmaps.length} beatmaps
+          <button 
+            className="clear-tags-button"
+            onClick={clearAllTags}
+            aria-label="Clear all tag filters"
+          >
+            Clear filters
+          </button>
         </div>
-    )
-}
+      )}
+    </div>
+  );
+};
 
-export default TagsSection
+export default TagsSection;

@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { doesBeatmapMatchTags, extractTagsText } from '../../../utils/tagUtils';
+import { filterBeatmapsByTags as filterUtility } from '../../../utils/beatmapUtils';
 
 /**
  * Hook do zarządzania filtrowaniem beatmap według tagów
@@ -8,7 +10,9 @@ import { useState } from 'react';
 export const useBeatmapFilter = () => {
     const [activeTags, setActiveTags] = useState([]);
     const [showTagSelector, setShowTagSelector] = useState(false);
-    const [availableTags, setAvailableTags] = useState([]);    // Funkcja filtrująca beatmapy według aktywnych tagów
+    const [availableTags, setAvailableTags] = useState([]);
+    
+    // Funkcja filtrująca beatmapy według aktywnych tagów
     const filterBeatmapsByTags = (beatmaps, globalTags = []) => {
         // Jeśli nie ma ani lokalnych, ani globalnych tagów aktywnych
         if (activeTags.length === 0 && globalTags.length === 0) return beatmaps;
@@ -16,43 +20,8 @@ export const useBeatmapFilter = () => {
         // Połącz tagi lokalne i globalne
         const allActiveTags = [...activeTags, ...globalTags];
         
-        return beatmaps.filter(beatmap => {
-            // Obsługujemy oba formaty tagów (string i obiekt)
-            const beatmapTags = [];
-            if (Array.isArray(beatmap.userTags)) {
-                beatmap.userTags.forEach(tag => {
-                    if (typeof tag === 'string') {
-                        beatmapTags.push(tag);
-                    } else if (tag && typeof tag === 'object' && tag.tag) {
-                        beatmapTags.push(tag.tag);
-                    }
-                });
-            }
-              const beatmapArtist = beatmap.artist || beatmap.artist_name || '';
-            const beatmapMapper = beatmap.creator || beatmap.creator_name || beatmap.mapper || '';
-            const starRating = beatmap.difficulty_rating || 0;
-            
-            return allActiveTags.every(tag => {
-                // Konwersja tagu do małych liter dla porównania
-                const tagLower = tag.toLowerCase();
-                
-                // Sprawdź czy tag jest tagiem użytkownika (case-insensitive)
-                if (beatmapTags.some(t => t.toLowerCase() === tagLower)) return true;
-                
-                // Sprawdź czy tag to artysta
-                if (beatmapArtist.toLowerCase() === tagLower) return true;
-                
-                // Sprawdź czy tag to mapper
-                if (beatmapMapper.toLowerCase() === tagLower) return true;
-                
-                // Sprawdź czy tag to zakres gwiazdek
-                if (tagLower === '4.99-5.70*' && starRating < 5.71) return true;
-                if (tagLower === '5.71-6.59*' && starRating >= 5.71 && starRating < 6.6) return true;
-                if (tagLower === '6.60-7.69*' && starRating >= 6.6) return true;
-                
-                return false;
-            });
-        });
+        // Używamy zaimportowanej funkcji pomocniczej, która zapewnia spójność z funkcją używaną w TagSections
+        return filterUtility(beatmaps, allActiveTags, doesBeatmapMatchTags);
     };
 
     // Funkcja przełączająca tag w filtrze
