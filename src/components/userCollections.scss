@@ -16,8 +16,9 @@
 }
 
 .collection-item.neon-border-box:hover {
-  border-color: rgba(234, 129, 251, 0.8);
-  box-shadow: 0 0 30px rgba(234, 129, 251, 0.3), 0 0 50px rgba(47, 15, 58, 0.4);
+  border-color: rgba(234, 129, 251, 0.7);
+  box-shadow: 0 0 15px rgba(234, 129, 251, 0.2), 0 0 30px rgba(47, 15, 58, 0.3);
+  transform: translateY(-1px); /* Subtelny efekt uniesienia */
 }
 
 .collection-item .collection-header {
@@ -49,6 +50,26 @@
 
 .collection-item .collection-name:hover {
   background-color: rgba(234, 129, 251, 0.1);
+}
+
+/* Animacja podświetlająca znalezioną beatmapę */
+@keyframes highlight-pulse {
+  0% {
+    box-shadow: 0 0 10px 5px rgba(234, 129, 251, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px 10px rgba(234, 129, 251, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 10px 5px rgba(234, 129, 251, 0.3);
+  }
+}
+
+.highlighted-beatmap {
+  animation: highlight-pulse 1.5s ease-in-out infinite;
+  border-color: rgba(234, 129, 251, 0.8) !important;
+  position: relative;
+  z-index: 1;
 }
 
 .collection-item .collection-actions {

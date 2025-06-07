@@ -187,7 +187,18 @@ export default function Navigation() {
           <div className="search-results-header">Powiązane z Twoimi kolekcjami</div>
           {userCollectionResults.length > 0 ? (
             userCollectionResults.slice(0, 5).map((bm) => (
-              <div key={bm.id} className="search-result-item">
+              <div 
+                key={bm.id} 
+                className="search-result-item" 
+                onClick={() => {
+                  // Zapisz ID beatmapy w localStorage
+                  localStorage.setItem('scrollToBeatmapId', bm.id);
+                  // Przekieruj do strony kolekcji
+                  router.push('/collections');
+                  setShowSearchBox(false);
+                }}
+                style={{ cursor: 'pointer' }}
+              >
                 <img
                   src={bm.cover || '/favicon.ico'}
                   alt="cover"
@@ -198,8 +209,7 @@ export default function Navigation() {
                 <span style={{ fontWeight: 600 }}>{bm.artist} - {bm.title}</span>
                 {bm.version && (
                   <span style={{ color: '#b8a6c1', marginLeft: 8, fontSize: '0.95em' }}>[{bm.version}]</span>
-                )}
-                {bm.userTags && bm.userTags.length > 0 && (
+                )}                {bm.userTags && bm.userTags.length > 0 && (
                   <span style={{ marginLeft: 8, fontSize: '0.9em', color: '#64c8ff' }}>
                     {bm.userTags.map(t => typeof t === 'string' ? `#${t}` : `#${t.tag}`).join(' ')}
                   </span>

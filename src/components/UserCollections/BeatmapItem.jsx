@@ -1,10 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, forwardRef } from 'react';
 import { Edit, Trash2 } from 'lucide-react';
 import { AiOutlineStar, AiFillStar } from 'react-icons/ai';
 import { BsMegaphoneFill } from 'react-icons/bs';
 import { isBeatmapFavorited } from './utils/collectionUtils';
+import { useRouter } from 'next/navigation';
+import { useAtom } from 'jotai';
+import { activeBeatmapIdAtom, highlightBeatmapAtom } from '../../store/activeBeatmapAtom';
 import '../../components/userCollections.scss';
 import './userCollections.scss';
 
@@ -12,8 +15,8 @@ import './userCollections.scss';
  * Komponent wyświetlający pojedynczą beatmapę
  */
 const BeatmapItem = ({ beatmap, collections, onEdit, onDelete, onToggleFavorite }) => {
-    // Sprawdź czy beatmapa jest w ulubionych
-    const isFavorited = isBeatmapFavorited(collections, beatmap.id);
+    // Bezpieczne sprawdzenie czy beatmapa jest w ulubionych
+    const isFavorited = collections ? isBeatmapFavorited(collections, beatmap.id) : false;
 
     // Funkcja renderująca wskaźnik priorytetu
     const renderPriorityIndicator = (priority) => {
@@ -30,9 +33,46 @@ const BeatmapItem = ({ beatmap, collections, onEdit, onDelete, onToggleFavorite 
             </div>
         );
     };
-
+    
+    // Funkcja do bezpiecznego renderowania tagów
+    const renderTag = (tag, idx) => {
+        try {
+            if (typeof tag === 'string') {
+                // Format string
+                return (
+                    <div key={idx} className="beatmap-tag">
+                        {tag}
+                    </div>
+                );
+            } else if (typeof tag === 'object' && tag !== null) {
+                // Format obiektowy {tag, tag_value}
+                const tagValue = typeof tag.tag_value === 'number' ? tag.tag_value : 0;
+                const tagName = typeof tag.tag === 'string' ? tag.tag : '';
+                
+                if (!tagName) return null; // Puste tagi nie są renderowane
+                
+                return (
+                    <div
+                        key={idx}
+                        className={`beatmap-tag ${tagValue > 0 ? 'positive' : tagValue < 0 ? 'negative' : ''}`}
+                        title={`Priority value: ${tagValue}`}
+                    >
+                        {tagName}
+                        {tagValue !== 0 && <span className="tag-value">{tagValue}</span>}
+                    </div>
+                );
+            }
+        } catch (error) {
+            console.error("Error rendering tag:", error, tag);
+        }
+        return null; // W przypadku błędu lub niepasującego typu
+    };
+    
     return (
-        <div className="beatmap-item">
+        <div 
+            id={`beatmap-${beatmap.id}`} 
+            className="beatmap-item"
+        >
             {/* Przycisk gwiazdki (ulubione) */}
             <button
                 className={`favorite-button ${isFavorited ? 'active' : ''}`}
@@ -54,30 +94,10 @@ const BeatmapItem = ({ beatmap, collections, onEdit, onDelete, onToggleFavorite 
                 <div className="beatmap-details">
                     <span className="beatmap-difficulty">{beatmap.version} ({beatmap.difficulty_rating.toFixed(2)}★)</span>
                     <span className="beatmap-creator">mapped by {beatmap.creator}</span>
-                </div>                <div className="beatmap-tags">
+                </div>
+                <div className="beatmap-tags">
                     {Array.isArray(beatmap.userTags) 
-                        ? beatmap.userTags.map((tag, idx) => {
-                            if (typeof tag === 'string') {
-                                // Nowy format z prostymi stringami
-                                return (
-                                    <div key={idx} className="beatmap-tag">
-                                        {tag}
-                                    </div>
-                                );
-                            } else {
-                                // Stary format z obiektami {tag, tag_value}
-                                return (
-                                    <div
-                                        key={idx}
-                                        className={`beatmap-tag ${tag.tag_value > 0 ? 'positive' : tag.tag_value < 0 ? 'negative' : ''}`}
-                                        title={`Priority value: ${tag.tag_value}`}
-                                    >
-                                        {tag.tag}
-                                        {tag.tag_value !== 0 && <span className="tag-value">{tag.tag_value}</span>}
-                                    </div>
-                                );
-                            }
-                        })
+                        ? beatmap.userTags.map((tag, idx) => renderTag(tag, idx))
                         : null
                     }
                 </div>

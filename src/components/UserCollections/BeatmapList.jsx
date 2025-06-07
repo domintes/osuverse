@@ -25,10 +25,9 @@ const BeatmapList = ({
     // Stan sortowania
     const [sortBy, setSortBy] = useState('artist');
     const [sortOrder, setSortOrder] = useState('asc');
-    
-    // Pobieranie i przetwarzanie beatmap
-    let beatmaps = getBeatmapsForCollection(collections, collectionId, subcollectionId);
-    beatmaps = filterBeatmapsByTags(beatmaps, globalTags);
+      // Pobieranie i przetwarzanie beatmap
+    let beatmaps = collections ? getBeatmapsForCollection(collections, collectionId, subcollectionId) : [];
+    beatmaps = filterBeatmapsByTags ? filterBeatmapsByTags(beatmaps, globalTags) : beatmaps;
 
     if (beatmaps.length === 0) {
         return <div className="empty-beatmaps">No beatmaps found in this collection.</div>;
@@ -43,8 +42,7 @@ const BeatmapList = ({
                 onSortChange={setSortBy}
                 onOrderChange={setSortOrder}
             />
-            
-            {/* Lista beatmapsetów */}
+              {/* Lista beatmapsetów */}
             <BeatmapsetList
                 beatmaps={beatmaps}
                 sortBy={sortBy}
@@ -52,6 +50,7 @@ const BeatmapList = ({
                 onEdit={onEdit}
                 onDelete={onDelete}
                 onToggleFavorite={onToggleFavorite}
+                collections={collections}
             />
         </div>
     );

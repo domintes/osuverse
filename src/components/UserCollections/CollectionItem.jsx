@@ -86,12 +86,11 @@ const CollectionItem = ({
                         onKeyDown={onKeyPress}
                         autoFocus
                     />
-                ) : (
-                    <div
+                ) : (                    <div
                         className="collection-name"
                         onClick={() => onToggleExpandCollection(collection.id)}
                     >
-                        {isExpanded ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
+                        {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                         <span>{collection.name}</span>
                     </div>
                 )}

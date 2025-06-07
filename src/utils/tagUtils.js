@@ -11,7 +11,8 @@ export const extractTagText = (tag) => {
   if (typeof tag === 'string') {
     return tag;
   } else if (tag && typeof tag === 'object' && tag.tag) {
-    return tag.tag;
+    // Dodatkowe sprawdzenie typu dla tag.tag
+    return typeof tag.tag === 'string' ? tag.tag : String(tag.tag);
   }
   return null;
 };
@@ -28,7 +29,7 @@ export const extractTagsText = (tags = []) => {
   tags.forEach(tag => {
     const tagText = extractTagText(tag);
     if (tagText) {
-      result.push(tagText);
+      result.push(String(tagText));
     }
   });
   
@@ -74,7 +75,11 @@ export const doesBeatmapMatchTags = (map, selectedTags) => {
   if (!selectedTags || selectedTags.length === 0) return true;
   
   return selectedTags.every(tag => {
-    const tagLower = tag.toLowerCase();
+    // Bezpieczne sprawdzanie tagu
+    if (!tag) return false;
+    
+    // Konwersja tagu do stringa i do lowercase
+    const tagLower = String(tag).toLowerCase();
     
     // Bezpieczne przetwarzanie tagów użytkownika
     const userTags = [];
@@ -82,7 +87,7 @@ export const doesBeatmapMatchTags = (map, selectedTags) => {
       map.userTags.forEach(t => {
         const tagText = extractTagText(t);
         if (tagText) {
-          userTags.push(tagText.toLowerCase());
+          userTags.push(String(tagText).toLowerCase());
         }
       });
     }
@@ -137,13 +142,14 @@ export const groupTagsByCategory = (beatmaps) => {
     const range = getStarRange(stars);
     groups.Stars[range] = (groups.Stars[range] || 0) + 1;
 
-    // User Tags
+  // User Tags
     const userTags = map.userTags || [];
     if (Array.isArray(userTags)) {
       userTags.forEach(tag => {
         const tagName = extractTagText(tag);
         if (tagName) {
-          groups['User Tags'][tagName] = (groups['User Tags'][tagName] || 0) + 1;
+          const tagKey = String(tagName);
+          groups['User Tags'][tagKey] = (groups['User Tags'][tagKey] || 0) + 1;
         }
       });
     }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { PlusCircle } from 'lucide-react';
 import { collectionsAtom } from '@/store/collectionAtom';
@@ -29,17 +29,18 @@ export default function UserCollectionsPanel({ editMode }) {
     const [validationStates, setValidationStates] = useState({
         collection: { isValid: true, message: '' },
         subcollections: {}
-    });
-
-    // Stan dla rozwijanych kolekcji i podkolekcji
-    const [expandedCollection, setExpandedCollection] = useState(null);
+    });    // Stan dla rozwijanych kolekcji i podkolekcji
+    // Domyślnie wszystkie kolekcje są rozwinięte, więc ustawiamy pierwszą kolekcję jako rozwiniętą
+    const [expandedCollection, setExpandedCollection] = useState(collections?.collections?.[0]?.id || null);
     const [expandedSubcollection, setExpandedSubcollection] = useState(null);
     const [editingBeatmap, setEditingBeatmap] = useState(null);
+    const [highlightedBeatmapId, setHighlightedBeatmapId] = useState(null);
+    
+    // Referencja do beatmapy, która ma być przewinięta do widoku
+    const beatmapRef = useRef({});
     
     // Dostęp do wybranych tagów z TagSections
-    const [selectedTags] = useAtom(selectedTagsAtom);
-
-    // Importowanie hooków
+    const [selectedTags] = useAtom(selectedTagsAtom);    // Importowanie hooków
     const { 
         sortMode, sortDirection, sortBeatmaps, 
         toggleSortMode, toggleSortDirection 
@@ -50,6 +51,52 @@ export default function UserCollectionsPanel({ editMode }) {
         filterBeatmapsByTags, toggleTagFilter, 
         setShowTagSelector, updateAvailableTags
     } = useBeatmapFilter();
+    
+    // Efekt do obsługi automatycznego przewijania do beatmapy z wyszukiwania
+    useEffect(() => {
+        const scrollToBeatmapId = localStorage.getItem('scrollToBeatmapId');
+        if (!scrollToBeatmapId || !collections || !collections.beatmaps) return;
+        
+        // Znajdź beatmapę w kolekcjach
+        const beatmapToFind = collections.beatmaps[scrollToBeatmapId];
+        if (!beatmapToFind) return;
+        
+        // Ustaw podświetlenie dla znalezionej beatmapy
+        setHighlightedBeatmapId(scrollToBeatmapId);
+        
+        // Rozwiń odpowiednią kolekcję
+        if (beatmapToFind.collectionId) {
+            setExpandedCollection(beatmapToFind.collectionId);
+            
+            // Jeśli beatmapa jest w podkolekcji, rozwiń ją również
+            if (beatmapToFind.subcollectionId) {
+                setExpandedSubcollection(beatmapToFind.subcollectionId);
+            }
+            
+            // Używamy timeoutu, aby dać czas na wyrenderowanie komponentów
+            setTimeout(() => {
+                const beatmapElement = document.getElementById(`beatmap-${scrollToBeatmapId}`);
+                if (beatmapElement) {
+                    // Przewiń do znalezionej beatmapy z animacją
+                    beatmapElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    
+                    // Dodaj animację podświetlającą
+                    beatmapElement.classList.add('highlighted-beatmap');
+                    
+                    // Usuń animację po 5 sekundach
+                    setTimeout(() => {
+                        beatmapElement.classList.remove('highlighted-beatmap');
+                    }, 5000);
+                }
+            }, 500);
+        }
+        
+        // Wyczyść localStorage po znalezieniu beatmapy
+        localStorage.removeItem('scrollToBeatmapId');
+    }, [collections]);
 
     const {
         draggedItem, draggedSubcollection, dragOverCollectionId, errors: dragErrors,
@@ -189,23 +236,50 @@ export default function UserCollectionsPanel({ editMode }) {
         );
 
         if (isFavorited) {
-            // Usuń z ulubionych
-            handleRemoveBeatmap(beatmap.id);
-        } else {
-            // Dodaj do ulubionych
+            // Usuń z ulubionych - przenieś do Unsorted
+            const unsortedCollection = collections.collections.find(c => c.name === 'Unsorted');
+            if (!unsortedCollection) {
+                handleRemoveBeatmap(beatmap.id);
+                return;
+            }
+
             setCollections(prev => {
-                // Dodaj beatmapę do kolekcji ulubionych
-                return {
-                    ...prev,
-                    beatmaps: {
-                        ...prev.beatmaps,
-                        [beatmap.id]: {
-                            ...beatmap,
-                            collectionId: favoritesCollection.id,
-                            subcollectionId: null
+                const updatedBeatmaps = { ...prev.beatmaps };
+                if (updatedBeatmaps[beatmap.id]) {
+                    updatedBeatmaps[beatmap.id] = {
+                        ...updatedBeatmaps[beatmap.id],
+                        collectionId: unsortedCollection.id,
+                        subcollectionId: null
+                    };
+                }
+                return { ...prev, beatmaps: updatedBeatmaps };
+            });
+        } else {
+            // Dodaj do ulubionych - przenieś z obecnej kolekcji do Favorites
+            setCollections(prev => {
+                const updatedBeatmaps = { ...prev.beatmaps };
+                if (updatedBeatmaps[beatmap.id]) {
+                    // Aktualizuj istniejącą beatmapę
+                    updatedBeatmaps[beatmap.id] = {
+                        ...updatedBeatmaps[beatmap.id],
+                        collectionId: favoritesCollection.id,
+                        subcollectionId: null
+                    };
+                    return { ...prev, beatmaps: updatedBeatmaps };
+                } else {
+                    // Utwórz nową beatmapę w ulubionych
+                    return {
+                        ...prev,
+                        beatmaps: {
+                            ...prev.beatmaps,
+                            [beatmap.id]: {
+                                ...beatmap,
+                                collectionId: favoritesCollection.id,
+                                subcollectionId: null
+                            }
                         }
-                    }
-                };
+                    };
+                }
             });
         }
     };
@@ -389,7 +463,7 @@ export default function UserCollectionsPanel({ editMode }) {
                     <CollectionItem
                         key={collection.id}
                         collection={collection}
-                        collections={collections}
+                        collections={collections} // Dodano przekazanie collections
                         editMode={editMode}
                         expandedCollection={expandedCollection}
                         expandedSubcollection={expandedSubcollection}
@@ -400,7 +474,8 @@ export default function UserCollectionsPanel({ editMode }) {
                         validationStates={validationStates}
                         newSubcollectionNames={newSubcollectionNames}
                         sortMode={sortMode}
-                        sortDirection={sortDirection}                        showTagSelector={showTagSelector}
+                        sortDirection={sortDirection}
+                        showTagSelector={showTagSelector}
                         availableTags={availableTags}
                         activeTags={activeTags}
                         globalTags={selectedTags}

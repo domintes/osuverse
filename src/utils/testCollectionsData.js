@@ -203,5 +203,32 @@ export const testCollectionsData = {
  * @param {Function} setCollections - Funkcja aktualizująca atom kolekcji
  */
 export const loadTestCollectionsData = (setCollections) => {
-  setCollections(testCollectionsData);
+  // Upewnij się, że struktura tagów jest prawidłowa przed wczytaniem danych
+  const validatedData = { ...testCollectionsData };
+  
+  // Przejdź przez wszystkie beatmapy i upewnij się, że tagi mają poprawny format
+  if (validatedData.beatmaps) {
+    Object.keys(validatedData.beatmaps).forEach(beatmapId => {
+      const beatmap = validatedData.beatmaps[beatmapId];
+      
+      if (beatmap.userTags && Array.isArray(beatmap.userTags)) {
+        // Upewnij się, że każdy tag jest poprawnym obiektem
+        beatmap.userTags = beatmap.userTags.map(tag => {
+          if (typeof tag === 'string') {
+            return tag;
+          } else if (typeof tag === 'object' && tag !== null) {
+            // Upewnij się, że obiekt ma poprawne właściwości
+            return {
+              tag: tag.tag || '',
+              tag_value: tag.tag_value || 0
+            };
+          } else {
+            return null;
+          }
+        }).filter(tag => tag !== null); // Usuń nieprawidłowe tagi
+      }
+    });
+  }
+  
+  setCollections(validatedData);
 };

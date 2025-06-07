@@ -14,7 +14,8 @@ const BeatmapsetList = ({
   sortOrder = 'asc',
   onEdit,
   onDelete,
-  onToggleFavorite
+  onToggleFavorite,
+  collections // Dodajemy collections jako props
 }) => {
   // Grupuj beatmapy według beatmapsetów
   const beatmapsets = useMemo(() => {
@@ -73,6 +74,7 @@ const BeatmapsetList = ({
             <BeatmapItem
               key={beatmap.id}
               beatmap={beatmap}
+              collections={collections} // Dodano przekazanie collections
               onEdit={onEdit ? () => onEdit(beatmap) : undefined}
               onDelete={onDelete ? () => onDelete(beatmap) : undefined}
               onToggleFavorite={onToggleFavorite ? () => onToggleFavorite(beatmap) : undefined}
@@ -86,6 +88,7 @@ const BeatmapsetList = ({
 
 BeatmapsetList.propTypes = {
   beatmaps: PropTypes.array.isRequired,
+  collections: PropTypes.object, // Dodajemy collections do propTypes
   sortBy: PropTypes.string,
   sortOrder: PropTypes.string,
   onEdit: PropTypes.func,

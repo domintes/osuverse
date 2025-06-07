@@ -62,9 +62,8 @@
         background-color: rgba(20, 20, 50, 0.6);
         cursor: pointer;
         transition: background-color 0.2s ease;
-        
-        &:hover {
-            background-color: rgba(40, 40, 100, 0.6);
+          &:hover {
+            background-color: rgba(35, 35, 85, 0.5);
         }
         
         .drag-handle {
@@ -271,6 +270,44 @@
             padding: 10px 0;
             text-align: center;
             font-style: italic;
+        }
+    }
+}
+
+/* Style dla przycisku gwiazdki (ulubione) */
+.beatmap-item {
+    position: relative;
+    
+    .favorite-button {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 5;
+        background: rgba(10, 10, 30, 0.7);
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: rgba(255, 255, 255, 0.6);
+        transition: all 0.2s ease;
+        
+        &:hover {
+            background: rgba(20, 20, 50, 0.9);
+            transform: scale(1.1);
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        &.active {
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+            
+            &:hover {
+                color: #ffee88;
+            }
         }
     }
 }
