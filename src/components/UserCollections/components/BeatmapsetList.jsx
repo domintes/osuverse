@@ -63,12 +63,13 @@ const BeatmapsetList = ({
   }
   
   return (
-    <div className="beatmapset-list">
-      {beatmapsets.map(beatmapset => (
+    <div className="beatmapset-list">      {beatmapsets.map(beatmapset => (
         <BeatmapsetGroup 
           key={beatmapset.id} 
           beatmapset={beatmapset}
-          defaultExpanded={beatmapset.difficulties.length === 1}
+          // Dla beatmapsetów z 1 trudnością zawsze domyślnie rozwinięte
+          // Dla pozostałych zwijane domyślnie (obsługa w komponencie BeatmapsetGroup)
+          defaultExpanded={false}
         >
           {beatmapset.difficulties.map(beatmap => (
             <BeatmapItem

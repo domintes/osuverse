@@ -61,9 +61,8 @@ const CollectionItem = ({
     const isExpanded = expandedCollection === collection.id;
     const isDragOver = dragOverCollectionId === collection.id;
 
-    return (
-        <div
-            className={`collection ${isExpanded ? 'expanded' : ''} ${isDragOver ? 'drag-over' : ''}`}
+    return (        <div
+            className={`collection ${isExpanded ? 'expanded' : ''} ${isDragOver ? 'drag-over' : ''} ${collection.isSystemCollection ? 'system-collection' : ''}`}
             data-collection-id={collection.id}
             draggable={editMode && !collection.isSystemCollection}
             onDragStart={(e) => onDragStart(collection, e)}

@@ -6,6 +6,7 @@ import { useAtom } from 'jotai';
 import { collectionsAtom } from '@/store/collectionAtom';
 import classNames from 'classnames';
 import AddBeatmapModal from './AddBeatmapModal';
+import { findSystemCollection } from '@/components/UserCollections/utils/collectionUtils';
 import './beatmapSearchResults.scss';
 import './addBeatmapModal.scss';
 
@@ -40,14 +41,15 @@ export default function BeatmapSearchResults({
   const closeModal = () => {
     setModalOpen(false);
     setModalTarget(null);
-  };
-  const handleAddBeatmapSubmit = (formData) => {
+  };  const handleAddBeatmapSubmit = (formData) => {
     if (!modalTarget) return;
 
     const { set, beatmap, type } = modalTarget;
 
+    // Najpierw szukamy konkretnie kolekcji "Unsorted" używając funkcji pomocniczej
+    const unsortedCollection = findSystemCollection(collections, 'Unsorted');
     // Find default "Unsorted" collection if none is selected
-    const defaultCollectionId = collections.collections.find(c => c.isSystemCollection && c.name === 'Unsorted')?.id;
+    const defaultCollectionId = unsortedCollection?.id;
 
     // Use the selected collection or fall back to the default
     const collectionId = formData.collectionId || defaultCollectionId;

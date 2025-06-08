@@ -28,7 +28,7 @@
   flex-direction: column;
   transition: box-shadow 0.3s, background 0.3s, transform 0.2s;
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Zmienione z hidden na visible */
   
   &:hover {
     transform: translateY(-2px);
@@ -180,5 +180,104 @@
   &:hover {
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  }
+}
+.beatmapset-difficulties-panel {
+  position: absolute;
+  width: 100%;
+  top: 100%;
+  left: 0;
+  background: #181a20;
+  border-radius: 0 0 14px 14px;
+  padding: 12px 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  z-index: 10;
+  border-top: 1px solid rgba(0, 230, 118, 0.3);
+  
+  h4 {
+    color: #00e676;
+    margin: 0 0 8px 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  
+  .beatmapset-difficulties {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    
+    .beatmapset-difficulty {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      min-width: 90px;
+      
+      .diff-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 150px;
+      }
+      
+      .diff-stars {
+        opacity: 0.85;
+        font-size: 0.85rem;
+      }
+      
+      &.difficulty-easy {
+        background: rgba(46, 204, 113, 0.2);
+        border: 1px solid rgba(46, 204, 113, 0.6);
+      }
+      
+      &.difficulty-normal {
+        background: rgba(52, 152, 219, 0.2);
+        border: 1px solid rgba(52, 152, 219, 0.6);
+      }
+      
+      &.difficulty-hard {
+        background: rgba(241, 196, 15, 0.2);
+        border: 1px solid rgba(241, 196, 15, 0.6);
+      }
+      
+      &.difficulty-insane {
+        background: rgba(231, 76, 60, 0.2);
+        border: 1px solid rgba(231, 76, 60, 0.6);
+      }
+      
+      &.difficulty-expert {
+        background: rgba(155, 89, 182, 0.2);
+        border: 1px solid rgba(155, 89, 182, 0.6);
+      }
+      
+      &.difficulty-expertplus {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+      }
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding: 10px 14px;
+    border-radius: 0 0 10px 10px;
+    
+    h4 {
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+    
+    .beatmapset-difficulties {
+      gap: 6px;
+      
+      .beatmapset-difficulty {
+        padding: 3px 8px;
+        min-width: 80px;
+        font-size: 0.85rem;
+      }
+    }
   }
 }

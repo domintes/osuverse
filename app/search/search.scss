@@ -17,7 +17,7 @@
 .beatmap-search-secondary-inputs {
   display: flex;
   gap: 1rem;
-  
+  margin-bottom: 32px;  
   @media (max-width: 768px) {
     flex-direction: column;
     gap: 0.75rem;

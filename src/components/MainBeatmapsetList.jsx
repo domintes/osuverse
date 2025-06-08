@@ -89,8 +89,7 @@ function BeatmapsetListItem({ set, onAddToCollection }) {
           {set.inCollection ? 'Zapisane' : 'Dodaj'}
         </button>
       </div>
-      
-      {/* Panel trudności */}
+        {/* Panel trudności */}
       {showDifficulties && (
         <motion.div
           className="beatmapset-difficulties-panel"

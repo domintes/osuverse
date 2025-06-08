@@ -29,9 +29,30 @@ export default function UserCollectionsPanel({ editMode }) {
     const [validationStates, setValidationStates] = useState({
         collection: { isValid: true, message: '' },
         subcollections: {}
-    });    // Stan dla rozwijanych kolekcji i podkolekcji
-    // Domyślnie wszystkie kolekcje są rozwinięte, więc ustawiamy pierwszą kolekcję jako rozwiniętą
-    const [expandedCollection, setExpandedCollection] = useState(collections?.collections?.[0]?.id || null);
+    });    // Sprawdź, czy jest zapisana ostatnio rozwinięta kolekcja w localStorage
+    const savedExpandedCollection = typeof window !== 'undefined' ? localStorage.getItem('lastExpandedCollection') : null;
+    
+    // Stan dla rozwijanych kolekcji i podkolekcji
+    // Używaj zapisanej kolekcji, a jeśli nie ma to pierwszy "Unsorted" jako rozwiniętą
+    const getDefaultExpandedCollection = () => {
+        // Próbuj najpierw załadować z localStorage
+        if (savedExpandedCollection) {
+            return savedExpandedCollection;
+        }
+        
+        // Jeśli nie ma zapisanej, spróbuj rozwinąć "Unsorted" system collection
+        if (collections && collections.collections) {
+            const unsorted = collections.collections.find(c => c.name === 'Unsorted');
+            if (unsorted) {
+                return unsorted.id;
+            }
+        }
+        
+        // Jeśli nic innego, rozwiń pierwszą kolekcję
+        return collections?.collections?.[0]?.id || null;
+    };
+    
+    const [expandedCollection, setExpandedCollection] = useState(getDefaultExpandedCollection);
     const [expandedSubcollection, setExpandedSubcollection] = useState(null);
     const [editingBeatmap, setEditingBeatmap] = useState(null);
     const [highlightedBeatmapId, setHighlightedBeatmapId] = useState(null);
@@ -102,9 +123,7 @@ export default function UserCollectionsPanel({ editMode }) {
         draggedItem, draggedSubcollection, dragOverCollectionId, errors: dragErrors,
         handleDragStart, handleDragEnd, handleDragOver, handleDrop,
         handleSubcollectionDragStart, handleSubcollectionDragOver
-    } = useCollectionDragDrop();
-
-    // Funkcja rozwijająca/zwijająca kolekcję
+    } = useCollectionDragDrop();    // Funkcja rozwijająca/zwijająca kolekcję
     const toggleExpandCollection = (collectionId) => {
         if (expandedCollection === collectionId) {
             setExpandedCollection(null);
@@ -116,6 +135,9 @@ export default function UserCollectionsPanel({ editMode }) {
             // Pobierz dostępne tagi dla kolekcji
             const beatmaps = getBeatmapsForCollection(collections, collectionId);
             updateAvailableTags(beatmaps);
+            
+            // Aktualizuj właściwą kolekcję w localStorage, aby zachować stan po odświeżeniu
+            localStorage.setItem('lastExpandedCollection', collectionId);
         }
     };
 

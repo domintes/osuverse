@@ -38,6 +38,23 @@ export const getBeatmapsForCollection = (collections, collectionId, subcollectio
     });
 };
 
+/**
+ * Funkcja wyszukująca kolekcję systemową po nazwie lub zwracająca domyślną
+ * @param {Object} collections - Obiekt z kolekcjami
+ * @param {string} systemCollectionName - Nazwa kolekcji systemowej do wyszukania (np. 'Unsorted', 'Favorites')
+ * @returns {Object|null} - Znaleziona kolekcja lub null
+ */
+export const findSystemCollection = (collections, systemCollectionName) => {
+    if (!collections || !collections.collections || !systemCollectionName) {
+        return null;
+    }
+    
+    // Szukaj kolekcji po nazwie
+    const collection = collections.collections.find(c => c.name === systemCollectionName);
+    
+    return collection || null;
+};
+
 // Funkcja sprawdzająca, czy beatmapa jest w ulubionych
 export const isBeatmapFavorited = (collections, beatmapId) => {
     if (!collections || !collections.collections || !collections.beatmaps) return false;

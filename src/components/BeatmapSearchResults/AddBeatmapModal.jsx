@@ -6,6 +6,7 @@ import { collectionsAtom } from '@/store/collectionAtom';
 import './addBeatmapModal.scss';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlusCircle } from 'lucide-react';
+import { findSystemCollection } from '@/components/UserCollections/utils/collectionUtils';
 
 export default function AddBeatmapModal({ 
   isOpen, 
@@ -53,12 +54,16 @@ export default function AddBeatmapModal({
         i === idx ? { ...tag, tag_value: clampedValue } : tag
       )
     );
-  };
-
-  // Initialize with the first collection if none is selected
+  };  // Initialize with Unsorted collection or the first collection if none is selected
   useEffect(() => {
     if (!selectedCollection && collectionsData.collections.length > 0) {
-      setSelectedCollection(collectionsData.collections[0].id);
+      // Preferuj kolekcję Unsorted jako domyślną używając funkcji pomocniczej
+      const unsortedCollection = findSystemCollection(collectionsData, 'Unsorted');
+      if (unsortedCollection) {
+        setSelectedCollection(unsortedCollection.id);
+      } else {
+        setSelectedCollection(collectionsData.collections[0].id);
+      }
     }
   }, [collectionsData.collections, selectedCollection]);
 
@@ -99,13 +104,13 @@ export default function AddBeatmapModal({
     setNewCollectionName('');
     setShowNewCollectionInput(false);
     setCollectionNameError('');
-  };
-
-  const handleSubmit = (e) => {
+  };  const handleSubmit = (e) => {
     e.preventDefault();
     
+    // Znajdź konkretnie kolekcję "Unsorted" używając funkcji pomocniczej
+    const unsortedCollection = findSystemCollection(collectionsData, 'Unsorted');
     // Use "Unsorted" collection if none is selected
-    const collectionId = selectedCollection || collectionsData.collections.find(c => c.name === 'Unsorted')?.id;
+    const collectionId = selectedCollection || unsortedCollection?.id;
     
     onSubmit({ 
       tags, 
