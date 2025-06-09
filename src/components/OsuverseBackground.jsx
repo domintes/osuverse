@@ -1,17 +1,23 @@
+'use client';
 import React from 'react';
+import dynamic from 'next/dynamic';
 
-const BlackHoleParticles = React.lazy(() => import('./BlackHoleParticles'));
-const MatrixBackground = React.lazy(() => import('./MatrixBackground'));
+// Dynamiczne importowanie komponentów tylko po stronie klienta
+const BlackHoleParticles = dynamic(() => import('./BlackHoleParticles'), {
+  ssr: false,
+  loading: () => null
+});
+
+const MatrixBackground = dynamic(() => import('./MatrixBackground'), {
+  ssr: false,
+  loading: () => null
+});
 
 export default function OsuverseBackground() {
   return (
     <>
-      <React.Suspense fallback={null}>
-        <BlackHoleParticles />
-      </React.Suspense>
-      <React.Suspense fallback={null}>
-        <MatrixBackground />
-      </React.Suspense>
+      <BlackHoleParticles />
+      <MatrixBackground />
     </>
   );
 }

@@ -205,17 +205,7 @@ const CollectionItem = ({
             {/* Collection's beatmaps (direct, not in subcollections) */}
             {isExpanded && expandedSubcollection === null && (
                 <>
-                    <FilterSortControls
-                        sortMode={sortMode}
-                        sortDirection={sortDirection}
-                        showTagSelector={showTagSelector}
-                        availableTags={availableTags}
-                        activeTags={activeTags}
-                        onToggleSortMode={onToggleSortMode}
-                        onToggleSortDirection={onToggleSortDirection}
-                        onToggleTagSelector={onToggleTagSelector}
-                        onToggleTagFilter={onToggleTagFilter}
-                    />                    <BeatmapList
+                    <BeatmapList
                         collections={collections}
                         collectionId={collection.id}
                         subcollectionId={null}

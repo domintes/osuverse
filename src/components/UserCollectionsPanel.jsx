@@ -14,6 +14,7 @@ import { useBeatmapSort } from './UserCollections/hooks/useBeatmapSort';
 import { useBeatmapFilter } from './UserCollections/hooks/useBeatmapFilter';
 import { useCollectionDragDrop } from './UserCollections/hooks/useCollectionDragDrop';
 import { validateCollectionName, getBeatmapsForCollection } from './UserCollections/utils/collectionUtils';
+import GlobalFilterSortControls from './UserCollections/GlobalFilterSortControls';
 
 /**
  * Główny komponent panelu kolekcji użytkownika
@@ -449,7 +450,7 @@ export default function UserCollectionsPanel({ editMode }) {
 
     return (
         <NeonBorderBox className="user-collections-panel">
-            <h2 className="panel-title">Collections</h2>
+            <h2 className="panel-title collection-header-title">Yours Collection</h2>
             
             {/* Add new collection form */}
             {editMode && (
@@ -479,6 +480,20 @@ export default function UserCollectionsPanel({ editMode }) {
                 </div>
             )}
             
+            {/* Global filter and sort controls */}
+            <GlobalFilterSortControls
+                sortMode={sortMode}
+                sortDirection={sortDirection}
+                showTagSelector={showTagSelector}
+                availableTags={availableTags}
+                activeTags={activeTags}
+                onToggleSortMode={toggleSortMode}
+                onToggleSortDirection={toggleSortDirection}
+                onToggleTagSelector={() => setShowTagSelector(!showTagSelector)}
+                onToggleTagFilter={toggleTagFilter}
+                beatmapsCount={Object.keys(collections.beatmaps || {}).length}
+            />
+            
             {/* Collections list */}
             <div className="collections-list">
                 {collections.collections?.map((collection) => (
@@ -494,13 +509,7 @@ export default function UserCollectionsPanel({ editMode }) {
                         editingName={editingName}
                         errors={errors}
                         validationStates={validationStates}
-                        newSubcollectionNames={newSubcollectionNames}
-                        sortMode={sortMode}
-                        sortDirection={sortDirection}
-                        showTagSelector={showTagSelector}
-                        availableTags={availableTags}
-                        activeTags={activeTags}
-                        globalTags={selectedTags}
+                        newSubcollectionNames={newSubcollectionNames}                        globalTags={selectedTags}
                         dragOverCollectionId={dragOverCollectionId}
                         onDragStart={handleDragStart}
                         onDragOver={handleDragOver}

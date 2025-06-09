@@ -376,3 +376,60 @@
   color: rgba(255, 255, 255, 0.5);
   font-style: italic;
 }
+
+.collection-header-title {
+  font-size: 32px;
+  margin-bottom: 18px;
+}
+
+/* Globalne kontrolki sortowania i filtrowania */
+.sort-filter-controls.global {
+  margin: 10px 0 20px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: rgba(46, 21, 59, 0.5);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    
+    &:first-child {
+      margin-right: auto;
+    }
+    
+    .beatmaps-count {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+  
+  .sorting-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .sort-mode-toggle,
+  .sort-direction-toggle,
+  .filter-toggle {
+    background: rgba(134, 29, 251, 0.2);
+    border: 1px solid rgba(134, 29, 251, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    
+    &:hover, &.active {
+      background: rgba(134, 29, 251, 0.4);
+      border-color: rgba(234, 129, 251, 0.5);
+    }
+  }
+}

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useAtom } from 'jotai';
 import { persistedExpandedBeatmapsetsAtom, initExpandedBeatmapsets } from '../../../store/expandedBeatmapsetsAtom';
+import BeatmapDifficulty from './BeatmapDifficulty';
+import './BeatmapDifficulty.scss';
 
 /**
  * Komponent grupujący beatmapy według beatmapsetów, z możliwością rozwijania

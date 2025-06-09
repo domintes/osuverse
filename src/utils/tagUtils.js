@@ -157,3 +157,54 @@ export const groupTagsByCategory = (beatmaps) => {
 
   return groups;
 };
+
+/**
+ * Sprawdza czy beatmapa zawiera określony tag
+ * @param {Object} beatmap - Beatmapa do sprawdzenia
+ * @param {string} tag - Tag do znalezienia
+ * @returns {boolean} - True jeśli beatmapa zawiera tag
+ */
+export const doesBeatmapHaveTag = (beatmap, tag) => {
+  if (!beatmap || !beatmap.tags || !tag) return false;
+  
+  const beatmapTags = extractTagsText(beatmap.tags);
+  const normalizedTag = String(tag).toLowerCase();
+  
+  return beatmapTags.some(t => String(t).toLowerCase() === normalizedTag);
+};
+
+/**
+ * Automatycznie rozwija beatmapsety, które zawierają beatmapy z określonym tagiem
+ * @param {Array} beatmapsets - Lista beatmapsetów do sprawdzenia
+ * @param {Array} tags - Lista tagów do wyszukania
+ * @param {Function} setExpandedBeatmapsets - Funkcja aktualizująca stan rozwiniętych beatmapsetów
+ * @returns {Object} - Zaktualizowana mapa rozwiniętych beatmapsetów
+ */
+export const expandBeatmapsetsWithTags = (beatmapsets, tags, currentExpanded, setExpandedBeatmapsets) => {
+  if (!tags || tags.length === 0 || !beatmapsets || !setExpandedBeatmapsets) return currentExpanded || {};
+  
+  const normalizedTags = tags.map(tag => typeof tag === 'string' ? tag.toLowerCase() : '');
+  const newExpandedState = { ...currentExpanded };
+  
+  // Sprawdź każdy beatmapset
+  beatmapsets.forEach(beatmapset => {
+    // Sprawdź czy jakikolwiek beatmap w tym secie ma szukany tag
+    const hasMatchingBeatmap = beatmapset.beatmaps && beatmapset.beatmaps.some(beatmap => {
+      if (!beatmap || !beatmap.tags) return false;
+      
+      const beatmapTags = extractTagsText(beatmap.tags);
+      return normalizedTags.some(tag => 
+        beatmapTags.some(beatmapTag => beatmapTag.toLowerCase() === tag)
+      );
+    });
+    
+    // Jeśli znaleziono pasujący beatmap, rozwiń beatmapset
+    if (hasMatchingBeatmap && beatmapset.id) {
+      newExpandedState[beatmapset.id] = true;
+    }
+  });
+  
+  // Aktualizuj stan rozwiniętych beatmapsetów
+  setExpandedBeatmapsets(newExpandedState);
+  return newExpandedState;
+};

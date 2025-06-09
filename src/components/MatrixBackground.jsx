@@ -1,12 +1,18 @@
 "use client";
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '../components/MatrixBackground.scss';
 
 const MatrixBackground = () => {
   const containerRef = useRef(null);
-  const columnsRef = useRef([]);
+  const [mounted, setMounted] = useState(false);
+  
+  // Uruchom to tylko po stronie klienta
   useEffect(() => {
-    if (!containerRef.current) return;
+    setMounted(true);
+  }, []);
+  
+  useEffect(() => {
+    if (!mounted || !containerRef.current) return;
 
     const characters = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789!?#+*';
     const container = containerRef.current;
@@ -17,9 +23,8 @@ const MatrixBackground = () => {
       container.removeChild(container.firstChild);
     }
     
-    columnsRef.current = [];
-    
     // Create columns
+    const columns = [];
     for (let i = 0; i < columnCount; i++) {
       const column = document.createElement('div');
       column.className = 'matrix-column';
@@ -43,7 +48,7 @@ const MatrixBackground = () => {
       }
       
       container.appendChild(column);
-      columnsRef.current.push(column);
+      columns.push(column);
     }
     
     // Handle resize
@@ -59,7 +64,7 @@ const MatrixBackground = () => {
           const column = document.createElement('div');
           column.className = 'matrix-column';
           column.style.left = `${i * 20 + Math.random() * 10}px`;
-            const duration = Math.random() * 4 + 3; // 3-7 seconds
+          const duration = Math.random() * 4 + 3; // 3-7 seconds
           const delay = Math.random() * 3; // 0-3 seconds delay
           
           column.style.animationDuration = `${duration}s`;
@@ -85,9 +90,9 @@ const MatrixBackground = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [mounted]); // Dodałem mounted jako zależność
   
-  return <div className="matrix-background" ref={containerRef}></div>;
+  return <div className="matrix-background" ref={containerRef} suppressHydrationWarning></div>;
 };
 
 export default MatrixBackground;

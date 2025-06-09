@@ -9,14 +9,25 @@
 
 /* Style dla pustej listy beatmap */
 .empty-beatmaps {
-    padding: 2rem;
-    text-align: center;
-    color: #ea81fb;
-    font-style: italic;
-    background: rgba(19, 16, 32, 0.3);
-    border-radius: 8px;
-    border: 1px solid rgba(88, 91, 105, 0.3);
-    margin: 1rem 0;
+  padding: 14px 16px;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  background: rgba(46, 21, 59, 0.3);
+  border-radius: 8px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  
+  &.system-collection {
+    opacity: 0.7;
+  }
+  
+  .empty-count {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+  }
 }
 
 /* Lista setów beatmap */

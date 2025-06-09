@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import './beatmapsetList.scss';
+import './beatmapDifficulty.scss';
 
 /**
  * Komponent wyświetlający listę beatmapsetów na głównej stronie
@@ -27,6 +28,8 @@ function BeatmapsetListItem({ set, onAddToCollection }) {
     setShowDifficulties(false);
   };
   
+  const bgCoverUrl = set.cover || `https://assets.ppy.sh/beatmaps/${set.id}/covers/card.jpg`;
+  
   return (
     <motion.div
       className={`beatmapset-item-box${showDifficulties ? ' expanded' : ''}`}
@@ -40,7 +43,7 @@ function BeatmapsetListItem({ set, onAddToCollection }) {
       {/* Cover */}
       <div className="beatmapset-cover">
         <img 
-          src={set.cover || `https://assets.ppy.sh/beatmaps/${set.id}/covers/card.jpg`} 
+          src={bgCoverUrl} 
           alt={`${set.artist} - ${set.title}`} 
           onError={(e) => {
             e.target.onerror = null; 
@@ -89,26 +92,45 @@ function BeatmapsetListItem({ set, onAddToCollection }) {
           {set.inCollection ? 'Zapisane' : 'Dodaj'}
         </button>
       </div>
-        {/* Panel trudności */}
+
+      {/* Panel trudności - ZMODYFIKOWANY */}
       {showDifficulties && (
         <motion.div
-          className="beatmapset-difficulties-panel"
+          className="beatmapset-with-bg"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
         >
-          <h4>Difficulties:</h4>
-          <div className="beatmapset-difficulties">
-            {(set.beatmaps || []).map(map => (
-              <div
-                key={map.id}
-                className={`beatmapset-difficulty difficulty-${getDifficultyClass(map.difficulty_rating)}`}
-              >
-                <span className="diff-name">{map.version}</span>
-                <span className="diff-stars">{map.difficulty_rating.toFixed(2)}★</span>
-              </div>
-            ))}
+          <div className="beatmapset-bg" style={{ backgroundImage: `url(${bgCoverUrl})` }}></div>
+          <div className="beatmapset-content">
+            <div className="beatmapset-difficulties">
+              {(set.beatmaps || []).map(map => (
+                <div
+                  key={map.id}
+                  className={`beatmapset-difficulty-item difficulty-${getDifficultyClass(map.difficulty_rating)}`}
+                >
+                  <div className="beatmapset-difficulty-content">
+                    <div className="beatmapset-difficulty-indicator"></div>
+                    <div className="beatmapset-difficulty-info">
+                      <div className="beatmapset-difficulty-name">
+                        {map.version} ({map.difficulty_rating.toFixed(2)}★)
+                      </div>
+                      <div className="beatmapset-difficulty-mapper">
+                        Mapper: {map.creator || set.creator || 'Unknown'}
+                      </div>
+                    </div>
+                    {map.tags && map.tags.length > 0 && (
+                      <div className="beatmapset-difficulty-tags">
+                        {map.tags.slice(0, 2).map(tag => (
+                          <span key={tag} className="difficulty-tag">#{tag}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </motion.div>
       )}

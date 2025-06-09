@@ -1,8 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import BeatmapsetGroup from './BeatmapsetGroup';
 import BeatmapItem from '../BeatmapItem';
 import { groupBeatmapsBySet, sortBeatmaps } from '../../../utils/beatmapUtils';
+import { expandBeatmapsetsWithTags } from '../../../utils/tagUtils';
+import { useAtom } from 'jotai';
+import { persistedExpandedBeatmapsetsAtom } from '../../../store/expandedBeatmapsetsAtom';
+import { selectedTagsAtom } from '../../../store/selectedTagsAtom';
 import './beatmapsetGroup.scss';
 
 /**
@@ -17,6 +21,10 @@ const BeatmapsetList = ({
   onToggleFavorite,
   collections // Dodajemy collections jako props
 }) => {
+  // Pobierz stan rozwiniętych beatmapsetów i wybranych tagów
+  const [expandedBeatmapsets, setExpandedBeatmapsets] = useAtom(persistedExpandedBeatmapsetsAtom);
+  const [selectedTags] = useAtom(selectedTagsAtom);
+  
   // Grupuj beatmapy według beatmapsetów
   const beatmapsets = useMemo(() => {
     const grouped = groupBeatmapsBySet(beatmaps);
@@ -53,6 +61,14 @@ const BeatmapsetList = ({
         (valueA > valueB ? -1 : 1);
     });
   }, [beatmaps, sortBy, sortOrder]);
+
+  // Automatycznie rozwijaj beatmapsety, które zawierają beatmapy z wybranym tagiem
+  useEffect(() => {
+    if (selectedTags && selectedTags.length > 0 && beatmapsets && beatmapsets.length > 0) {
+      // Przekazujemy tagi do funkcji, która automatycznie rozwinie pasujące beatmapsety
+      expandBeatmapsetsWithTags(beatmapsets, selectedTags, expandedBeatmapsets, setExpandedBeatmapsets);
+    }
+  }, [selectedTags, beatmapsets, expandedBeatmapsets, setExpandedBeatmapsets]);
   
   if (!beatmaps || beatmaps.length === 0) {
     return <div className="empty-beatmaps">No beatmaps found.</div>;
