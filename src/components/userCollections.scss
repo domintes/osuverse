@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px; /* Zmniejszona wartość */
 }
 
 /* Nadpisanie stylów dla NeonBorderBox w kolekcjach */
@@ -10,8 +10,8 @@
   background: linear-gradient(140deg, #2f0f3a 0%, #3a1a4d 100%);
   border: 1px solid rgba(234, 129, 251, 0.5);
   box-shadow: 0 0 20px rgba(234, 129, 251, 0.2), 0 0 40px rgba(47, 15, 58, 0.3);
-  margin: 12px 0;
-  padding: 16px 20px;
+  margin: 8px 0; /* Zmniejszona wartość */
+  padding: 12px 16px; /* Zmniejszona wartość */
   transition: all 0.3s ease;
 }
 
@@ -21,11 +21,15 @@
   transform: translateY(-1px); /* Subtelny efekt uniesienia */
 }
 
+.collection-item {
+  padding: 10px 14px; /* Bardziej kompaktowe wypełnienie */
+}
+
 .collection-item .collection-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px; /* Zmniejszony margines dolny */
 }
 
 .collection-item .collection-info {
@@ -36,16 +40,17 @@
 
 .collection-item .collection-name-container {
   flex: 1;
-  margin-right: 10px;
+  margin-right: 8px; /* Mniejszy margines */
 }
 
 .collection-item .collection-name {
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding: 5px;
+  padding: 4px; /* Mniejsze wypełnienie */
   border-radius: 4px;
   transition: background-color 0.2s ease;
+  font-size: 0.95rem; /* Nieco mniejsza czcionka */
 }
 
 .collection-item .collection-name:hover {
@@ -129,10 +134,10 @@
 }
 
 .subcollection-item {
-  margin-left: 20px;
-  padding: 8px 12px;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin-left: 16px; /* Zmniejszony margines lewy */
+  padding: 6px 10px; /* Mniejsze wypełnienie */
+  margin-top: 6px; /* Mniejszy margines górny */
+  margin-bottom: 6px; /* Mniejszy margines dolny */
   border-left: 2px solid rgba(234, 129, 251, 0.3);
   border-radius: 0 8px 8px 0;
   background: rgba(234, 129, 251, 0.05);
@@ -326,7 +331,7 @@
   border: none;
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
-  padding: 6px;
+  padding: 3px; /* Mniejsze przyciski */
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -378,24 +383,25 @@
 }
 
 .collection-header-title {
-  font-size: 32px;
-  margin-bottom: 18px;
+  font-size: 28px; /* Zmniejszona wartość */
+  margin-bottom: 14px; /* Zmniejszona wartość */
 }
 
 /* Globalne kontrolki sortowania i filtrowania */
 .sort-filter-controls.global {
-  margin: 10px 0 20px;
-  padding: 10px;
+  margin: 8px 0 16px; /* Zmniejszona wartość */
+  padding: 8px; /* Zmniejszona wartość */
   border-radius: 8px;
   background-color: rgba(46, 21, 59, 0.5);
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px; /* Zmniejszona wartość */
+  min-height: auto; /* Dodane dla zmniejszenia wysokości */
   
   .control-group {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px; /* Zmniejszona wartość */
     
     &:first-child {
       margin-right: auto;
@@ -412,24 +418,87 @@
     align-items: center;
     gap: 8px;
   }
-  
-  .sort-mode-toggle,
+    .sort-mode-toggle,
   .sort-direction-toggle,
   .filter-toggle {
     background: rgba(134, 29, 251, 0.2);
     border: 1px solid rgba(134, 29, 251, 0.3);
     color: rgba(255, 255, 255, 0.9);
-    padding: 5px 10px;
+    padding: 4px 8px; /* Zmniejszona wartość */
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s; /* Szybsza animacja */
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px; /* Zmniejszona wartość */
+    font-size: 0.9rem; /* Mniejszy tekst */
     
     &:hover, &.active {
       background: rgba(134, 29, 251, 0.4);
       border-color: rgba(234, 129, 251, 0.5);
+    }
+  }
+}
+
+/* Zmniejszenie wielkości czcionki dla lepszej kompaktowości */
+.collection-item .collection-name-container {
+  margin-right: 8px; /* Mniejszy margines */
+}
+
+.collection-item .collection-name {
+  padding: 4px; /* Mniejsze wypełnienie */
+  font-size: 0.95rem; /* Nieco mniejsza czcionka */
+}
+
+/* Zmniejszenie wielkości przycisków akcji */
+.beatmap-actions button {
+  padding: 3px; /* Mniejsze przyciski */
+}
+
+/* Wyłączenie niepotrzebnych transformacji dla lepszej wydajności */
+.disable-transitions * {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Przełącznik dla wyłączenia animacji */
+.transition-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px auto;
+  width: fit-content;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  
+  input[type="checkbox"] {
+    appearance: none;
+    width: 36px;
+    height: 18px;
+    background: rgba(47, 15, 58, 0.5);
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    border: 1px solid rgba(234, 129, 251, 0.3);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ea81fb;
+      left: 2px;
+      top: 1px;
+      transition: transform 0.2s;
+    }
+    
+    &:checked {
+      background: rgba(234, 129, 251, 0.3);
+      
+      &::before {
+        transform: translateX(18px);
+      }
     }
   }
 }

@@ -1,0 +1,98 @@
+/* animatedComponents.scss */
+
+/* Przycisk neonowy */
+.animated-neon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  background: rgba(30, 30, 40, 0.8);
+  color: var(--button-color, #8c54ff);
+  border: 1px solid var(--button-color, #8c54ff);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 5px 0 var(--button-color, #8c54ff);
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: 0.5s;
+  }
+  
+  &:hover::after {
+    left: 100%;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+    
+    &:hover::after {
+      left: -100%;
+    }
+  }
+}
+
+/* Kontener lodera */
+.neon-loader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .neon-loader {
+    border-radius: 50%;
+    border: 4px solid transparent;
+    border-top: 4px solid var(--loader-color, #8c54ff);
+    border-right: 4px solid var(--loader-color, #8c54ff);
+    box-shadow: 0 0 10px 0 var(--loader-color, #8c54ff);
+    filter: blur(0.3px);
+  }
+}
+
+/* Efekt kursora w typewriterText */
+.typewriter-text {
+  display: inline-block;
+  
+  .typewriter-cursor {
+    display: inline-block;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+    color: inherit;
+  }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Podstawowe style dla komponentów */
+.fade-in, .slide-in, .page-transition {
+  will-change: opacity, transform;
+}
+
+.parallax-element {
+  will-change: transform;
+}
+
+.pulse-effect {
+  will-change: transform;
+}

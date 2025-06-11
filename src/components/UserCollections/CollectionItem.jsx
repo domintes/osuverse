@@ -5,7 +5,7 @@ import { Edit, Trash2, GripVertical, PlusCircle, ChevronDown, ChevronUp } from '
 import SubcollectionItem from './SubcollectionItem';
 import BeatmapList from './BeatmapList';
 import FilterSortControls from './FilterSortControls';
-import { validateSubcollectionName } from './utils/collectionUtils';
+import { validateSubcollectionName, isCollectionEmpty } from './utils/collectionUtils';
 import '../../components/userCollections.scss';
 import './userCollections.scss';
 

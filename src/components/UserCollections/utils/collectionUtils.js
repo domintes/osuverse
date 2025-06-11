@@ -102,3 +102,19 @@ export const validateSubcollectionName = (collections, name, collectionId, isNew
     
     return { isValid: true, message: '' };
 };
+
+/**
+ * Sprawdza czy kolekcja jest pusta (nie ma przypisanych beatmap)
+ * @param {Object} collections - Obiekt z kolekcjami
+ * @param {string} collectionId - ID kolekcji do sprawdzenia
+ * @returns {boolean} - true jeśli kolekcja jest pusta, false w przeciwnym razie
+ */
+export const isCollectionEmpty = (collections, collectionId) => {
+    if (!collections || !collections.beatmaps || !collectionId) {
+        return true;
+    }
+    
+    return !Object.values(collections.beatmaps).some(beatmap => 
+        beatmap.collectionId === collectionId
+    );
+};

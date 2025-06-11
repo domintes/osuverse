@@ -4,7 +4,7 @@ import { useState } from 'react';
 import UserCollectionsPanel from '@/components/UserCollectionsPanel';
 import MainOsuverseDiv from '@/components/MainOsuverseDiv';
 import TagsSection from '@/components/TagSections.jsx/TagSections';
-import { Edit, Tag, Database } from 'lucide-react';
+import { Edit, Tag, Database, Zap } from 'lucide-react';
 import './collections.scss';
 import { useAtom } from "jotai";
 import { collectionsAtom } from "@/store/collectionAtom";
@@ -13,6 +13,7 @@ import { loadTestCollectionsData } from '@/utils/testCollectionsData';
 export default function Collections() {
   const [editMode, setEditMode] = useState(false);
   const [collections, setCollections] = useAtom(collectionsAtom);
+  const [disableTransitions, setDisableTransitions] = useState(false);
 
   // Funkcja do wczytania danych testowych
   const handleLoadTestData = () => {
@@ -20,10 +21,21 @@ export default function Collections() {
   };
 
   return (
-    <MainOsuverseDiv className="collections-container">
+    <MainOsuverseDiv className={`collections-container ${disableTransitions ? 'disable-transitions' : ''}`}>
       <div className="collections-header">
         <h1 style={{ fontSize: 32, color: '#ea81fb', textShadow: '0 0 16px #2f0f3a' }}>Collections</h1>
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          {/* Przełącznik dla animacji */}
+          <div className="transition-toggle">
+            <span>Animacje</span>
+            <input 
+              type="checkbox" 
+              checked={disableTransitions} 
+              onChange={() => setDisableTransitions(!disableTransitions)} 
+            />
+            <Zap size={16} color={disableTransitions ? '#ea81fb' : '#777777'} />
+          </div>
+          
           {/* Przycisk do wczytania danych testowych */}
           <button
             onClick={handleLoadTestData}
