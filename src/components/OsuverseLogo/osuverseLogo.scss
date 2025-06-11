@@ -1,0 +1,105 @@
+.osuverse-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    border-radius: 18px;
+    padding: 0.25rem 1rem;
+    cursor: pointer;
+    transition: filter 0.3s;
+
+    &:hover {
+        filter: brightness(1.2) drop-shadow(0 0 10px rgba(234, 129, 251, 0.7));
+    }
+}
+
+.osuverse-logo {
+    font-size: 28px;
+    font-weight: 900;
+    color: #ffcae6;
+    text-shadow: 0 0 12px #ea81fb, 0 0 24px #2f0f3a, 0 0 8px #b144b1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.08em;
+    filter: drop-shadow(0 0 8px #2f0f3a);
+}
+
+.osuniverse-logo-favicon {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    position: relative;
+    top: 0;
+    left: -2px;
+    margin-right: -2px;
+    z-index: 10;
+    filter: drop-shadow(0 0 8px #ea81fb) brightness(1.1);
+}
+
+.osuniverse-logo-letter-first {
+    z-index: 10;
+    font-weight: 900;
+    font-family: 'Cracked Code';
+    text-shadow: 0 0 24px #2f0f3a, 0 0 8px #ea81fb;
+    filter: drop-shadow(0 0 12px #2f0f3a);
+}
+
+.wonderful-void {
+        z-index: 0;
+        opacity: 0.1;
+        background: radial-gradient(circle, #000 60%, #2f0f3a 100%);
+        border: 1px solid #ea81fb44;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: 3s ease-in-out infinite glow, 8s linear infinite eventHorizon;
+        position: absolute;
+        top: 4px;
+        left: 14px;
+}
+
+@keyframes glow {
+    0%,
+    100% {
+        box-shadow: 0 0 40px 20px #2f0f3acc;
+    }
+
+    50% {
+        box-shadow: 0 0 60px 30px #ea81fbcc;
+    }
+}
+
+@keyframes eventHorizon {
+    0% {
+        filter: blur(0px) brightness(1);
+    }
+
+    50% {
+        filter: blur(2px) brightness(1.2);
+    }
+
+    100% {
+        filter: blur(0px) brightness(1);
+    }
+}
+
+.osuniverse-logo-letter {    font-weight: 900;
+    font-family: 'Cracked Code';
+    z-index: 777;
+    color: #ffcae6;
+    text-shadow: 0 0 8px #ea81fb, 0 0 16px #2f0f3a;
+    transition: color 0.2s, text-shadow 0.2s;
+}
+
+.nav-bar {
+    width: 100%;
+    height: 100vh; // Full height for desktop
+    // ...existing code...
+}
+
+.AboutPage-container {
+    width: 100%;
+    height: 100vh; // Full height for desktop
+    // ...existing code...
+}

@@ -1,0 +1,229 @@
+// Style dla komponentu BeatmapDifficulty - uproszczona wersja
+.beatmapset-difficulty-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(32, 8, 36, 0.7);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  border-left: 3px solid rgba(234, 129, 251, 0.6);
+  box-sizing: border-box;
+  transition: transform 0.2s, background 0.2s;
+  position: relative;
+  overflow: hidden;
+  
+  &:hover {
+    background: rgba(53, 18, 65, 0.7);
+    transform: translateY(-1px);
+  }
+  
+  // Tło beatmapsetu (opcjonalne)
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.08;
+    z-index: 0;
+    filter: blur(3px);
+  }
+  
+  // Kompaktowy widok
+  &.compact-view {
+    height: 42px;
+    
+    .beatmapset-difficulty-content {
+      flex: 1;
+    }
+    
+    .difficulty-info {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: 12px;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+    }
+    
+    .difficulty-name {
+      font-weight: 600;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    
+    .difficulty-mapper {
+      color: rgba(255, 255, 255, 0.7);
+      flex-shrink: 0;
+    }
+    
+    .difficulty-tags {
+      color: rgba(234, 129, 251, 0.9);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 300px;
+      
+      @media (max-width: 768px) {
+        max-width: 200px;
+      }
+      
+      @media (max-width: 480px) {
+        max-width: 100px;
+      }
+    }
+  }
+}
+
+// Styl dla listy difficulties
+.beatmapset-difficulties {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0.5rem;
+  background-color: rgba(46, 21, 59, 0.82);
+  margin-top: 8px; 
+  margin-bottom: 8px;
+  
+  .beatmapset-difficulty-item {
+    padding: 6px 10px; /* Mniejsze wypełnienie */
+    margin-bottom: 3px; /* Mniejszy margines między trudnościami */
+    background: rgba(32, 8, 36, 0.5); /* Bardziej przezroczyste tło */
+    
+    &:hover {
+      background: rgba(53, 18, 65, 0.6);
+    }
+    
+    .difficulty-name {
+      font-size: 0.95rem; /* Mniejsza czcionka */
+      min-width: 120px; /* Zapewnia równe wyrównanie */
+    }
+    
+    .difficulty-mapper {
+      font-size: 0.85rem; /* Mniejsza czcionka dla kreatora */
+      color: rgba(255, 255, 255, 0.7); /* Mniejszy kontrast */
+    }
+    
+    .difficulty-tags {
+      font-size: 0.85rem;
+      color: #c3a9ff;
+    }
+  }
+  
+  /* Style dla akcji trudności */
+  .beatmapset-difficulty-actions {
+    display: flex;
+    gap: 4px; /* Mniejszy odstęp między przyciskami */
+    
+    .action-button {
+      padding: 4px; /* Mniejsze przyciski */
+      opacity: 0.7; /* Domyślnie półprzezroczyste */
+      
+      &:hover {
+        opacity: 1; /* Pełna nieprzezroczystość na hover */
+      }
+    }
+  }
+}
+
+// Styl dla całego beatmapsetu z subtelnymi efektami
+.beatmapset-group {
+  position: relative;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  
+  // Tło dla całego beatmapsetu
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.15;
+    z-index: 0;
+    filter: blur(5px);
+  }
+  
+  // Nagłówek zawierający informacje o beatmapsecie
+  .beatmapset-header {
+    position: relative;
+    z-index: 1;
+    padding: 10px 15px;
+    background-color: rgba(46, 21, 59, 0.9);
+    cursor: pointer;
+    
+    .beatmapset-info {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .beatmapset-title {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    
+    .beatmapset-metadata {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+}
+
+// Przyciski akcji
+.beatmapset-difficulty-actions {
+  display: flex;
+  gap: 8px;
+  z-index: 2;
+  
+  .action-button {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    
+    &:hover {
+      color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(234, 129, 251, 0.2);
+    }
+    
+    &.edit-button:hover {
+      color: #64ffda;
+    }
+    
+    &.delete-button:hover {
+      color: #ff6464;
+    }
+    
+    &.favorite-button:hover {
+      color: #ffdf64;
+    }
+  }
+}
+
+/* Style dla elementów z tagami */
+.beatmapset-difficulty-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 3px;
+  
+  .tag {
+    font-size: 0.8rem;
+    background: rgba(134, 29, 251, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(134, 29, 251, 0.3);
+  }
+}

@@ -1,0 +1,96 @@
+/* filepath: c:\Stuff\Projects\osuverse\src\components\TagInput\enhancedTagInput.scss */
+.enhanced-tag-input {
+  width: 100%;
+  font-family: inherit;
+  
+  /* Styl tagify dostosowany do motywu osuverse */
+  --tagify-dd-color-primary: #ea81fb;
+  --tagify-dd-bg-color: #0f0f1a;
+  
+  .tagify {
+    --tags-border-color: rgba(234, 129, 251, 0.4);
+    --tags-hover-border-color: rgba(234, 129, 251, 0.8);
+    --tags-focus-border-color: #ea81fb;
+    --tag-bg: rgba(234, 129, 251, 0.2);
+    --tag-hover: rgba(234, 129, 251, 0.4);
+    --tag-text-color: #ffffff;
+    --tag-text-color--edit: #ffffff;
+    --tag-pad: 0.3em 0.5em;
+    --tag-inset-shadow-size: 1.2em;
+    --tag-invalid-color: #ff5555;
+    --tag-invalid-bg: rgba(255, 85, 85, 0.2);
+    --tag-remove-bg: rgba(255, 85, 85, 0.3);
+    --tag-remove-btn-bg: none;
+    --tag-remove-btn-bg--hover: rgba(255, 85, 85, 0.6);
+    --loader-size: 1em;
+    
+    padding: 0.7em;
+    background: rgba(0, 0, 0, 0.2);
+    transition: all 0.25s ease;
+    border: 1px solid var(--tags-border-color);
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(234, 129, 251, 0.2);
+    
+    &:hover {
+      border-color: var(--tags-hover-border-color);
+      box-shadow: 0 0 12px rgba(234, 129, 251, 0.3);
+    }
+    
+    &.tagify--focus {
+      border-color: var(--tags-focus-border-color);
+      box-shadow: 0 0 16px rgba(234, 129, 251, 0.4);
+    }
+    
+    .tagify__tag {
+      margin: 3px;
+      border-radius: 4px;
+      position: relative;
+      z-index: 1;
+      outline: none;
+      
+      &:hover {
+        --tag-bg: var(--tag-hover);
+      }
+      
+      .tagify__tag__removeBtn {
+        color: rgba(255, 255, 255, 0.7);
+        
+        &:hover {
+          color: rgba(255, 255, 255, 1);
+          background: var(--tag-remove-btn-bg--hover);
+        }
+      }
+      
+      &.tagify--notAllowed {
+        background: var(--tag-invalid-bg);
+        color: var(--tag-invalid-color);
+      }
+    }
+    
+    .tagify__input {
+      color: #ffffff;
+    }
+    
+    .tagify__dropdown {
+      background: var(--tagify-dd-bg-color);
+      border-radius: 8px;
+      border: 1px solid rgba(234, 129, 251, 0.3);
+      box-shadow: 0 0 16px rgba(0, 0, 0, 0.5);
+      
+      .tagify__dropdown__item {
+        color: #ffffff;
+        border-radius: 4px;
+        padding: 0.5em 0.7em;
+        margin: 2px;
+        
+        &--active {
+          background: rgba(234, 129, 251, 0.2);
+        }
+        
+        &:hover {
+          background: rgba(234, 129, 251, 0.3);
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+.osuverse-popup-button {
+  background: none;
+  border: none;
+  color: #ea81fb;
+  cursor: pointer;
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    color: #ffffff;
+    background-color: rgba(234, 129, 251, 0.2);
+    transform: scale(1.1);
+  }
+}
+
+.osuverse-popup-content {
+  min-width: 300px;
+  max-width: 550px;
+  
+  .osuverse-popup-title {
+    color: #ea81fb;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: bold;
+    text-shadow: 0 0 16px #2f0f3a;
+  }
+  
+  .osuverse-popup-section {
+    margin-bottom: 1.5rem;
+    
+    h3 {
+      color: #ea81fb;
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+    
+    ul {
+      list-style-type: disc;
+      padding-left: 1.5rem;
+      
+      li {
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+        color: #ffffff;
+      }
+    }
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

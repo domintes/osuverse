@@ -1,0 +1,283 @@
+.beatmapset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  
+  @media (max-width: 768px) {
+    gap: 14px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 10px;
+  }
+}
+.beatmapset-list-empty {
+  color: #888;
+  padding: 24px;
+  text-align: center;
+  
+  @media (max-width: 480px) {
+    padding: 16px;
+  }
+}
+.beatmapset-item-box {
+  background: #23262f;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.3s, background 0.3s, transform 0.2s;
+  position: relative;
+  overflow: visible; /* Zmienione z hidden na visible */
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+  }
+  
+  &.expanded {
+    background: #181a20;
+    box-shadow: 0 6px 30px rgba(0, 230, 118, 0.25);
+    z-index: 5;
+  }
+  
+  @media (max-width: 480px) {
+    border-radius: 10px;
+  }
+}
+.beatmapset-content {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 24px;
+  position: relative;
+  
+  @media (max-width: 768px) {
+    gap: 12px;
+    padding: 14px 18px;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 8px;
+    padding: 10px 14px;
+  }
+}
+.beatmapset-cover {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 2px 8px #000a;
+  flex-shrink: 0;
+  
+  @media (max-width: 768px) {
+    width: 60px;
+    height: 60px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+  }
+}
+.beatmapset-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  
+  @media (max-width: 480px) {
+    gap: 2px;
+  }
+}
+.title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+}
+.mapper {
+  font-size: 0.98rem;
+  color: #7ee0ff;
+}
+.tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+.tag-chip {
+  background: #23262f;
+  color: #00e676;
+  border: 1px solid #00e676;
+  border-radius: 12px;
+  padding: 2px 10px;
+  font-size: 0.98rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  
+  &:hover {
+    background: #00e676;
+    color: #23262f;
+  }
+}
+.add-btn {
+  background: #00e676;
+  color: #23262f;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 18px;
+  transition: background 0.2s, color 0.2s;
+  
+  &:hover {
+    background: #1de9b6;
+    color: #181a20;
+  }
+}
+.beatmap-difficulty-list {
+  background: #1a1d25;
+  border-top: 1px solid rgba(0, 230, 118, 0.3);
+  overflow: hidden;
+}
+.difficulties-container {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px 24px 12px 24px;
+  
+  @media (max-width: 768px) {
+    padding: 10px 18px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 8px 14px;
+  }
+}
+.beatmapset-difficulty-item {
+  background: #23262f;
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 10px 3px 10px;
+  min-width: 60px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 230, 118, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  .stars {
+    font-size: 0.8rem;
+    opacity: 0.85;
+  }
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  }
+}
+.beatmapset-difficulties-panel {
+  position: absolute;
+  width: 100%;
+  top: 100%;
+  left: 0;
+  background: #181a20;
+  border-radius: 0 0 14px 14px;
+  padding: 12px 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  z-index: 10;
+  border-top: 1px solid rgba(0, 230, 118, 0.3);
+  
+  h4 {
+    color: #00e676;
+    margin: 0 0 8px 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  
+  .beatmapset-difficulties {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    
+    .beatmapset-difficulty {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      min-width: 90px;
+      
+      .diff-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 150px;
+      }
+      
+      .diff-stars {
+        opacity: 0.85;
+        font-size: 0.85rem;
+      }
+      
+      &.difficulty-easy {
+        background: rgba(46, 204, 113, 0.2);
+        border: 1px solid rgba(46, 204, 113, 0.6);
+      }
+      
+      &.difficulty-normal {
+        background: rgba(52, 152, 219, 0.2);
+        border: 1px solid rgba(52, 152, 219, 0.6);
+      }
+      
+      &.difficulty-hard {
+        background: rgba(241, 196, 15, 0.2);
+        border: 1px solid rgba(241, 196, 15, 0.6);
+      }
+      
+      &.difficulty-insane {
+        background: rgba(231, 76, 60, 0.2);
+        border: 1px solid rgba(231, 76, 60, 0.6);
+      }
+      
+      &.difficulty-expert {
+        background: rgba(155, 89, 182, 0.2);
+        border: 1px solid rgba(155, 89, 182, 0.6);
+      }
+      
+      &.difficulty-expertplus {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+      }
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding: 10px 14px;
+    border-radius: 0 0 10px 10px;
+    
+    h4 {
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+    
+    .beatmapset-difficulties {
+      gap: 6px;
+      
+      .beatmapset-difficulty {
+        padding: 3px 8px;
+        min-width: 80px;
+        font-size: 0.85rem;
+      }
+    }
+  }
+}

@@ -1,0 +1,96 @@
+/* filepath: /c:/Stuff/Projects/osuverse/src/components/addBeatmapModal.scss */
+.beatmap-collection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 20px;
+    /* Add void/metallic accent */
+    background: radial-gradient(circle at 60% 40%, #000 60%, #1a2a4d 100%);
+    border-radius: 16px;
+    box-shadow: 0 0 40px 10px #0a0f2a, 0 0 80px 0 #1a2a4d99;
+}
+
+.beatmap-item {
+    background-size: cover;
+    background-position: center;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: flex-end;
+    padding: 10px;
+    color: white;
+    text-shadow: 0 0 5px black;
+    border-radius: 8px;
+    overflow: hidden;
+    /* Hi-tech border */
+    border: 2px solid #7ee0ff44;
+    box-shadow: 0 0 24px 0 #1a2a4d99;
+    position: relative;
+}
+
+.beatmap-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(126,224,255,0.04) 0%, rgba(26,42,77,0.01) 80%);
+    pointer-events: none;
+    z-index: 1;
+    border-radius: 8px;
+}
+
+.beatmap-info {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+    /* Metallic accent */
+    border: 1.5px solid #4447b1;
+    box-shadow: 0 0 8px #7ee0ff44;
+}
+
+.beatmap-info h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #7ee0ff;
+    text-shadow: 0 0 8px #1a2a4d;
+}
+
+.beatmap-info p {
+    margin: 5px 0;
+    color: #c3e6ff;
+}
+
+.beatmap-info a {
+    color: #4CAFED;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.beatmap-info a:hover {
+    text-decoration: underline;
+    color: #7ee0ff;
+}
+
+/* Modal accent for void/hi-tech */
+.modal-content {
+    background: linear-gradient(120deg, #0a0f2a 60%, #1a2a4d 100%);
+    border-radius: 18px;
+    box-shadow: 0 0 40px 0 #1a2a4d99, 0 0 80px 0 #0a0f2a55;
+    border: 2px solid #7ee0ff44;
+    color: #c3e6ff;
+}
+
+.add-beatmap-button {
+    background: linear-gradient(90deg, #0a0f2a 60%, #7ee0ff 100%);
+    color: #fff;
+    border: 1.5px solid #7ee0ff;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 0 8px #7ee0ff44;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.add-beatmap-button:hover {
+    background: linear-gradient(90deg, #1a2a4d 60%, #4447b1 100%);
+    color: #7ee0ff;
+    box-shadow: 0 0 16px #7ee0ff99;
+}

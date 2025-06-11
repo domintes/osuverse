@@ -1,0 +1,186 @@
+/* dataTable.scss */
+
+.data-table-container {
+  width: 100%;
+  font-family: var(--font-sans, 'Segoe UI', system-ui, sans-serif);
+  color: #fff;
+  margin-bottom: 20px;
+  
+  .data-table-controls {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    
+    .data-table-search {
+      padding: 8px 12px;
+      border-radius: 4px;
+      background: rgba(20, 20, 30, 0.8);
+      border: 1px solid rgba(84, 84, 120, 0.5);
+      color: #fff;
+      min-width: 200px;
+      
+      &:focus {
+        outline: none;
+        border-color: var(--neon-primary, #8c54ff);
+        box-shadow: 0 0 0 2px rgba(140, 84, 255, 0.2);
+      }
+    }
+  }
+  
+  .data-table-wrapper {
+    overflow-x: auto;
+    
+    .tanstack-data-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: rgba(30, 30, 40, 0.7);
+      border-radius: 6px;
+      overflow: hidden;
+      
+      &.table-bordered {
+        border: 1px solid rgba(84, 84, 120, 0.5);
+        
+        th, td {
+          border-right: 1px solid rgba(84, 84, 120, 0.3);
+          
+          &:last-child {
+            border-right: none;
+          }
+        }
+        
+        tr {
+          &:not(:last-child) td {
+            border-bottom: 1px solid rgba(84, 84, 120, 0.3);
+          }
+        }
+      }
+      
+      &.table-striped {
+        tbody tr:nth-child(even) {
+          background-color: rgba(40, 40, 60, 0.4);
+        }
+      }
+      
+      th, td {
+        padding: 12px 15px;
+        text-align: left;
+      }
+      
+      th {
+        background-color: rgba(40, 40, 60, 0.9);
+        font-weight: 600;
+        position: relative;
+        user-select: none;
+        
+        &.sortable-column {
+          cursor: pointer;
+          
+          &:hover {
+            background-color: rgba(50, 50, 70, 0.9);
+          }
+        }
+        
+        .th-content {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        
+        .sort-icon {
+          margin-left: 8px;
+          display: flex;
+          align-items: center;
+        }
+        
+        .sort-indicator {
+          opacity: 0.5;
+          font-size: 14px;
+        }
+      }
+      
+      td {
+        transition: background-color 0.15s ease;
+      }
+      
+      tbody tr {
+        &:hover {
+          background-color: rgba(60, 60, 80, 0.5) !important;
+        }
+      }
+      
+      .empty-table-message {
+        text-align: center;
+        padding: 40px 20px;
+        font-style: italic;
+        color: #aaa;
+      }
+    }
+  }
+  
+  .data-table-pagination {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      
+      .pagination-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(40, 40, 60, 0.8);
+        border: 1px solid rgba(84, 84, 120, 0.5);
+        border-radius: 4px;
+        height: 32px;
+        width: 32px;
+        cursor: pointer;
+        color: #fff;
+        transition: all 0.2s;
+        
+        &:hover:not(:disabled) {
+          background: rgba(60, 60, 80, 0.8);
+          border-color: rgba(140, 84, 255, 0.7);
+        }
+        
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+      
+      .pagination-info {
+        margin: 0 10px;
+        white-space: nowrap;
+      }
+    }
+    
+    .page-size-selector {
+      .page-size-select {
+        padding: 5px 10px;
+        background: rgba(40, 40, 60, 0.8);
+        border: 1px solid rgba(84, 84, 120, 0.5);
+        border-radius: 4px;
+        color: #fff;
+        
+        &:focus {
+          outline: none;
+          border-color: var(--neon-primary, #8c54ff);
+        }
+        
+        option {
+          background: rgba(30, 30, 40, 0.95);
+        }
+      }
+    }
+  }
+}

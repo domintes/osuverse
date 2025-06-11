@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Osuverse
 
-## Getting Started
+A modern, cyberpunk-inspired web app for creating and managing osu! beatmap collections with custom tags, dynamic tag sorting, and hi-tech void/galaxy visuals.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Modern UI**: Cyberpunk, void, hi-tech, and metallic dark blue/black hole theme
+- **User Collections**: Add, manage, and organize beatmaps into collections and subcollections
+- **Custom Tags**: Add your own tags to beatmaps; dynamic tag sections (Artists, Mappers, Difficulty, User Tags)
+- **Tag Filtering**: Show/hide tag groups with checkboxes; filter beatmaps by tags
+- **osu!APIv2 Integration**: Search and fetch beatmaps (see [osu!APIv2 docs](https://osu.ppy.sh/docs/))
+- **Global State**: Uses Jotai for state, with localStorage persistence
+- **Account Sync**: (Planned) Save collections to user account if authenticated
+- **Beautiful Effects**: Black hole particles, animated gradients, neon glows
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Quick Start
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+1. `npm install`
+2. `npm run dev`
+3. Open [http://localhost:3000](http://localhost:3000)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Developer Docs
 
-## Learn More
+See [Docs.md](./Docs.md) for important files, component reuse, and future ideas.
 
-To learn more about Next.js, take a look at the following resources:
+## Contributing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Fork, branch, and PR as usual
+- Please keep the cyberpunk/void/hi-tech style consistent
+- See [osu!APIv2 docs](https://osu.ppy.sh/docs/) for API integration
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For more, see in-code comments and Docs.md

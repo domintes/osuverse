@@ -1,11 +1,35 @@
 import { atomWithStorage } from 'jotai/utils';
 
-// Collection structure:
-// {
-//   beatmapsets: { [beatmapsetId]: { metadata, difficulties: [] } }
-//   beatmaps: { [beatmapId]: { metadata, beatmapsetId } }
-// }
-export const collectionAtom = atomWithStorage('userCollection', {
-    beatmapsets: {},
-    beatmaps: {}
+// Generate a stable UUID for the "Unsorted" collection
+const UNSORTED_COLLECTION_ID = '00000000-0000-0000-0000-000000000000';
+// Generate a stable UUID for the "Favorites" collection
+const FAVORITES_COLLECTION_ID = '11111111-1111-1111-1111-111111111111';
+
+// Collection structure with beatmaps and UI state
+export const collectionsAtom = atomWithStorage('userCollections', {
+    collections: [
+        {
+            id: UNSORTED_COLLECTION_ID,
+            name: 'Unsorted',
+            order: -1, // Always show at the top
+            isSystemCollection: true, // Mark as system collection that can't be deleted
+            subcollections: []
+        },
+        {
+            id: FAVORITES_COLLECTION_ID,
+            name: 'Favorites',
+            order: -2, // Show above Unsorted
+            isSystemCollection: true, // Mark as system collection that can't be deleted
+            subcollections: []
+        }
+    ],
+    beatmapsets: {}, // beatmapset metadata
+    beatmaps: {}, // beatmap metadata with structure: { 
+                 // id: { 
+                 //   id, setId, version, difficulty_rating, 
+                 //   collectionId, subcollectionId,
+                 //   tags: [{ tag, tag_value }], // Custom tags with priority values
+                 //   notes: '' // Optional notes
+                 // }
+    tags: {}, // For tag statistics and quick access: { tagName: { count, beatmapIds: [] } }
 });
