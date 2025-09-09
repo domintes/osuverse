@@ -1,80 +1,283 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { User, LogOut, Download, Image as LucideImage, Settings, Home, CheckSquare, X } from 'lucide-react';
+import { User, LogOut, Download, Image as LucideImage, Settings, Home, CheckSquare, X, Edit, Trash2, BarChart3, Upload, CloudUpload } from 'lucide-react';
 import { useAtom } from 'jotai';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { collectionsAtom } from '@/store/collectionAtom';
 import NeonBorderBox from './NeonBorderBox';
 import './UserPanel.scss';
 
-export default function UserPanel({ user, onLogout, onExport, onAvatarChange, homepageConfig, setHomepageConfig }) {
+export default function UserPanel({ user, onLogout, onExport, onAvatarChange }) {
   const [open, setOpen] = useState(false);
   const [collections] = useAtom(collectionsAtom);
-  // Przykładowe opcje personalizacji
-  const homepageOptions = [
-    { key: 'showCollections', label: 'Show collections section', color: 'pink' },
-    { key: 'showTags', label: 'Show tag filter section', color: 'blue' },
-    { key: 'showSearch', label: 'Show search box', color: 'green' },
-    { key: 'showRanked', label: 'Show only ranked beatmaps on home', color: 'purple' },
-    { key: 'showCustomSection', label: 'Show custom section', color: 'orange' },
-  ];  return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger asChild>
-        <button className="user-panel-button" title="User settings">
-          {user?.avatar_url ? (
-            <img src={user.avatar_url} alt={user.username} className="user-panel-avatar-img" />
-          ) : (
-            <User />
-          )}
-          <span className="username-span">{user?.username}</span>
-        </button>
-      </Dialog.Trigger><Dialog.Portal>
-        <Dialog.Overlay className="user-panel-overlay" />
-        <Dialog.Content className="user-panel-content">
-          <Dialog.Title className="sr-only">User Settings Panel</Dialog.Title>
-          <div className="user-panel-header">
-            <span className="user-panel-avatar">
-              <img src={user?.avatar_url} alt={user?.username} />
-            </span>
-            <span className="user-panel-username">{user?.username}</span>
-            <Dialog.Close asChild>
-              <button className="user-panel-close"><X /></button>
-            </Dialog.Close>
-          </div><NeonBorderBox info className="neon-border-container">
-            <div className="flex-container">
-              <LucideImage size={20} />
-              <span>Change avatar (soon)</span>
-            </div>
-          </NeonBorderBox>          <NeonBorderBox color="#ff4fd8" className="neon-border-container">
-            <div className="flex-container">
-              <Download size={20} />
-              <button onClick={onExport}>Export your data</button>
-            </div>
-          </NeonBorderBox>          <NeonBorderBox error className="neon-border-container">
-            <div className="flex-container">
-              <LogOut size={20} />
-              <button onClick={onLogout}>Remove OAuth & all data</button>
-            </div>
-          </NeonBorderBox>          <NeonBorderBox info className="neon-border-container">
-            <div className="flex-container">
-              <Settings size={20} />
-              <span>Customize homepage:</span>
-            </div>
-            <div className="user-panel-homepage-options">
-              {homepageOptions.map(opt => (
-                <label key={opt.key}>
-                  <input
-                    type="checkbox"
-                    checked={homepageConfig[opt.key]}
-                    onChange={e => setHomepageConfig(cfg => ({ ...cfg, [opt.key]: e.target.checked }))}
+  const [customAvatar, setCustomAvatar] = useState(null);
+  const [customNickname, setCustomNickname] = useState(user?.username || '');
+  const [isEditingNickname, setIsEditingNickname] = useState(false);
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
+  const [showWarningModal, setShowWarningModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const savedAvatar = localStorage.getItem('customAvatar');
+    const savedNickname = localStorage.getItem('customNickname');
+    if (savedAvatar) setCustomAvatar(savedAvatar);
+    if (savedNickname) setCustomNickname(savedNickname);
+  }, []);
+
+  useEffect(() => {
+    setUnsavedChanges(true);
+  }, [customAvatar, customNickname]);
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = (file) => {
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target.result;
+        setCustomAvatar(base64);
+        localStorage.setItem('customAvatar', base64);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files[0];
+    handleFileSelect(file);
+  };
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout');
+    localStorage.removeItem('customAvatar');
+    localStorage.removeItem('customNickname');
+    setCustomAvatar(null);
+    setCustomNickname(user?.username || '');
+    setUnsavedChanges(false);
+    setOpen(false);
+    window.location.reload();
+  };
+
+  const handleRemoveCollections = () => {
+    // Clear collections
+    localStorage.removeItem('userCollections');
+    setUnsavedChanges(false);
+    setOpen(false);
+    window.location.reload();
+  };
+
+  const handleRemoveEverything = () => {
+    setShowWarningModal(true);
+  };
+
+  const confirmRemoveEverything = async () => {
+    await fetch('/api/auth/logout');
+    localStorage.clear();
+    setShowWarningModal(false);
+    setOpen(false);
+    window.location.reload();
+  };
+
+  const handleSave = () => {
+    localStorage.setItem('customNickname', customNickname);
+    setUnsavedChanges(false);
+  };
+
+  const handleExit = () => {
+    if (unsavedChanges) {
+      setShowConfirmModal(true);
+    } else {
+      setOpen(false);
+    }
+  };
+
+  const confirmExitWithoutSaving = () => {
+    setCustomAvatar(localStorage.getItem('customAvatar'));
+    setCustomNickname(localStorage.getItem('customNickname') || user?.username || '');
+    setUnsavedChanges(false);
+    setShowConfirmModal(false);
+    setOpen(false);
+  };
+
+  const backToPanel = () => {
+    setShowConfirmModal(false);
+  };
+
+  const stats = {
+    collections: collections.collections.length,
+    subcollections: collections.collections.reduce((acc, col) => acc + col.subcollections.length, 0),
+    beatmaps: Object.keys(collections.beatmaps).length,
+    tags: Object.keys(collections.tags).length,
+  };
+
+  return (
+    <>
+      <Dialog.Root open={open} onOpenChange={setOpen}>
+        <Dialog.Trigger asChild>
+          <button className="user-panel-button" title="User settings">
+            {customAvatar || user?.avatar_url ? (
+              <img src={customAvatar || user.avatar_url} alt={customNickname || user?.username} className="user-panel-avatar-img" />
+            ) : (
+              <User />
+            )}
+            <span className="username-span">{customNickname || user?.username}</span>
+          </button>
+        </Dialog.Trigger>
+        <Dialog.Portal>
+          <Dialog.Overlay className="user-panel-overlay" />
+          <Dialog.Content className="user-panel-content user-panel-redesign">
+            <Dialog.Title className="sr-only">User Settings Panel</Dialog.Title>
+            <button className="user-panel-close" onClick={handleExit}><X /></button>
+            
+            <div className="user-panel-main">
+              <div className="user-panel-left">
+                <div className="avatar-section">
+                  <div 
+                    className={`avatar-upload ${dragging ? 'dragging' : ''}`}
+                    onClick={handleAvatarClick}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
+                    {customAvatar ? (
+                      <img src={customAvatar} alt="Custom Avatar" className="custom-avatar" />
+                    ) : (
+                      <>
+                        {dragging ? (
+                          <>
+                            <CloudUpload size={40} color="#ff4fd8" />
+                            <span>Drop here</span>
+                          </>
+                        ) : (
+                          <>
+                            <LucideImage size={40} color="#ff4fd8" />
+                            <span>Change Avatar</span>
+                          </>
+                        )}
+                      </>
+                    )}
+                  </div>
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    accept="image/*" 
+                    style={{ display: 'none' }} 
+                    onChange={(e) => handleFileSelect(e.target.files[0])} 
                   />
-                  <CheckSquare size={18} color={opt.color} />
-                  <span>{opt.label}</span>
-                </label>
-              ))}
+                </div>
+                <div className="nickname-section">
+                  {isEditingNickname ? (
+                    <input 
+                      type="text" 
+                      value={customNickname} 
+                      onChange={(e) => setCustomNickname(e.target.value)} 
+                      onBlur={() => setIsEditingNickname(false)} 
+                      autoFocus 
+                    />
+                  ) : (
+                    <span onClick={() => setIsEditingNickname(true)} className="nickname-display">
+                      {customNickname || user?.username} <Edit size={16} />
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              <div className="user-panel-right">
+                <div className="action-buttons">
+                  <button className="action-btn logout-btn" onClick={handleLogout}>
+                    <LogOut size={20} />
+                    Log Out
+                  </button>
+                  <button className="action-btn remove-collections-btn" onClick={handleRemoveCollections}>
+                    <Trash2 size={20} />
+                    Remove Collections
+                  </button>
+                  <button className="action-btn remove-all-btn" onClick={handleRemoveEverything}>
+                    <Trash2 size={20} />
+                    Remove Everything
+                  </button>
+                </div>
+              </div>
             </div>
-          </NeonBorderBox>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+            
+            <div className="user-panel-stats">
+              <h3><BarChart3 size={20} /> Statistics</h3>
+              <div className="stats-grid">
+                <div className="stat-item">
+                  <span className="stat-label">Collections:</span>
+                  <span className="stat-value">{stats.collections}</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">Subcollections:</span>
+                  <span className="stat-value">{stats.subcollections}</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">Beatmaps:</span>
+                  <span className="stat-value">{stats.beatmaps}</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">Tags:</span>
+                  <span className="stat-value">{stats.tags}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="user-panel-bottom">
+              <button className="save-btn" onClick={handleSave}>Save</button>
+              <button className="exit-btn" onClick={handleExit}>Exit without Saving</button>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+
+      {/* Warning Modal */}
+      <Dialog.Root open={showWarningModal} onOpenChange={setShowWarningModal}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="user-panel-overlay" />
+          <Dialog.Content className="warning-modal">
+            <div className="warning-header">
+              <h2 style={{ color: '#ff4fd8' }}>WARNING</h2>
+              <button onClick={() => setShowWarningModal(false)}><X /></button>
+            </div>
+            <p>This action will permanently delete all your collections data and remove Osuverse OAuth authorization.</p>
+            <p>This cannot be undone.</p>
+            <div className="warning-buttons">
+              <button onClick={confirmRemoveEverything} className="confirm-btn">Confirm</button>
+              <button onClick={() => setShowWarningModal(false)} className="cancel-btn">Cancel</button>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+
+      {/* Confirm Exit Modal */}
+      <Dialog.Root open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="user-panel-overlay" />
+          <Dialog.Content className="confirm-modal">
+            <h2>Are you sure?</h2>
+            <p>Unsaved changes will not be saved.</p>
+            <div className="confirm-buttons">
+              <button onClick={handleSave} className="save-close-btn">Save & Close</button>
+              <button onClick={backToPanel} className="back-btn">Back to Panel</button>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+    </>
   );
 }

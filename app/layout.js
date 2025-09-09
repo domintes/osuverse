@@ -1,5 +1,6 @@
 import Navigation from '@/components/Navigation';
 import OsuverseBackground from '@/components/OsuverseBackground';
+import { AppProvider } from '@/context/AppContext';
 import "./globals.scss";
 
 export const metadata = {
@@ -9,13 +10,15 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning={true} className="app-body vsc-initialized">
-        <OsuverseBackground />
-        <Navigation />
-        <main>
-          {children}
-        </main>
+        <AppProvider>
+          <OsuverseBackground />
+          <Navigation />
+          <main>
+            {children}
+          </main>
+        </AppProvider>
       </body>
     </html>
   );

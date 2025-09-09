@@ -8,6 +8,7 @@ import OsuverseMainSearchBox from './OsuverseMainSearchBox';
 import OsuverseLogo from './OsuverseLogo/OsuverseLogo';
 import { useAtom } from 'jotai';
 import { collectionsAtom } from '../store/collectionAtom';
+import { useApp } from '../context/AppContext';
 
 export default function Navigation() {
   const [user, setUser] = useState(null);
@@ -15,19 +16,14 @@ export default function Navigation() {
   const [showSearchBox, setShowSearchBox] = useState(false);
   // Dodajemy stan dla mobilnego menu
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [homepageConfig, setHomepageConfig] = useState({
-    showCollections: true,
-    showTags: true,
-    showSearch: true,
-    showRanked: false,
-    showCustomSection: false,
-  });  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
   const [userCollectionResults, setUserCollectionResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const searchBoxRef = useRef(null);
   const pathname = usePathname();
   const router = useRouter();
   const [collections] = useAtom(collectionsAtom);
+  const { simpleMode, toggleSimpleMode } = useApp();
 
   // Funkcja do zamykania mobilnego menu po kliknięciu w link
   const handleNavLinkClick = () => {
@@ -259,6 +255,18 @@ export default function Navigation() {
               />
             </form>
           </li>
+          <li className="simple-mode-toggle">
+            <label className="toggle-label">
+              <input
+                type="checkbox"
+                checked={simpleMode}
+                onChange={toggleSimpleMode}
+                className="toggle-input"
+              />
+              <span className="toggle-slider"></span>
+              <span className="toggle-text">Focus Mode</span>
+            </label>
+          </li>
           <li className="user-panel-container">
             {mounted && (
               user ? (
@@ -267,8 +275,6 @@ export default function Navigation() {
                   onLogout={handleLogout}
                   onExport={handleExport}
                   onAvatarChange={handleAvatarChange}
-                  homepageConfig={homepageConfig}
-                  setHomepageConfig={setHomepageConfig}
                 />
               ) : (                <button
                   onClick={() => { window.location.href = "/api/auth/login"; }}
