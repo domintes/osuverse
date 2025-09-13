@@ -5,7 +5,7 @@ import { useAtom } from 'jotai';
 import { collectionsReducerAtom } from '@/store/collectionsReducerAtom';
 import { selectedTagsAtom } from '@/store/selectedTagsAtom';
 import { getAllBeatmapsFromCollections } from '@/utils/beatmapUtils';
-import { motion } from 'motion';
+import { motion } from 'framer-motion';
 import EnhancedTagInput from '../TagInput/EnhancedTagInput';
 import Fuse from 'fuse.js';
 import './tagSections.scss';

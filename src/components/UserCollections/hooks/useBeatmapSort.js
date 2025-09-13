@@ -12,6 +12,14 @@ export const useBeatmapSort = () => {
     // Funkcja sortująca beatmapy według różnych kryteriów
     const sortBeatmaps = (beatmaps) => {
         return [...beatmaps].sort((a, b) => {
+            // Pinned beatmapy zawsze na górze
+            const pinnedA = a.pinned || false;
+            const pinnedB = b.pinned || false;
+            
+            if (pinnedA && !pinnedB) return -1;
+            if (!pinnedA && pinnedB) return 1;
+            
+            // Jeśli obie są pinned lub obie nie są pinned, sortuj normalnie
             if (sortMode === 'priority') {
                 const priorityA = a.beatmap_priority || 0;
                 const priorityB = b.beatmap_priority || 0;

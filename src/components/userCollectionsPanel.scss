@@ -413,6 +413,24 @@
   .beatmap-delete:hover {
     color: #ff4c4c;
   }
+  
+  .beatmap-pin {
+    &.pinned {
+      color: #ea81fb;
+      
+      &:hover {
+        color: #d16ce0;
+      }
+    }
+    
+    &:not(.pinned) {
+      color: #9f9fc8;
+      
+      &:hover {
+        color: #ffffff;
+      }
+    }
+  }
 }
 
 .priority-indicator {
@@ -622,4 +640,34 @@
 
 .collection-details {
   animation: fadeIn 0.3s ease-out;
+}
+
+.collection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.collection-header-title {
+  margin: 0;
+}
+
+.settings-button {
+  background: rgba(234, 129, 251, 0.1);
+  border: 1px solid rgba(234, 129, 251, 0.3);
+  border-radius: 6px;
+  padding: 8px;
+  color: #ea81fb;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-button:hover {
+  background: rgba(234, 129, 251, 0.2);
+  border-color: #ea81fb;
+  transform: scale(1.05);
 }

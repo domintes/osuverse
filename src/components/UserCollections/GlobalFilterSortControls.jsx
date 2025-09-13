@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Filter, SortAsc, SortDesc } from 'lucide-react';
 import TagSelector from '../UserCollections/TagSelector';
@@ -20,19 +20,11 @@ const GlobalFilterSortControls = ({
     onToggleTagFilter,
     beatmapsCount = 0
 }) => {
-    const [clientBeatmapsCount, setClientBeatmapsCount] = useState(0);
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-        setIsClient(true);
-        setClientBeatmapsCount(beatmapsCount);
-    }, [beatmapsCount]);
-
     return (
         <div className="sort-filter-controls global">
             <div className="control-group">
                 <span className="beatmaps-count">
-                    {isClient ? clientBeatmapsCount : beatmapsCount} beatmap{isClient ? (clientBeatmapsCount !== 1 ? 's' : '') : (beatmapsCount !== 1 ? 's' : '')}
+                    {beatmapsCount} beatmap{beatmapsCount !== 1 ? 's' : ''}
                 </span>
             </div>
             

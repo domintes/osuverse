@@ -6,7 +6,6 @@ import { authAtom } from '@/store/authAtom';
 import { collectionsAtom } from '@/store/collectionAtom';
 import './searchInput.scss';
 import NeonBorderBox from './NeonBorderBox';
-import classNames from 'classnames';
 
 export default function SearchInput() {
     const [query, setQuery] = useState('');

@@ -13,7 +13,8 @@ import {
   removeBeatmap,
   editBeatmap,
   moveBeatmap,
-  toggleFavorite
+  toggleFavorite,
+  togglePinned
 } from '@/store/reducers/actions';
 import {
   toggleExpandedCollection,
@@ -109,6 +110,10 @@ export function useCollectionsReducer() {
   const handleToggleFavorite = (beatmap) => {
     dispatch(toggleFavorite(beatmap));
   };
+
+  const handleTogglePinned = (beatmapId) => {
+    dispatch(togglePinned(beatmapId));
+  };
   
   // Funkcje zarządzania UI
   const handleToggleExpandCollection = (collectionId) => {
@@ -169,6 +174,7 @@ export function useCollectionsReducer() {
     removeBeatmap: handleRemoveBeatmap,
     moveBeatmap: handleMoveBeatmap,
     toggleFavorite: handleToggleFavorite,
+    togglePinned: handleTogglePinned,
     
     toggleExpandCollection: handleToggleExpandCollection,
     toggleExpandSubcollection: handleToggleExpandSubcollection,

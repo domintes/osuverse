@@ -7,7 +7,10 @@ import {
   REMOVE_SUBCOLLECTION,
   EDIT_SUBCOLLECTION,
   REORDER_SUBCOLLECTIONS,
-  MOVE_SUBCOLLECTION
+  MOVE_SUBCOLLECTION,
+  ADD_SYSTEM_COLLECTION,
+  TOGGLE_EXPANDED_COLLECTION,
+  TOGGLE_EXPANDED_SUBCOLLECTION
 } from './actions';
 
 export const collectionsReducer = (state, action) => {
@@ -217,6 +220,45 @@ export const collectionsReducer = (state, action) => {
           
           return collection;
         })
+      };
+    }
+    
+    case ADD_SYSTEM_COLLECTION: {
+      const { name, id, isSystemCollection, order } = action.payload;
+      
+      // Sprawdź czy kolekcja już istnieje
+      if (state.collections.some(c => c.id === id || (c.isSystemCollection && c.name === name))) {
+        return state;
+      }
+      
+      return {
+        ...state,
+        collections: [...state.collections, {
+          id: id || crypto.randomUUID(),
+          name: name.trim(),
+          order: order,
+          isSystemCollection: isSystemCollection,
+          subcollections: []
+        }]
+      };
+    }
+
+    case TOGGLE_EXPANDED_COLLECTION: {
+      const collectionId = action.payload;
+      
+      return {
+        ...state,
+        expandedCollection: state.expandedCollection === collectionId ? null : collectionId,
+        expandedSubcollection: null // Zamknij podkolekcje przy zmianie kolekcji
+      };
+    }
+
+    case TOGGLE_EXPANDED_SUBCOLLECTION: {
+      const subcollectionId = action.payload;
+      
+      return {
+        ...state,
+        expandedSubcollection: state.expandedSubcollection === subcollectionId ? null : subcollectionId
       };
     }
     

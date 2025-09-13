@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, forwardRef } from 'react';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Pin, PinOff } from 'lucide-react';
 import { AiOutlineStar, AiFillStar } from 'react-icons/ai';
 import { BsMegaphoneFill } from 'react-icons/bs';
 import { isBeatmapFavorited } from './utils/collectionUtils';
@@ -14,7 +14,7 @@ import './userCollections.scss';
 /**
  * Komponent wyświetlający pojedynczą beatmapę
  */
-const BeatmapItem = ({ beatmap, collections, onEdit, onDelete, onToggleFavorite }) => {
+const BeatmapItem = ({ beatmap, collections, onEdit, onDelete, onToggleFavorite, onTogglePinned, hidePriorityColumn = false }) => {
     // Bezpieczne sprawdzenie czy beatmapa jest w ulubionych
     const isFavorited = collections ? isBeatmapFavorited(collections, beatmap.id) : false;
 
@@ -102,8 +102,17 @@ const BeatmapItem = ({ beatmap, collections, onEdit, onDelete, onToggleFavorite 
                     }
                 </div>
             </div>
-            {renderPriorityIndicator(beatmap.beatmap_priority || 0)}
+            {!hidePriorityColumn && renderPriorityIndicator(beatmap.beatmap_priority || 0)}
             <div className="beatmap-actions">
+                {onTogglePinned && (
+                    <button
+                        className={`beatmap-pin ${beatmap.pinned ? 'pinned' : ''}`}
+                        onClick={() => onTogglePinned(beatmap.id)}
+                        title={beatmap.pinned ? "Unpin beatmap" : "Pin beatmap"}
+                    >
+                        {beatmap.pinned ? <PinOff size={16} /> : <Pin size={16} />}
+                    </button>
+                )}
                 <button
                     className="beatmap-edit"
                     onClick={() => onEdit(beatmap)}

@@ -54,6 +54,7 @@ const CollectionItem = ({
     onEditBeatmap,
     onDeleteBeatmap,
     onToggleFavorite,
+    onTogglePinned,
     sortBeatmaps,
     filterBeatmapsByTags
 }) => {
@@ -166,6 +167,7 @@ const CollectionItem = ({
                                     onEdit={onEditBeatmap}
                                     onDelete={onDeleteBeatmap}
                                     onToggleFavorite={onToggleFavorite}
+                                    onTogglePinned={onTogglePinned}
                                 />
                             </>
                         )}
@@ -215,6 +217,7 @@ const CollectionItem = ({
                         onEdit={onEditBeatmap}
                         onDelete={onDeleteBeatmap}
                         onToggleFavorite={onToggleFavorite}
+                        onTogglePinned={onTogglePinned}
                     />
                 </>
             )}

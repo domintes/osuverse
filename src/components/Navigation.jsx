@@ -222,13 +222,13 @@ export default function Navigation() {
 
   return (
     <nav>
-      <div className="navbar-container">
+      <div className="nav-left">
+        <div className="logo-container">
+          <Link href="/" className="logo-link" onClick={handleNavLinkClick}>
+            <OsuverseLogo />
+          </Link>
+        </div>
         <ul className={`nav-links ${mobileMenuOpen ? 'open' : ''}`}>
-          <li className="logo-container">
-            <Link href="/" className={pathname === '/' ? 'active logo-link' : 'logo-link'} onClick={handleNavLinkClick}>
-              <OsuverseLogo />
-            </Link>
-          </li>
           <li>
             <Link href="/collections" className={pathname === '/collections' ? 'active' : ''} onClick={handleNavLinkClick}>Collections</Link>
           </li>
@@ -238,11 +238,11 @@ export default function Navigation() {
           <li>
             <Link href="/search" className={pathname === '/search' ? 'active' : ''} onClick={handleNavLinkClick}>Search</Link>
           </li>
-          {/* Formularz wyszukiwania w navbarze */}
-          <li className="search-container">
-            <div ref={searchBoxRef} className={`search-dropdown ${showSearchBox ? 'visible' : 'hidden'}`}>
-              {renderSearchResults()}
-            </div>
+        </ul>
+      </div>
+
+      <div className="nav-center">
+        <div className="search-container" ref={searchBoxRef}>
             <form className="navbar-search-form">
               <input
                 type="text"
@@ -254,44 +254,49 @@ export default function Navigation() {
                 value={searchQuery}
               />
             </form>
-          </li>
-          <li className="simple-mode-toggle">
-            <label className="toggle-label">
-              <input
-                type="checkbox"
-                checked={simpleMode}
-                onChange={toggleSimpleMode}
-                className="toggle-input"
+            <div className={`search-dropdown ${showSearchBox ? 'visible' : 'hidden'}`}>
+              {renderSearchResults()}
+            </div>
+        </div>
+      </div>
+
+      <div className="nav-right">
+        <div className="simple-mode-toggle">
+          <label className="toggle-label">
+            <input
+              type="checkbox"
+              checked={simpleMode}
+              onChange={toggleSimpleMode}
+              className="toggle-input"
+            />
+            <span className="toggle-slider"></span>
+            <span className="toggle-text">Focus Mode</span>
+          </label>
+        </div>
+        <div className="user-panel-container">
+          {mounted && (
+            user ? (
+              <UserPanel
+                user={user}
+                onLogout={handleLogout}
+                onExport={handleExport}
+                onAvatarChange={handleAvatarChange}
               />
-              <span className="toggle-slider"></span>
-              <span className="toggle-text">Focus Mode</span>
-            </label>
-          </li>
-          <li className="user-panel-container">
-            {mounted && (
-              user ? (
-                <UserPanel
-                  user={user}
-                  onLogout={handleLogout}
-                  onExport={handleExport}
-                  onAvatarChange={handleAvatarChange}
-                />
-              ) : (                <button
-                  onClick={() => { window.location.href = "/api/auth/login"; }}
-                  className="login-btn grid-pattern"
-                  type="button"
-                >
-                  Login with osu!
-                </button>
-              )
-            )}
-          </li>
-        </ul>
-        {/* Przycisk menu hamburgera dla mniejszych ekranów */}
+            ) : (
+              <button
+                onClick={() => { window.location.href = "/api/auth/login"; }}
+                className="login-btn grid-pattern"
+                type="button"
+              >
+                Login with osu!
+              </button>
+            )
+          )}
+        </div>
         <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          <div className="line"></div>
-          <div className="line"></div>
-          <div className="line"></div>
+          <div className={`line ${mobileMenuOpen ? 'line1-open' : ''}`}></div>
+          <div className={`line ${mobileMenuOpen ? 'line2-open' : ''}`}></div>
+          <div className={`line ${mobileMenuOpen ? 'line3-open' : ''}`}></div>
         </div>
       </div>
     </nav>

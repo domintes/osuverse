@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import UserCollectionsPanelContainer from './UserCollectionsPanelContainer';
+import NewUserCollectionsPanel from './NewUserCollectionsPanel';
 
 /**
  * Główny komponent panelu kolekcji użytkownika
- * Ten komponent został zrefaktoryzowany, aby używać UserCollectionsPanelContainer
- * w celu lepszego zarządzania stanem z użyciem atomWithReducer
+ * Używa nowego, przebudowanego komponentu NewUserCollectionsPanel
+ * z zaawansowanymi funkcjami drag-and-drop, lock/unlock toggle,
+ * smooth animations, column selector i osu!-style display
  */
 export default function UserCollectionsPanel({ editMode }) {
-  return <UserCollectionsPanelContainer editMode={editMode} />;
+  return <NewUserCollectionsPanel />;
 }

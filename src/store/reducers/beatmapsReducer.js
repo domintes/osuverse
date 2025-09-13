@@ -1,9 +1,13 @@
 import {
   ADD_BEATMAP,
+  ADD_BEATMAPSET,
   REMOVE_BEATMAP,
   EDIT_BEATMAP,
   MOVE_BEATMAP,
-  TOGGLE_FAVORITE
+  MOVE_BEATMAP_TO_SUBCOLLECTION,
+  TOGGLE_FAVORITE,
+  TOGGLE_PINNED,
+  TOGGLE_PIN
 } from './actions';
 
 // Funkcja pomocnicza do znajdowania kolekcji systemowych
@@ -13,6 +17,18 @@ const findSystemCollection = (collections, name) => {
 
 export const beatmapsReducer = (state, action) => {
   switch (action.type) {
+    case ADD_BEATMAPSET: {
+      const { beatmapsetData } = action.payload;
+
+      return {
+        ...state,
+        beatmapsets: {
+          ...state.beatmapsets,
+          [beatmapsetData.id]: beatmapsetData
+        }
+      };
+    }
+
     case ADD_BEATMAP: {
       const { beatmapData, collectionId, subcollectionId } = action.payload;
       
@@ -153,6 +169,28 @@ export const beatmapsReducer = (state, action) => {
         beatmaps: updatedBeatmaps
       };
     }
+
+    case MOVE_BEATMAP_TO_SUBCOLLECTION: {
+      const { beatmapId, targetCollectionId, targetSubcollectionId, sourceCollectionId, sourceSubcollectionId } = action.payload;
+
+      // Sprawdź, czy beatmapa istnieje
+      if (!state.beatmaps[beatmapId]) return state;
+
+      // Zaktualizuj kolekcję i podkolekcję beatmapy
+      const updatedBeatmaps = {
+        ...state,
+        beatmaps: {
+          ...state.beatmaps,
+          [beatmapId]: {
+            ...state.beatmaps[beatmapId],
+            collectionId: targetCollectionId,
+            subcollectionId: targetSubcollectionId
+          }
+        }
+      };
+
+      return updatedBeatmaps;
+    }
     
     case TOGGLE_FAVORITE: {
       const { beatmap } = action.payload;
@@ -221,6 +259,46 @@ export const beatmapsReducer = (state, action) => {
           };
         }
       }
+    }
+    
+    case TOGGLE_PINNED: {
+      const { beatmapId } = action.payload;
+      
+      if (!state.beatmaps[beatmapId]) return state;
+      
+      const currentBeatmap = state.beatmaps[beatmapId];
+      const isPinned = currentBeatmap.pinned || false;
+      
+      return {
+        ...state,
+        beatmaps: {
+          ...state.beatmaps,
+          [beatmapId]: {
+            ...currentBeatmap,
+            pinned: !isPinned
+          }
+        }
+      };
+    }
+
+    case TOGGLE_PIN: {
+      const { beatmapId } = action.payload;
+      
+      if (!state.beatmaps[beatmapId]) return state;
+      
+      const currentBeatmap = state.beatmaps[beatmapId];
+      const isPinned = currentBeatmap.pinned || false;
+      
+      return {
+        ...state,
+        beatmaps: {
+          ...state.beatmaps,
+          [beatmapId]: {
+            ...currentBeatmap,
+            pinned: !isPinned
+          }
+        }
+      };
     }
     
     default:

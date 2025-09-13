@@ -5,7 +5,7 @@ import { useAtom } from 'jotai';
 import { collectionsReducerAtom } from '@/store/collectionsReducerAtom';
 import { authAtom } from '@/store/authAtom';
 import Fuse from 'fuse.js';
-import { motion } from 'motion';
+import { motion } from 'framer-motion';
 import './enhancedSearchInput.scss';
 
 /**

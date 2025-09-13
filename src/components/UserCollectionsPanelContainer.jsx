@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useAtom } from 'jotai';
+import { Settings } from 'lucide-react';
 import { selectedTagsAtom } from '@/store/selectedTagsAtom';
 import { useBeatmapSort } from './UserCollections/hooks/useBeatmapSort';
 import { useBeatmapFilter } from './UserCollections/hooks/useBeatmapFilter';
@@ -10,6 +11,7 @@ import { useCollectionsReducer } from './UserCollections/hooks/useCollectionsRed
 import { getBeatmapsForCollection } from './UserCollections/utils/collectionUtils';
 import NeonBorderBox from './NeonBorderBox';
 import AddBeatmapModal from './BeatmapSearchResults/AddBeatmapModal';
+import SettingsModal from './SettingsModal';
 import CollectionsList from './UserCollections/CollectionsList';
 import AddCollectionForm from './UserCollections/AddCollectionForm';
 import GlobalFilterSortControls from './UserCollections/GlobalFilterSortControls';
@@ -30,6 +32,7 @@ export default function UserCollectionsPanelContainer({ editMode }) {
   const [newSubcollectionNames, setNewSubcollectionNames] = useState({});
   const [editingBeatmap, setEditingBeatmap] = useState(null);
   const [highlightedBeatmapId, setHighlightedBeatmapId] = useState(null);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   
   // Referencja do beatmapy, która ma być przewinięta do widoku
   const beatmapRef = useRef({});
@@ -175,7 +178,16 @@ export default function UserCollectionsPanelContainer({ editMode }) {
 
   return (
     <NeonBorderBox className="user-collections-panel">
-      <h2 className="panel-title collection-header-title">Yours Collection</h2>
+      <div className="collection-header">
+        <h2 className="panel-title collection-header-title">Yours Collection</h2>
+        <button
+          className="settings-button"
+          onClick={() => setSettingsModalOpen(true)}
+          title="Autotag Settings"
+        >
+          <Settings size={20} />
+        </button>
+      </div>
       
       {/* Add new collection form */}
       {editMode && (
@@ -246,6 +258,7 @@ export default function UserCollectionsPanelContainer({ editMode }) {
         onEditBeatmap={handleEditBeatmap}
         onDeleteBeatmap={collectionsState.removeBeatmap}
         onToggleFavorite={collectionsState.toggleFavorite}
+        onTogglePinned={collectionsState.togglePinned}
         sortBeatmaps={sortBeatmaps}
         filterBeatmapsByTags={filterBeatmapsByTags}
       />
@@ -261,6 +274,12 @@ export default function UserCollectionsPanelContainer({ editMode }) {
           editMode={true}
         />
       )}
+      
+      {/* Modal ustawień autotagów */}
+      <SettingsModal
+        isOpen={settingsModalOpen}
+        onClose={() => setSettingsModalOpen(false)}
+      />
     </NeonBorderBox>
   );
 }

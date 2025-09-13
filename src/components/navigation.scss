@@ -14,7 +14,7 @@ nav {
   height: 62px;
   display: flex;
   align-items: center;
-  background-color: #5e236d47;
+  justify-content: space-between; // Użyj space-between dla głównego kontenera
 
   @media (max-width: 768px) {
     padding: 0.5rem 1rem;
@@ -22,7 +22,25 @@ nav {
   
   @media (max-width: 480px) {
     padding: 0.4rem 0.6rem;
-    overflow-x: auto;
+  }
+
+  .nav-left, .nav-center, .nav-right {
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-left {
+    gap: 1rem;
+  }
+
+  .nav-center {
+    flex-grow: 1;
+    justify-content: center;
+    padding: 0 2rem;
+  }
+
+  .nav-right {
+    gap: 1.5rem;
   }
 
   ul {
@@ -31,13 +49,11 @@ nav {
     margin: 0;
     display: flex;
     flex-direction: row;
-    gap: 2rem;
+    gap: 1.5rem;
     align-items: center;
-    width: 100%;
     
     @media (max-width: 768px) {
       gap: 1rem;
-      flex-wrap: wrap;
     }
     
     @media (max-width: 480px) {
@@ -52,7 +68,6 @@ nav {
   .logo-container {
     display: flex;
     align-items: center;
-    margin-right: 1rem;
     
     .logo-link {
       background: none;
@@ -77,8 +92,6 @@ nav {
   }
   
   .user-panel-container {
-    margin-left: auto;
-    margin-right: 12px;
     display: flex;
     align-items: center;
   }
@@ -90,7 +103,7 @@ nav {
     border-radius: 8px;
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
     font-weight: 600;
-    font-size: 1.1rem;
+    font-size: 1rem;
     position: relative;
     z-index: 1;
     letter-spacing: 0.04em;
@@ -102,8 +115,8 @@ nav {
     box-shadow: 0 2px 8px 0 #2f0f3a44;
     border: 1px solid transparent;
     
-    @media (max-width: 768px) {
-      font-size: 1rem;
+    @media (max-width: 992px) {
+      font-size: 0.9rem;
       padding: 0.4rem 0.9rem;
     }
     
@@ -118,13 +131,17 @@ nav {
       color: #ffaed7;
       box-shadow: 0 2px 16px 0 #4d1a3a99;
       border: 1px solid #780f56;
-    }    &.active {
+    }
+    
+    &.active {
       background: linear-gradient(90deg, #2f0f3a 0%, #f264a4 100%);
       color: #fff;
       box-shadow: 0 2px 24px 0 #f264a4cc;
       border: 1px solid #f264a4;
     }
-  }  .login-btn {
+  }
+  
+  .login-btn {
     background: linear-gradient(90deg, #f264a4 60%, #2f0f3a 100%);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -137,11 +154,11 @@ nav {
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
     box-shadow: 0 2px 12px 0 #f264a433, 0 0 16px 0 #2f0f3a55;
     border: 1px solid #f264a4;
+    cursor: pointer;
     
     @media (max-width: 768px) {
       font-size: 0.95rem;
       padding: 0.4rem 0.9rem;
-      margin-left: 0.5rem;
     }
     
     @media (max-width: 480px) {
@@ -157,54 +174,47 @@ nav {
     }
   }
   
-  .navbar-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    z-index: 72;
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    z-index: 200;
     
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      cursor: pointer;
-      z-index: 200;
-      
-      .line {
-        width: 25px;
-        height: 3px;
-        background-color: #f264a4;
-        margin: 3px;
-        border-radius: 3px;
-        transition: all 0.3s ease;
-      }
-      
-      @media (max-width: 768px) {
-        display: flex;
-      }
+    .line {
+      width: 25px;
+      height: 3px;
+      background-color: #f264a4;
+      margin: 3px;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+    }
+    
+    @media (max-width: 768px) {
+      display: flex;
     }
   }
 
   // Responsywne style dla linków nawigacji
   .nav-links {
     @media (max-width: 768px) {
-      position: fixed;
-      top: 0;
-      right: -100%;
-      width: 70%;
-      height: 100vh;
-      flex-direction: column;
-      background: linear-gradient(90deg, #2f0f3a 0%, #3a1a4d 100%);
-      padding: 4rem 1rem 2rem 1rem;
-      gap: 1rem !important;
-      z-index: 100;
-      transition: right 0.3s ease;
-      border-left: 2px solid #f264a4;
-      box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
-      overflow-y: auto;
+      display: none; // Ukryj linki w trybie desktopowym
       
       &.open {
+        display: flex; // Pokaż jako flexbox, gdy otwarte
+        position: fixed;
+        top: 0;
         right: 0;
+        width: 70%;
+        height: 100vh;
+        flex-direction: column;
+        background: linear-gradient(90deg, #2f0f3a 0%, #3a1a4d 100%);
+        padding: 4rem 1rem 2rem 1rem;
+        gap: 1rem !important;
+        z-index: 100;
+        transition: right 0.3s ease;
+        border-left: 2px solid #f264a4;
+        box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+        overflow-y: auto;
       }
       
       li {
@@ -223,23 +233,15 @@ nav {
   // Dodanie stylów dla kontenera wyszukiwania
   .search-container {
     position: relative;
-    min-width: min(320px, 80vw);
+    width: 100%;
     max-width: 600px;
     z-index: 20;
-    
-    @media (max-width: 768px) {
-      min-width: min(280px, 80vw);
-    }
-    
-    @media (max-width: 480px) {
-      min-width: min(240px, 80vw);
-    }
   }
 
   .search-dropdown {
     position: absolute;
     left: 0;
-    top: 100%;
+    top: calc(100% + 5px);
     width: min(480px, 95vw);
     background: none;
     
@@ -318,7 +320,7 @@ nav {
       border: 1px solid #f264a466;
       border-radius: 8px;
       color: #ffcae6;
-      padding: 0.4rem 1rem;
+      padding: 0.5rem 1rem;
       width: 100%;
       font-size: 0.95rem;
       transition: all 0.2s;
@@ -339,7 +341,6 @@ nav {
 .simple-mode-toggle {
   display: flex;
   align-items: center;
-  margin-right: 1rem;
   
   .toggle-label {
     display: flex;

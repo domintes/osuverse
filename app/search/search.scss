@@ -1,3 +1,10 @@
+.beatmap-search-secondary-inputs {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  column-gap: 24px !important;
+}
+
+
 .beatmap-search-form {
   gap: 1rem;
   margin-bottom: 2rem;
@@ -10,24 +17,6 @@
   
   @media (max-width: 480px) {
     margin-bottom: 1rem;
-  }
-}
-
-.beatmap-search-input-group,
-.beatmap-search-secondary-inputs {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 32px;  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-}
-
-.beatmap-search-secondary-inputs {
-  @media (min-width: 768px) {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
   }
 }
 

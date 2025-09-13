@@ -19,6 +19,8 @@ const BeatmapsetList = ({
   onEdit,
   onDelete,
   onToggleFavorite,
+  onTogglePinned,
+  hidePriorityColumn = false,
   collections // Dodajemy collections jako props
 }) => {
   // Pobierz stan rozwiniętych beatmapsetów i wybranych tagów
@@ -95,6 +97,8 @@ const BeatmapsetList = ({
               onEdit={onEdit ? () => onEdit(beatmap) : undefined}
               onDelete={onDelete ? () => onDelete(beatmap) : undefined}
               onToggleFavorite={onToggleFavorite ? () => onToggleFavorite(beatmap) : undefined}
+              onTogglePinned={onTogglePinned ? () => onTogglePinned(beatmap.id) : undefined}
+              hidePriorityColumn={hidePriorityColumn}
             />
           ))}
         </BeatmapsetGroup>
@@ -110,7 +114,9 @@ BeatmapsetList.propTypes = {
   sortOrder: PropTypes.string,
   onEdit: PropTypes.func,
   onDelete: PropTypes.func,
-  onToggleFavorite: PropTypes.func
+  onToggleFavorite: PropTypes.func,
+  onTogglePinned: PropTypes.func,
+  hidePriorityColumn: PropTypes.bool
 };
 
 export default BeatmapsetList;

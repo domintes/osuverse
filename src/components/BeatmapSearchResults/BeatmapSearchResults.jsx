@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAtom } from 'jotai';
 import { collectionsAtom } from '@/store/collectionAtom';
-import classNames from 'classnames';
-import AddBeatmapModal from './AddBeatmapModal';
+import QuickAddModal from '../QuickAddModal';
+import AdvancedAddModal from '../AdvancedAddModal';
 import { findSystemCollection } from '@/components/UserCollections/utils/collectionUtils';
 import './beatmapSearchResults.scss';
-import './addBeatmapModal.scss';
+import '../OsuverseLogo/AddBeatmapModal/addBeatmapModal.scss';
+import '../quickAddModal.scss';
 
 export default function BeatmapSearchResults({
   results,
@@ -20,8 +21,10 @@ export default function BeatmapSearchResults({
 }) {
   const [collections, setCollections] = useAtom(collectionsAtom);
   const [expandedSets, setExpandedSets] = useState({});
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalTarget, setModalTarget] = useState(null);
+  const [advancedAddModalOpen, setAdvancedAddModalOpen] = useState(false);
+  const [advancedAddTarget, setAdvancedAddTarget] = useState(null);
+  const [quickAddModalOpen, setQuickAddModalOpen] = useState(false);
+  const [quickAddTarget, setQuickAddTarget] = useState(null);
 
   // Liczenie całkowitej liczby stron
   const totalPages = Math.ceil(totalResults / itemsPerPage);
@@ -33,18 +36,107 @@ export default function BeatmapSearchResults({
       [id]: !prev[id]
     }));
   };
-  const handleAddToCollection = (set, beatmap = null) => {
-    setModalTarget({ set, beatmap, type: beatmap ? 'single' : 'all' });
-    setModalOpen(true);
+  const handleAdvancedAdd = (set, beatmap = null) => {
+    setAdvancedAddTarget({ set, beatmap, type: beatmap ? 'single' : 'all' });
+    setAdvancedAddModalOpen(true);
   };
 
-  const closeModal = () => {
-    setModalOpen(false);
-    setModalTarget(null);
-  };  const handleAddBeatmapSubmit = (formData) => {
-    if (!modalTarget) return;
+  const handleQuickAdd = (set, beatmap = null) => {
+    setQuickAddTarget({ set, beatmap, type: beatmap ? 'single' : 'all' });
+    setQuickAddModalOpen(true);
+  };
 
-    const { set, beatmap, type } = modalTarget;
+  const handleQuickAddSubmit = (collectionId, subcollectionId = null) => {
+    if (!quickAddTarget) return;
+
+    const { set, beatmap, type } = quickAddTarget;
+
+    // Najpierw szukamy konkretnie kolekcji "Unsorted" używając funkcji pomocniczej
+    const unsortedCollection = findSystemCollection(collections, 'Unsorted');
+    // Find default "Unsorted" collection if none is selected
+    const defaultCollectionId = unsortedCollection?.id;
+
+    // Use the selected collection or fall back to the default
+    const finalCollectionId = collectionId || defaultCollectionId;
+    const finalSubcollectionId = subcollectionId || null;
+
+    if (!finalCollectionId) {
+      console.error('No collection selected and no default collection found');
+      return;
+    }
+
+    setCollections(prev => {
+      const newBeatmaps = { ...prev.beatmaps };
+      const newTags = { ...prev.tags };
+
+      // Prepare tags with values
+      const userTags = [];
+      // For quick add, we don't add custom tags, just use empty array
+
+      // Calculate beatmap_priority based on tag values sum (will be 0 for quick add)
+      const beatmap_priority = 0;
+
+      // Update tag statistics (none for quick add)
+
+      if (type === 'all') {
+        set.beatmaps.forEach(bm => {
+          const beatmapData = {
+            ...bm,
+            setId: set.id,
+            artist: set.artist,
+            title: set.title,
+            creator: set.creator,
+            cover: set.covers?.cover || set.covers?.card,
+            userTags: userTags,
+            notes: '',
+            beatmap_priority,
+            collectionId: finalCollectionId,
+            subcollectionId: finalSubcollectionId
+          };
+
+          newBeatmaps[bm.id] = beatmapData;
+        });
+      } else if (beatmap) {
+        const beatmapData = {
+          ...beatmap,
+          setId: set.id,
+          artist: set.artist,
+          title: set.title,
+          creator: set.creator,
+          cover: set.covers?.cover || set.covers?.card,
+          userTags: userTags,
+          notes: '',
+          beatmap_priority,
+          collectionId: finalCollectionId,
+          subcollectionId: finalSubcollectionId
+        };
+
+        newBeatmaps[beatmap.id] = beatmapData;
+      }
+
+      return {
+        ...prev,
+        beatmaps: newBeatmaps,
+        tags: newTags
+      };
+    });
+
+    setQuickAddModalOpen(false);
+    setQuickAddTarget(null);
+  };
+
+  const closeAdvancedAddModal = () => {
+    setAdvancedAddModalOpen(false);
+    setAdvancedAddTarget(null);
+  };
+
+  const closeQuickAddModal = () => {
+    setQuickAddModalOpen(false);
+    setQuickAddTarget(null);
+  };  const handleAdvancedAddSubmit = (formData) => {
+    if (!advancedAddTarget) return;
+
+    const { set, beatmap, type } = advancedAddTarget;
 
     // Najpierw szukamy konkretnie kolekcji "Unsorted" używając funkcji pomocniczej
     const unsortedCollection = findSystemCollection(collections, 'Unsorted');
@@ -149,7 +241,7 @@ export default function BeatmapSearchResults({
       };
     });
 
-    closeModal();
+    closeAdvancedAddModal();
   };
 
   const handleRemoveFromCollection = (beatmapId) => {
@@ -198,7 +290,8 @@ export default function BeatmapSearchResults({
               set={set}
               expanded={!!expandedSets[set.id]}
               toggleExpanded={() => toggleExpanded(set.id)}
-              onAddToCollection={handleAddToCollection}
+              onAddToCollection={handleAdvancedAdd}
+              onQuickAdd={handleQuickAdd}
               onRemoveFromCollection={handleRemoveFromCollection}
               isBeatmapInCollection={isBeatmapInCollection}
               areAllBeatmapsInCollection={areAllBeatmapsInCollection}
@@ -249,13 +342,20 @@ export default function BeatmapSearchResults({
         </div>
       )}
 
-      <AddBeatmapModal
-        isOpen={modalOpen && modalTarget !== null}
-        onClose={closeModal}
-        beatmapset={modalTarget?.set}
-        beatmap={modalTarget?.beatmap}
-        onSubmit={handleAddBeatmapSubmit}
-        initialTags={[]}
+      <AdvancedAddModal
+        isOpen={advancedAddModalOpen}
+        onClose={closeAdvancedAddModal}
+        beatmapset={advancedAddTarget?.set}
+        beatmap={advancedAddTarget?.beatmap}
+        onSubmit={handleAdvancedAddSubmit}
+      />
+
+      <QuickAddModal
+        isOpen={quickAddModalOpen}
+        onClose={closeQuickAddModal}
+        beatmapset={quickAddTarget?.set}
+        beatmap={quickAddTarget?.beatmap}
+        onAdd={handleQuickAddSubmit}
       />
     </div>
   );
@@ -267,6 +367,7 @@ function BeatmapsetItem({
   expanded,
   toggleExpanded,
   onAddToCollection,
+  onQuickAdd,
   onRemoveFromCollection,
   isBeatmapInCollection,
   areAllBeatmapsInCollection,
@@ -314,7 +415,7 @@ function BeatmapsetItem({
 
   return (
     <div
-      className={classNames('beatmapset-item', { 'expanded': expanded })}
+      className={`beatmapset-item ${expanded ? 'expanded' : ''}`}
       onMouseLeave={handleMouseLeave}
     >
       <div className="beatmapset-cover">
@@ -418,20 +519,31 @@ function BeatmapsetItem({
                       {diff.version}
                     </a>
                   </div>
-                  <button
-                    className={classNames('beatmapset-difficulty-action', {
-                      'add': !inCollection,
-                      'remove': inCollection
-                    })}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      inCollection
-                        ? onRemoveFromCollection(diff.id)
-                        : onAddToCollection(set, diff);
-                    }}
-                  >
-                    {inCollection ? 'Remove' : 'Add'}
-                  </button>
+                  <div className="beatmapset-difficulty-actions">
+                    {!inCollection && (
+                      <button
+                        className="beatmapset-difficulty-quick-add"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onQuickAdd(set, diff);
+                        }}
+                        title="Quick Add to Collection"
+                      >
+                        +
+                      </button>
+                    )}
+                    <button
+                      className={`beatmapset-difficulty-action ${!inCollection ? 'add' : 'remove'}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        inCollection
+                          ? onRemoveFromCollection(diff.id)
+                          : onAddToCollection(set, diff);
+                      }}
+                    >
+                      {inCollection ? 'Remove' : 'Add'}
+                    </button>
+                  </div>
                 </div>
               );
             })}
@@ -439,10 +551,20 @@ function BeatmapsetItem({
 
           {sortedBeatmaps.length > 1 && (
             <div className="beatmapset-add-all">
+              {!areAllBeatmapsInCollection(sortedBeatmaps) && (
+                <button
+                  className="beatmapset-quick-add-all-button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onQuickAdd(set);
+                  }}
+                  title="Quick Add all difficulties"
+                >
+                  +
+                </button>
+              )}
               <button
-                className={classNames('beatmapset-add-all-button', {
-                  'remove': areAllBeatmapsInCollection(sortedBeatmaps)
-                })}
+                className={`beatmapset-add-all-button ${areAllBeatmapsInCollection(sortedBeatmaps) ? 'remove' : ''}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   if (areAllBeatmapsInCollection(sortedBeatmaps)) {

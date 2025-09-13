@@ -20,6 +20,7 @@ const BeatmapList = ({
     onEdit,
     onDelete,
     onToggleFavorite,
+    onTogglePinned,
     groupByBeatmapset = true
 }) => {    // Stan sortowania
     const [sortBy, setSortBy] = useState('artist');
@@ -27,6 +28,9 @@ const BeatmapList = ({
       // Pobieranie i przetwarzanie beatmap
     let beatmaps = collections ? getBeatmapsForCollection(collections, collectionId, subcollectionId) : [];
     beatmaps = filterBeatmapsByTags ? filterBeatmapsByTags(beatmaps, globalTags) : beatmaps;
+    
+    // Sprawdź czy wszystkie beatmapy mają priorytet 0
+    const hidePriorityColumn = beatmaps.every(beatmap => (beatmap.beatmap_priority || 0) === 0);
 
     if (beatmaps.length === 0) {
         const collectionInfo = collections?.collections?.find(c => c.id === collectionId);
@@ -61,6 +65,8 @@ const BeatmapList = ({
                 onEdit={onEdit}
                 onDelete={onDelete}
                 onToggleFavorite={onToggleFavorite}
+                onTogglePinned={onTogglePinned}
+                hidePriorityColumn={hidePriorityColumn}
                 collections={collections}
             />
         </div>

@@ -14,10 +14,19 @@ export const MOVE_SUBCOLLECTION = 'MOVE_SUBCOLLECTION';
 
 // Akcje beatmap
 export const ADD_BEATMAP = 'ADD_BEATMAP';
+export const ADD_BEATMAPSET = 'ADD_BEATMAPSET';
 export const REMOVE_BEATMAP = 'REMOVE_BEATMAP';
 export const EDIT_BEATMAP = 'EDIT_BEATMAP';
 export const MOVE_BEATMAP = 'MOVE_BEATMAP';
+export const MOVE_BEATMAP_TO_SUBCOLLECTION = 'MOVE_BEATMAP_TO_SUBCOLLECTION';
 export const TOGGLE_FAVORITE = 'TOGGLE_FAVORITE';
+export const TOGGLE_PINNED = 'TOGGLE_PINNED';
+export const TOGGLE_PIN = 'TOGGLE_PIN';
+export const ADD_SYSTEM_COLLECTION = 'ADD_SYSTEM_COLLECTION';
+
+// Akcje UI
+export const TOGGLE_EXPANDED_COLLECTION = 'TOGGLE_EXPANDED_COLLECTION';
+export const TOGGLE_EXPANDED_SUBCOLLECTION = 'TOGGLE_EXPANDED_SUBCOLLECTION';
 
 // Akcje tagów
 export const ADD_TAG = 'ADD_TAG';
@@ -77,6 +86,11 @@ export const addBeatmap = (beatmapData, collectionId, subcollectionId = null) =>
   payload: { beatmapData, collectionId, subcollectionId }
 });
 
+export const addBeatmapset = (beatmapsetData) => ({
+  type: ADD_BEATMAPSET,
+  payload: { beatmapsetData }
+});
+
 export const removeBeatmap = (beatmapId) => ({
   type: REMOVE_BEATMAP,
   payload: { beatmapId }
@@ -92,9 +106,40 @@ export const moveBeatmap = (beatmapId, toCollectionId, toSubcollectionId = null)
   payload: { beatmapId, toCollectionId, toSubcollectionId }
 });
 
+export const moveBeatmapToSubcollection = (beatmapId, targetCollectionId, targetSubcollectionId, sourceCollectionId, sourceSubcollectionId) => ({
+  type: MOVE_BEATMAP_TO_SUBCOLLECTION,
+  payload: { beatmapId, targetCollectionId, targetSubcollectionId, sourceCollectionId, sourceSubcollectionId }
+});
+
 export const toggleFavorite = (beatmap) => ({
   type: TOGGLE_FAVORITE,
   payload: { beatmap }
+});
+
+export const togglePinned = (beatmapId) => ({
+  type: TOGGLE_PINNED,
+  payload: { beatmapId }
+});
+
+export const togglePin = (beatmapId) => ({
+  type: TOGGLE_PIN,
+  payload: { beatmapId }
+});
+
+export const addSystemCollection = (name, id, isSystemCollection = true, order = -1000) => ({
+  type: ADD_SYSTEM_COLLECTION,
+  payload: { name, id, isSystemCollection, order }
+});
+
+// Kreatory akcji dla UI
+export const toggleExpandedCollection = (collectionId) => ({
+  type: TOGGLE_EXPANDED_COLLECTION,
+  payload: collectionId
+});
+
+export const toggleExpandedSubcollection = (subcollectionId) => ({
+  type: TOGGLE_EXPANDED_SUBCOLLECTION,
+  payload: subcollectionId
 });
 
 // Kreatory akcji dla tagów
