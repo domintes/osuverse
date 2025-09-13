@@ -8,7 +8,6 @@ import { useBeatmapFilter } from './UserCollections/hooks/useBeatmapFilter';
 import { useCollectionDragDrop } from './UserCollections/hooks/useCollectionDragDrop';
 import { useCollectionsReducer } from './UserCollections/hooks/useCollectionsReducer';
 import { getBeatmapsForCollection } from './UserCollections/utils/collectionUtils';
-import NeonBorderBox from './NeonBorderBox';
 import AddBeatmapModal from './BeatmapSearchResults/AddBeatmapModal';
 import CollectionsList from './UserCollections/CollectionsList';
 import AddCollectionForm from './UserCollections/AddCollectionForm';
@@ -174,8 +173,8 @@ export default function UserCollectionsPanelContainer({ editMode }) {
   };
 
   return (
-    <NeonBorderBox className="user-collections-panel">
-      <h2 className="panel-title collection-header-title">Yours Collection</h2>
+    <div className="user-collections-panel tag-sections-style">
+      <h2 className="panel-title collection-header-title tag-sections-title">Your Collections</h2>
       
       {/* Add new collection form */}
       {editMode && (
@@ -261,6 +260,6 @@ export default function UserCollectionsPanelContainer({ editMode }) {
           editMode={true}
         />
       )}
-    </NeonBorderBox>
+    </div>
   );
 }

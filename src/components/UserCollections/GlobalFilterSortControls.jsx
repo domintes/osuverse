@@ -20,19 +20,68 @@ const GlobalFilterSortControls = ({
     onToggleTagFilter,
     beatmapsCount = 0
 }) => {
-    const [clientBeatmapsCount, setClientBeatmapsCount] = useState(0);
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
         setIsClient(true);
-        setClientBeatmapsCount(beatmapsCount);
-    }, [beatmapsCount]);
+    }, []);
+
+    // Aby uniknąć błędów hydratacji, renderujemy identyczną zawartość na serwerze i kliencie
+    if (!isClient) {
+        return (
+            <div className="sort-filter-controls global">
+                <div className="control-group">
+                    <span className="beatmaps-count">
+                        0 beatmaps
+                    </span>
+                </div>
+                <div className="control-group">
+                    <div className="sorting-controls">
+                        <button
+                            className="sort-mode-toggle"
+                            onClick={onToggleSortMode}
+                            title="Change sort criteria"
+                        >
+                            <span>Sort by: </span>
+                            {sortMode === 'priority' && 'Priority'}
+                            {sortMode === 'name' && 'Name'}
+                            {sortMode === 'date' && 'Date Added'}
+                        </button>
+                        <button
+                            className="sort-direction-toggle"
+                            onClick={onToggleSortDirection}
+                            title="Change sort direction"
+                        >
+                            {sortDirection === 'asc' ? <SortAsc size={16} /> : <SortDesc size={16} />}
+                        </button>
+                    </div>
+                </div>
+                <div className="control-group">
+                    <button
+                        className="filter-toggle"
+                        onClick={onToggleTagSelector}
+                        title="Toggle tag filter"
+                    >
+                        <Filter size={16} />
+                        <span>Filter</span>
+                    </button>
+                </div>
+                {showTagSelector && (
+                    <TagSelector
+                        availableTags={availableTags}
+                        activeTags={activeTags}
+                        onToggleTag={onToggleTagFilter}
+                    />
+                )}
+            </div>
+        );
+    }
 
     return (
         <div className="sort-filter-controls global">
             <div className="control-group">
                 <span className="beatmaps-count">
-                    {isClient ? clientBeatmapsCount : beatmapsCount} beatmap{isClient ? (clientBeatmapsCount !== 1 ? 's' : '') : (beatmapsCount !== 1 ? 's' : '')}
+                    {beatmapsCount} beatmap{beatmapsCount !== 1 ? 's' : ''}
                 </span>
             </div>
             
