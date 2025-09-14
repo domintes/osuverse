@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { collectionsReducerAtom } from '@/store/collectionsReducerAtom';
 import { addBeatmap, addCollection } from '@/store/reducers/actions';
@@ -28,14 +28,26 @@ export default function AddBeatmapModal({
   const [selectedSubcollection, setSelectedSubcollection] = useState(null);
   const [showNewCollectionInput, setShowNewCollectionInput] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState('');
-  const [collectionNameError, setCollectionNameError] = useState('');  const [tagInput, setTagInput] = useState('');
+  const [collectionNameError, setCollectionNameError] = useState('');
+  const [tagInputError, setTagInputError] = useState('');
+  const [tagInput, setTagInput] = useState('');
   const [tagSuggestions, setTagSuggestions] = useState([]);
+  const tagInputRef = useRef(null);
+  const [pendingNewCollectionName, setPendingNewCollectionName] = useState('');
   
   // Get collections and dispatch from the reducer atom
   const [state, dispatch] = useAtom(collectionsReducerAtom);
 
   const handleAddTag = () => {
     setTags([...tags, { tag: '', tag_value: 0 }]);
+    // Focus on tag input after adding new tag
+    setTimeout(() => {
+      const tagInputs = document.querySelectorAll('.beatmap-modal-tag-input');
+      const lastInput = tagInputs[tagInputs.length - 1];
+      if (lastInput) {
+        lastInput.focus();
+      }
+    }, 100);
   };
 
   const handleRemoveTag = (idx) => {
@@ -71,6 +83,20 @@ export default function AddBeatmapModal({
       }
     }
   }, [state.collections, selectedCollection]);
+
+  // Po dodaniu nowej kolekcji wybierz ją automatycznie
+  useEffect(() => {
+    if (pendingNewCollectionName && state.collections.length > 0) {
+      const created = state.collections.find(
+        c => c.name.trim().toLowerCase() === pendingNewCollectionName.trim().toLowerCase()
+      );
+      if (created) {
+        setSelectedCollection(created.id);
+        setSelectedSubcollection(null);
+        setPendingNewCollectionName('');
+      }
+    }
+  }, [pendingNewCollectionName, state.collections]);
   // Funkcja walidacji nazwy kolekcji
   const validateCollectionName = (name) => {
     if (!name.trim()) {
@@ -92,11 +118,12 @@ export default function AddBeatmapModal({
       return;
     }
     
-    // Używamy akcji addCollection zamiast bezpośredniej manipulacji stanem
-    const collectionId = crypto.randomUUID();
-    dispatch(addCollection(newCollectionName.trim(), collectionId));
-    
-    setSelectedCollection(collectionId);
+    // Wywołujemy akcję dodania kolekcji; ID zostanie wygenerowane w reducerze
+    const name = newCollectionName.trim();
+    dispatch(addCollection(name));
+    // Zaznacz do wyboru po zaktualizowaniu stanu
+    setPendingNewCollectionName(name);
+    setSelectedSubcollection(null);
     setNewCollectionName('');
     setShowNewCollectionInput(false);
     setCollectionNameError('');
@@ -127,8 +154,24 @@ export default function AddBeatmapModal({
     const handleSubmit = (e) => {
     e.preventDefault();
     
+    // Walidacja: żaden z istniejących tagów nie może być pusty
+    const firstEmptyIdx = tags.findIndex(tag => !tag.tag.trim());
+    if (firstEmptyIdx !== -1) {
+      setTagInputError("beatmap-modal-tag-input shouldn't be empty");
+      // Ustaw fokus na pierwszym pustym polu tagu
+      setTimeout(() => {
+        const tagInputs = document.querySelectorAll('.beatmap-modal-tag-input');
+        const target = tagInputs[firstEmptyIdx];
+        if (target) target.focus();
+      }, 0);
+      return;
+    }
+    
+    // Clear any previous errors
+    setTagInputError('');
+    
     // Znajdź konkretnie kolekcję "Unsorted" używając funkcji pomocniczej
-    const unsortedCollection = findSystemCollection(state.collections, 'Unsorted');
+    const unsortedCollection = findSystemCollection(state, 'Unsorted');
     // Use "Unsorted" collection if none is selected
     const collectionId = selectedCollection || unsortedCollection?.id;
 
@@ -141,18 +184,28 @@ export default function AddBeatmapModal({
         subcollectionId: selectedSubcollection 
       });
     } else {
-      // W przeciwnym razie użyj bezpośrednio reducera
-      dispatch(addBeatmap(
-        collectionId,
-        selectedSubcollection,
-        beatmapset.id,
-        beatmap ? beatmap.id : null,
-        {
-          tags,
-          notes
-        }
-      ));
+      // W przeciwnym razie użyj bezpośrednio reducera (obsłuż tylko pojedynczą beatmapę)
+      if (beatmap) {
+        const beatmap_priority = tags.reduce((sum, t) => sum + (parseInt(t.tag_value) || 0), 0);
+        const beatmapData = {
+          ...beatmap,
+          setId: beatmapset.id,
+          artist: beatmapset.artist,
+          title: beatmapset.title,
+          creator: beatmapset.creator,
+          cover: beatmapset.covers?.cover || beatmapset.covers?.card,
+          userTags: tags,
+          notes,
+          beatmap_priority,
+          id: beatmap.id
+        };
+        dispatch(addBeatmap(beatmapData, collectionId, selectedSubcollection));
+      } else {
+        console.warn('AddBeatmapModal: onSubmit not provided and no single beatmap to add.');
+      }
     }
+    
+    onClose();
   };
 
   // Automatycznie wygenerowane tagi (na podstawie beatmapy)
@@ -196,16 +249,21 @@ export default function AddBeatmapModal({
     const value = e.target.value;
     setTagInput(value);
     
+    // Clear any tag input errors when user starts typing
+    if (tagInputError) {
+      setTagInputError('');
+    }
+    
     if (value.trim()) {
       // Pobierz wszystkie tagi z kolekcji użytkownika jako sugestie
       const userTags = new Set();
-      
-      Object.values(collectionsData.beatmaps || {}).forEach(beatmap => {
-        if (beatmap.userTags) {
+      // Przejdź po wszystkich beatmapach z globalnego stanu
+      Object.values(state.beatmaps || {}).forEach(beatmap => {
+        if (beatmap?.userTags) {
           beatmap.userTags.forEach(tag => {
             if (typeof tag === 'string') {
               userTags.add(tag);
-            } else if (tag.tag) {
+            } else if (tag?.tag) {
               userTags.add(tag.tag);
             }
           });
@@ -225,20 +283,43 @@ export default function AddBeatmapModal({
 
   // Funkcja do dodawania tagu z inputu
   const handleAddTagFromInput = (tagName) => {
-    if (!tagName.trim()) return;
+    // Blokuj dodanie, jeśli istnieją puste wiersze tagów
+    const emptyIdx = tags.findIndex(t => !t.tag.trim());
+    if (emptyIdx !== -1) {
+      setTagInputError("beatmap-modal-tag-input shouldn't be empty");
+      setTimeout(() => {
+        const tagInputs = document.querySelectorAll('.beatmap-modal-tag-input');
+        const target = tagInputs[emptyIdx];
+        if (target) target.focus();
+      }, 0);
+      return;
+    }
+
+    if (!tagName.trim()) {
+      setTagInputError("beatmap-modal-tag-input shouldn't be empty");
+      // Fokus na polu wejściowym tagu
+      if (tagInputRef.current) tagInputRef.current.focus();
+      return;
+    }
     
     // Sprawdź czy tag już istnieje
     const tagExists = tags.some(t => 
       t.tag.toLowerCase() === tagName.trim().toLowerCase()
     );
     
-    if (!tagExists) {
-      setTags([...tags, { tag: tagName.trim(), tag_value: 0 }]);
+    if (tagExists) {
+      setTagInputError('This tag already exists');
+      if (tagInputRef.current) tagInputRef.current.focus();
+      return;
     }
+    
+    setTags([...tags, { tag: tagName.trim(), tag_value: 0 }]);
     
     // Wyczyść pole input i sugestie
     setTagInput('');
     setTagSuggestions([]);
+    setTagInputError('');
+    if (tagInputRef.current) tagInputRef.current.focus();
   };
 
   // Funkcja do obsługi klawisza Enter w polu tagu
@@ -258,7 +339,7 @@ export default function AddBeatmapModal({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        onClick={onClose}
+        // Remove onClick={onClose} to prevent closing on backdrop click
       >
         <motion.div 
           className="beatmap-modal-content"
@@ -384,14 +465,29 @@ export default function AddBeatmapModal({
                   placeholder="Add a tag and press Enter"
                   className="beatmap-modal-tag-input-field"
                   autoFocus={editMode} // Autofocus przy edycji
+                  ref={tagInputRef}
                 />
                 <button 
                   type="button" 
                   onClick={() => handleAddTagFromInput(tagInput)}
-                  className="beatmap-modal-add-tag-btn"
+                  className={`beatmap-modal-add-tag-btn${tagInputError ? ' error' : ''}`}
                 >
                   + Add
                 </button>
+                
+                {/* Error message for tag input */}
+                {tagInputError && (
+                  <div className="beatmap-modal-tag-error">
+                    <span>{tagInputError}</span>
+                    <button 
+                      type="button" 
+                      onClick={() => setTagInputError('')}
+                      className="beatmap-modal-error-close"
+                    >
+                      ×
+                    </button>
+                  </div>
+                )}
               </div>
               
               {/* Sugestie tagów */}

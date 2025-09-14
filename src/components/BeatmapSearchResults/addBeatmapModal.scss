@@ -205,6 +205,7 @@
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
+  position: relative;
 }
 
 .beatmap-modal-tag-input-field {
@@ -234,6 +235,12 @@
   &:hover {
     background: rgba(0, 230, 118, 0.3);
     border-color: rgba(0, 230, 118, 0.6);
+  }
+
+  &.error {
+    border-color: #ff4444;
+    color: #ff8a80;
+    box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.2);
   }
 }
 
@@ -549,3 +556,48 @@
     }
   }
 }
+
+/* Error styling for tag input */
+.beatmap-modal-tag-error {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: #ff4444;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(255, 68, 68, 0.3);
+  z-index: 1001;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 16px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #ff4444;
+  }
+  
+  .beatmap-modal-error-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 8px;
+    min-width: 20px;
+    
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
