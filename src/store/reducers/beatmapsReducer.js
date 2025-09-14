@@ -3,7 +3,8 @@ import {
   REMOVE_BEATMAP,
   EDIT_BEATMAP,
   MOVE_BEATMAP,
-  TOGGLE_FAVORITE
+  TOGGLE_FAVORITE,
+  REORDER_BEATMAPS
 } from './actions';
 
 // Funkcja pomocnicza do znajdowania kolekcji systemowych
@@ -15,6 +16,7 @@ export const beatmapsReducer = (state, action) => {
   switch (action.type) {
     case ADD_BEATMAP: {
       const { beatmapData, collectionId, subcollectionId } = action.payload;
+      const now = Date.now();
       
       // Sprawdź, czy beatmapa już istnieje
       if (state.beatmaps[beatmapData.id]) {
@@ -27,12 +29,21 @@ export const beatmapsReducer = (state, action) => {
               ...state.beatmaps[beatmapData.id],
               ...beatmapData,
               collectionId: collectionId,
-              subcollectionId: subcollectionId
+              subcollectionId: subcollectionId,
+              // Nie nadpisuj addedAt/order jeśli istnieją
+              addedAt: state.beatmaps[beatmapData.id].addedAt || now,
+              order: state.beatmaps[beatmapData.id].order ?? 0
             }
           }
         };
       } else {
         // Dodaj nową beatmapę
+        // Ustal kolejny order w obrębie docelowej (sub)kolekcji
+        const nextOrder = (() => {
+          const list = Object.values(state.beatmaps).filter(b => b.collectionId === collectionId && (b.subcollectionId || null) === (subcollectionId || null));
+          if (list.length === 0) return 0;
+          return Math.max(...list.map(b => b.order ?? 0)) + 1;
+        })();
         return {
           ...state,
           beatmaps: {
@@ -40,7 +51,9 @@ export const beatmapsReducer = (state, action) => {
             [beatmapData.id]: {
               ...beatmapData,
               collectionId: collectionId,
-              subcollectionId: subcollectionId
+              subcollectionId: subcollectionId,
+              addedAt: now,
+              order: nextOrder
             }
           }
         };
@@ -139,19 +152,56 @@ export const beatmapsReducer = (state, action) => {
       if (!state.beatmaps[beatmapId]) return state;
       
       // Zaktualizuj kolekcję i podkolekcję beatmapy
+      // Nadaj nowy order na końcu listy docelowej
+      const nextOrder = (() => {
+        const list = Object.values(state.beatmaps).filter(b => b.collectionId === toCollectionId && (b.subcollectionId || null) === (toSubcollectionId || null));
+        if (list.length === 0) return 0;
+        return Math.max(...list.map(b => b.order ?? 0)) + 1;
+      })();
+
       const updatedBeatmaps = {
         ...state.beatmaps,
         [beatmapId]: {
           ...state.beatmaps[beatmapId],
           collectionId: toCollectionId,
-          subcollectionId: toSubcollectionId
+          subcollectionId: toSubcollectionId,
+          order: nextOrder
         }
       };
-      
       return {
         ...state,
         beatmaps: updatedBeatmaps
       };
+    }
+
+    case REORDER_BEATMAPS: {
+      const { collectionId, subcollectionId, draggedId, targetId } = action.payload;
+      if (!state.beatmaps[draggedId] || !state.beatmaps[targetId]) return state;
+
+      const dragged = state.beatmaps[draggedId];
+      const target = state.beatmaps[targetId];
+      // Tylko w ramach tej samej (sub)kolekcji
+      if (dragged.collectionId !== collectionId || target.collectionId !== collectionId) return state;
+      if ((dragged.subcollectionId || null) !== (subcollectionId || null) || (target.subcollectionId || null) !== (subcollectionId || null)) return state;
+
+      const list = Object.values(state.beatmaps)
+        .filter(b => b.collectionId === collectionId && (b.subcollectionId || null) === (subcollectionId || null))
+        .sort((a,b) => (a.order ?? 0) - (b.order ?? 0));
+
+      const draggedIdx = list.findIndex(b => b.id === draggedId);
+      const targetIdx = list.findIndex(b => b.id === targetId);
+      if (draggedIdx === -1 || targetIdx === -1) return state;
+
+      const newList = [...list];
+      const [removed] = newList.splice(draggedIdx, 1);
+      newList.splice(targetIdx, 0, removed);
+
+      const updated = { ...state.beatmaps };
+      newList.forEach((b, idx) => {
+        updated[b.id] = { ...updated[b.id], order: idx };
+      });
+
+      return { ...state, beatmaps: updated };
     }
     
     case TOGGLE_FAVORITE: {

@@ -7,12 +7,17 @@ import { selectedTagsAtom } from '@/store/selectedTagsAtom';
 import { useBeatmapSort } from '@/components/UserCollections/hooks/useBeatmapSort';
 import { groupTagsByCategory, extractTagsText, doesBeatmapMatchTags } from '@/utils/tagUtils';
 import './userCollections.scss';
+import { GiHamburgerMenu } from 'react-icons/gi';
+import { useAtom as useReducerAtom } from 'jotai';
+import { collectionsReducerAtom } from '@/store/collectionsReducerAtom';
+import { reorderBeatmaps, moveBeatmap } from '@/store/reducers/actions';
 
-export default function UserCollectionsSection() {
+export default function UserCollectionsSection({ editMode = false }) {
   const [collections] = useAtom(collectionsAtom);
   const [globalTags] = useAtom(selectedTagsAtom);
   const { sortMode, sortDirection, sortBeatmaps, toggleSortMode, toggleSortDirection } = useBeatmapSort();
   const [expandedGroups, setExpandedGroups] = useState({});
+  const [state, dispatch] = useReducerAtom(collectionsReducerAtom);
 
   const collectionsById = useMemo(() => (
     (collections.collections || []).reduce((acc, c) => { acc[c.id] = c; return acc; }, {})
@@ -62,14 +67,7 @@ export default function UserCollectionsSection() {
 
   return (
     <div className="user-collections-section">
-      <div className="section-toolbar" style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 12 }}>
-        <button className="sort-mode" onClick={toggleSortMode} title="Toggle sort mode">
-          Sort: {sortMode}
-        </button>
-        <button className="sort-dir" onClick={toggleSortDirection} title="Toggle sort direction">
-          Dir: {sortDirection}
-        </button>
-      </div>
+      <SortToolbar sortMode={sortMode} sortDirection={sortDirection} setModeDir={{ toggleSortMode, toggleSortDirection }} />
 
       {groups.map(group => {
         const itemsFiltered = group.items.filter(filterFn);
@@ -106,7 +104,31 @@ export default function UserCollectionsSection() {
                           const setId = item.setId || item.beatmapset_id;
                           const cover = item.cover || (setId ? `https://assets.ppy.sh/beatmaps/${setId}/covers/list.jpg` : '/favicon.ico');
                           return (
-                            <div className="beatmap-row" key={setKey} style={{ backgroundImage: `url(${cover})` }}>
+                            <div
+                              className={`beatmap-row ${editMode ? 'draggable' : ''}`}
+                              key={setKey}
+                              style={{ backgroundImage: `url(${cover})` }}
+                              data-beatmap-id={item.id}
+                              draggable={editMode}
+                              onDragStart={(e) => {
+                                e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'beatmap', id: item.id, collectionId: item.collectionId || group.collectionId, subcollectionId: item.subcollectionId || group.subcollectionId }));
+                              }}
+                              onDragOver={(e) => editMode && e.preventDefault()}
+                              onDrop={(e) => {
+                                if (!editMode) return;
+                                e.preventDefault();
+                                try {
+                                  const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                                  if (data.type === 'beatmap' && data.id !== item.id) {
+                                    if (data.collectionId === (item.collectionId || group.collectionId) && (data.subcollectionId || null) === (item.subcollectionId || group.subcollectionId || null)) {
+                                      dispatch(reorderBeatmaps(group.collectionId, group.subcollectionId || null, data.id, item.id));
+                                    } else {
+                                      dispatch(moveBeatmap(data.id, group.collectionId, group.subcollectionId || null));
+                                    }
+                                  }
+                                } catch {}
+                              }}
+                            >
                               <div className="row-overlay" />
                               <div className="row-content">
                                 <div className="row-title">{item.artist} - {item.title}</div>
@@ -117,6 +139,11 @@ export default function UserCollectionsSection() {
                                   )}
                                 </div>
                               </div>
+                              {editMode && (
+                                <div className="drag-handle" title="Drag to reorder or move">
+                                  <GiHamburgerMenu />
+                                </div>
+                              )}
                             </div>
                           );
                         }
@@ -126,7 +153,24 @@ export default function UserCollectionsSection() {
                         const cover = first.cover || (setId ? `https://assets.ppy.sh/beatmaps/${setId}/covers/list.jpg` : '/favicon.ico');
                         const sortedDiffs = [...arr].sort((a, b) => (a.difficulty_rating || 0) - (b.difficulty_rating || 0));
                         return (
-                          <div className="beatmapset-row" key={setKey} style={{ backgroundImage: `url(${cover})` }}>
+                          <div
+                            className={`beatmapset-row ${editMode ? 'draggable' : ''}`}
+                            key={setKey}
+                            style={{ backgroundImage: `url(${cover})` }}
+                            data-beatmapset-id={setId}
+                            onDragOver={(e) => editMode && e.preventDefault()}
+                            onDrop={(e) => {
+                              if (!editMode) return;
+                              e.preventDefault();
+                              try {
+                                const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                                if (data.type === 'beatmap') {
+                                  // upuszczenie na beatmapset (multi) wrzuca beatmapę do tego samego setu/grupy
+                                  dispatch(moveBeatmap(data.id, group.collectionId, group.subcollectionId || null));
+                                }
+                              } catch {}
+                            }}
+                          >
                             <div className="row-overlay" />
                             <div className="row-content">
                               <div className="row-title">{first.artist} - {first.title}</div>
@@ -142,6 +186,11 @@ export default function UserCollectionsSection() {
                                 </div>
                               </div>
                             </div>
+                            {editMode && (
+                              <div className="drag-handle" title="Drag to move">
+                                <GiHamburgerMenu />
+                              </div>
+                            )}
                           </div>
                         );
                       });
@@ -153,6 +202,43 @@ export default function UserCollectionsSection() {
           </div>
         );
       })}
+    </div>
+  );
+}
+
+function SortToolbar({ sortMode, sortDirection, setModeDir }) {
+  const [mode, setMode] = useState(sortMode);
+  const [dir, setDir] = useState(sortDirection);
+  return (
+    <div className="section-toolbar" style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
+      <span style={{ color: '#b8a6c1' }}>Sort by:</span>
+      <select
+        value={mode}
+        onChange={(e) => {
+          const val = e.target.value;
+          setMode(val);
+          // Directly set sort mode where available
+          if (setModeDir.setSortMode) setModeDir.setSortMode(val);
+        }}
+        style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid rgba(234,129,251,0.35)', background: 'rgba(0,0,0,0.2)', color: '#fff' }}
+      >
+        <option value="date">Added Date</option>
+        <option value="priority">Priority</option>
+        <option value="name">Name</option>
+        <option value="custom">Custom (drag & drop)</option>
+      </select>
+      <button
+        type="button"
+        onClick={() => {
+          const next = dir === 'asc' ? 'desc' : 'asc';
+          setDir(next);
+          if (setModeDir.setSortDirection) setModeDir.setSortDirection(next);
+        }}
+        title="Toggle direction"
+        style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid #ea81fb', background: 'rgba(234,129,251,0.25)', color: '#fff' }}
+      >
+        {dir === 'asc' ? '↑' : '↓'}
+      </button>
     </div>
   );
 }

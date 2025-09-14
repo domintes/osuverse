@@ -457,6 +457,18 @@
     border: 1px solid rgba(255,255,255,0.08);
     box-shadow: 0 4px 10px rgba(47, 15, 58, 0.25);
     isolation: isolate;
+    
+    .drag-handle {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #ffcae6;
+      opacity: 0.8;
+      display: none;
+      cursor: grab;
+    }
+    &.draggable .drag-handle { display: block; }
   }
 
   .beatmap-row:hover,

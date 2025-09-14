@@ -17,6 +17,7 @@ export const ADD_BEATMAP = 'ADD_BEATMAP';
 export const REMOVE_BEATMAP = 'REMOVE_BEATMAP';
 export const EDIT_BEATMAP = 'EDIT_BEATMAP';
 export const MOVE_BEATMAP = 'MOVE_BEATMAP';
+export const REORDER_BEATMAPS = 'REORDER_BEATMAPS';
 export const TOGGLE_FAVORITE = 'TOGGLE_FAVORITE';
 
 // Akcje tagów
@@ -90,6 +91,11 @@ export const editBeatmap = (beatmapId, formData) => ({
 export const moveBeatmap = (beatmapId, toCollectionId, toSubcollectionId = null) => ({
   type: MOVE_BEATMAP,
   payload: { beatmapId, toCollectionId, toSubcollectionId }
+});
+
+export const reorderBeatmaps = (collectionId, subcollectionId, draggedId, targetId) => ({
+  type: REORDER_BEATMAPS,
+  payload: { collectionId, subcollectionId: subcollectionId || null, draggedId, targetId }
 });
 
 export const toggleFavorite = (beatmap) => ({
