@@ -13,7 +13,6 @@ export default function UserCollectionsSection() {
   const [globalTags] = useAtom(selectedTagsAtom);
   const { sortMode, sortDirection, sortBeatmaps, toggleSortMode, toggleSortDirection } = useBeatmapSort();
   const [expandedGroups, setExpandedGroups] = useState({});
-  const [localActiveTags, setLocalActiveTags] = useState([]);
 
   const collectionsById = useMemo(() => (
     (collections.collections || []).reduce((acc, c) => { acc[c.id] = c; return acc; }, {})
@@ -38,7 +37,7 @@ export default function UserCollectionsSection() {
   }, [collections, collectionsById]);
 
   const filterFn = (bm) => {
-    const active = [...globalTags, ...localActiveTags].map(t => String(t).toLowerCase());
+    const active = [...globalTags].map(t => String(t).toLowerCase());
     if (active.length === 0) return true;
 
     const artist = (bm.artist || '').toLowerCase();
@@ -52,10 +51,6 @@ export default function UserCollectionsSection() {
 
   const toggleGroup = (key) => setExpandedGroups(prev => ({ ...prev, [key]: !prev[key] }));
   const isExpanded = (key) => expandedGroups[key] !== false; // domyślnie otwarty
-
-  const toggleLocalTag = (tag) => {
-    setLocalActiveTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
-  };
 
   if (!groups.length) {
     return (
@@ -75,13 +70,6 @@ export default function UserCollectionsSection() {
         <button className="sort-dir" onClick={toggleSortDirection} title="Toggle sort direction">
           Dir: {sortDirection}
         </button>
-        {localActiveTags.length > 0 && (
-          <div className="active-tags" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {localActiveTags.map(t => (
-              <span key={t} className="tag-chip active" onClick={() => toggleLocalTag(t)}>#{t} ×</span>
-            ))}
-          </div>
-        )}
       </div>
 
       {groups.map(group => {
@@ -91,52 +79,17 @@ export default function UserCollectionsSection() {
 
         return (
           <div className="collection-group" key={group.key}>
-            <div className="collection-group-header" onClick={() => toggleGroup(group.key)} style={{ cursor: 'pointer' }}>
-              <span className="collection-name">{group.collection}</span>
-              {group.subcollection && <span className="subcollection-name"> / {group.subcollection}</span>}
-              <span className="count">{itemsFiltered.length}</span>
-              <span className="expander">{isExpanded(group.key) ? '−' : '+'}</span>
+            <div className="collection-group-header" onClick={() => toggleGroup(group.key)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
+              <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <span className="collection-name">{group.collection}</span>
+                {group.subcollection && <span className="subcollection-name">/ {group.subcollection}</span>}
+                <span className="count">({itemsFiltered.length})</span>
+              </div>
+              <span className="expander" aria-hidden>{isExpanded(group.key) ? '−' : '+'}</span>
             </div>
 
             {isExpanded(group.key) && (
               <div className="collection-group-body">
-                {/* Sekcje tagów */}
-                <div className="tags-sections" style={{ marginBottom: 12 }}>
-                  {/* User Tags */}
-                  <div className="tags-section">
-                    <div className="tags-title">User Tags</div>
-                    <div className="tags-list">
-                      {Object.entries(tagGroups['User Tags'] || {}).map(([tag, count]) => (
-                        <span
-                          key={tag}
-                          className={`tag-chip ${localActiveTags.includes(tag) ? 'active' : ''}`}
-                          onClick={() => toggleLocalTag(tag)}
-                          title={`#${tag} (${count})`}
-                        >
-                          #{tag} ({count})
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Artists */}
-                  <div className="tags-section">
-                    <div className="tags-title">Artists</div>
-                    <div className="tags-list">
-                      {Object.entries(tagGroups['Artists'] || {}).map(([artist, count]) => (
-                        <span
-                          key={artist}
-                          className={`tag-chip ${localActiveTags.includes(artist) ? 'active' : ''}`}
-                          onClick={() => toggleLocalTag(artist)}
-                          title={`${artist} (${count})`}
-                        >
-                          #{artist} ({count})
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
                 {/* Lista beatmap */}
                 {itemsSorted.length === 0 ? (
                   <div className="empty-state">No beatmaps match selected tags.</div>

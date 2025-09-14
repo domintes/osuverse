@@ -44,7 +44,7 @@ const TagsSection = () => {
   
   return (
     <div className="tag-sections-container">
-      <h2 className="tag-sections-title">Collection Tags Filter</h2>
+      <h2 className="tag-sections-title">Collection Tags Filterr</h2>
       
       {/* Przełączniki widoczności grup tagów */}
       <div className="tag-groups-toggle">
