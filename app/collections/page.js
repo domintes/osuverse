@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import UserCollectionsPanel from '@/components/UserCollectionsPanel';
+import UserCollectionsSection from '@/components/UserCollectionsSection';
 import MainOsuverseDiv from '@/components/MainOsuverseDiv';
 import TagsSection from '@/components/TagSections.jsx/TagSections';
 import { Edit, Tag, Database, Zap } from 'lucide-react';
@@ -87,7 +87,7 @@ export default function Collections() {
       {/* Komponent sekcji tagów - wyświetlany tylko w trybie wyświetlania */}
       {!editMode && <TagsSection />}
       
-      <UserCollectionsPanel editMode={editMode} />
+  <UserCollectionsSection />
     </MainOsuverseDiv>
   );
 }
