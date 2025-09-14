@@ -8,6 +8,9 @@ import './addBeatmapModal.scss';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlusCircle } from 'lucide-react';
 import { findSystemCollection } from '@/components/UserCollections/utils/collectionUtils';
+import { FaStar, FaRegStar } from 'react-icons/fa';
+import { LuZap } from 'react-icons/lu';
+import { BiSolidZap } from 'react-icons/bi';
 
 export default function AddBeatmapModal({ 
   isOpen, 
@@ -48,6 +51,39 @@ export default function AddBeatmapModal({
         lastInput.focus();
       }
     }, 100);
+  };
+
+  // Helpers for special lists inside modal
+  const favoritesCollection = state?.collections?.find(c => c.name === 'Favorites');
+  const toCheckCollection = state?.collections?.find(c => c.name === 'To Check');
+  const isSetFavorited = !!(beatmapset?.beatmaps || []).some(b => Object.values(state.beatmaps || {}).some(x => x.id === b.id && x.collectionId === favoritesCollection?.id));
+  const isSetInToCheck = !!(beatmapset?.beatmaps || []).some(b => Object.values(state.beatmaps || {}).some(x => x.id === b.id && x.collectionId === toCheckCollection?.id));
+  const toggleSetIn = (target) => {
+    const targetCol = target === 'fav' ? favoritesCollection : toCheckCollection;
+    if (!targetCol) return;
+    const already = target === 'fav' ? isSetFavorited : isSetInToCheck;
+    const otherCol = target === 'fav' ? toCheckCollection : favoritesCollection;
+    const newBeatmaps = { ...state.beatmaps };
+    (beatmapset?.beatmaps || []).forEach(bm => {
+      const exists = newBeatmaps[bm.id];
+      if (already) {
+        if (exists && exists.collectionId === targetCol.id) delete newBeatmaps[bm.id];
+      } else {
+        const base = exists || {
+          ...bm,
+          setId: beatmapset.id,
+          artist: beatmapset.artist,
+          title: beatmapset.title,
+          creator: beatmapset.creator,
+          cover: beatmapset.covers?.cover || beatmapset.covers?.card,
+          userTags: [],
+          notes: '',
+          beatmap_priority: 0
+        };
+        newBeatmaps[bm.id] = { ...base, collectionId: targetCol.id, subcollectionId: null };
+      }
+    });
+    dispatch({ type: 'SET_FULL_STATE', payload: { ...state, beatmaps: newBeatmaps } });
   };
 
   const handleRemoveTag = (idx) => {
@@ -353,6 +389,14 @@ export default function AddBeatmapModal({
           <h2 className="beatmap-modal-title">
             Add to collection
           </h2>
+          <div style={{ display: 'flex', gap: 8, margin: '6px 0 10px 0' }}>
+            <button type="button" title={isSetFavorited ? 'Remove from Favourites' : 'Add to Favourites'} onClick={() => toggleSetIn('fav')} className="beatmap-modal-quick special-fav">
+              {isSetFavorited ? <FaStar /> : <FaRegStar />} Favourites
+            </button>
+            <button type="button" title={isSetInToCheck ? 'Remove from To Check' : 'Quick add to To Check'} onClick={() => toggleSetIn('check')} className="beatmap-modal-quick special-check">
+              {isSetInToCheck ? <BiSolidZap /> : <LuZap />} To Check
+            </button>
+          </div>
           
           <div className="beatmap-modal-preview">
             <div 
@@ -384,7 +428,9 @@ export default function AddBeatmapModal({
                     }}
                     className="beatmap-modal-select"
                   >
-                    {state.collections.map(collection => (
+                    {state.collections
+                      .filter(c => !(c.isSystemCollection && (c.name === 'Favorites' || c.name === 'To Check')))
+                      .map(collection => (
                       <option key={collection.id} value={collection.id}>{collection.name}</option>
                     ))}
                   </select>

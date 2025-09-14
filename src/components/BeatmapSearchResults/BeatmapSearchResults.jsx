@@ -9,6 +9,9 @@ import AddBeatmapModal from './AddBeatmapModal';
 import { findSystemCollection } from '@/components/UserCollections/utils/collectionUtils';
 import './beatmapSearchResults.scss';
 import './addBeatmapModal.scss';
+import { FaStar, FaRegStar } from 'react-icons/fa';
+import { LuZap } from 'react-icons/lu';
+import { BiSolidZap } from 'react-icons/bi';
 
 export default function BeatmapSearchResults({
   results,
@@ -168,6 +171,85 @@ export default function BeatmapSearchResults({
     return beatmaps.every(bm => isBeatmapInCollection(bm.id));
   };
 
+  // Special lists helpers
+  const getSystemCollectionByName = (name) => findSystemCollection(collections, name);
+  const isSetFavorited = (set) => {
+    const fav = getSystemCollectionByName('Favorites');
+    if (!fav) return false;
+    return (set.beatmaps || []).some(b => Object.values(collections.beatmaps || {}).some(x => x.id === b.id && x.collectionId === fav.id));
+  };
+  const toggleFavoriteSet = (set) => {
+    const fav = getSystemCollectionByName('Favorites');
+    const uns = getSystemCollectionByName('Unsorted');
+    if (!fav) return;
+    const already = isSetFavorited(set);
+    setCollections(prev => {
+      const newBeatmaps = { ...prev.beatmaps };
+      (set.beatmaps || []).forEach(bm => {
+        const exists = newBeatmaps[bm.id];
+        if (already) {
+          // move to unsorted or remove if no unsorted
+          if (exists && uns) {
+            newBeatmaps[bm.id] = { ...exists, collectionId: uns.id, subcollectionId: null };
+          } else if (exists && !uns) {
+            delete newBeatmaps[bm.id];
+          }
+        } else {
+          // add/update into favorites
+          const base = exists || {
+            ...bm,
+            setId: set.id,
+            artist: set.artist,
+            title: set.title,
+            creator: set.creator,
+            cover: set.covers?.cover || set.covers?.card,
+            userTags: [],
+            notes: '',
+            beatmap_priority: 0
+          };
+          newBeatmaps[bm.id] = { ...base, collectionId: fav.id, subcollectionId: null };
+        }
+      });
+      return { ...prev, beatmaps: newBeatmaps };
+    });
+  };
+  const isSetInToCheck = (set) => {
+    const tc = getSystemCollectionByName('To Check');
+    if (!tc) return false;
+    return (set.beatmaps || []).some(b => Object.values(collections.beatmaps || {}).some(x => x.id === b.id && x.collectionId === tc.id));
+  };
+  const quickAddToCheck = (set) => {
+    const tc = getSystemCollectionByName('To Check');
+    if (!tc) return;
+    const already = isSetInToCheck(set);
+    setCollections(prev => {
+      const newBeatmaps = { ...prev.beatmaps };
+      (set.beatmaps || []).forEach(bm => {
+        const exists = newBeatmaps[bm.id];
+        if (already) {
+          // remove from To Check only
+          if (exists && exists.collectionId === tc.id) {
+            delete newBeatmaps[bm.id];
+          }
+        } else {
+          const base = exists || {
+            ...bm,
+            setId: set.id,
+            artist: set.artist,
+            title: set.title,
+            creator: set.creator,
+            cover: set.covers?.cover || set.covers?.card,
+            userTags: [],
+            notes: '',
+            beatmap_priority: 0
+          };
+          newBeatmaps[bm.id] = { ...base, collectionId: tc.id, subcollectionId: null };
+        }
+      });
+      return { ...prev, beatmaps: newBeatmaps };
+    });
+  };
+
   // Funkcja określająca kolor trudności
   const getDiffColor = (star) => {
     if (star >= 6.5) return { background: '#ff1744', color: '#fff' };
@@ -204,6 +286,11 @@ export default function BeatmapSearchResults({
               areAllBeatmapsInCollection={areAllBeatmapsInCollection}
               getDiffColor={getDiffColor}
               getDifficultyClass={getDifficultyClass}
+              // Favorites / To Check helpers
+              isSetFavorited={isSetFavorited}
+              toggleFavoriteSet={toggleFavoriteSet}
+              isSetInToCheck={isSetInToCheck}
+              quickAddToCheck={quickAddToCheck}
             />
           ))
         )}
@@ -271,7 +358,12 @@ function BeatmapsetItem({
   isBeatmapInCollection,
   areAllBeatmapsInCollection,
   getDiffColor,
-  getDifficultyClass
+  getDifficultyClass,
+  // injected helpers
+  isSetFavorited,
+  toggleFavoriteSet,
+  isSetInToCheck,
+  quickAddToCheck
 }) {
   // Sortujemy beatmapy według poziomu trudności
   const sortedBeatmaps = [...(set.beatmaps || [])].sort((a, b) => a.difficulty_rating - b.difficulty_rating);
@@ -317,6 +409,32 @@ function BeatmapsetItem({
       className={classNames('beatmapset-item', { 'expanded': expanded })}
       onMouseLeave={handleMouseLeave}
     >
+      <div className="beatmapset-actions">
+        <button
+          className="action-btn star"
+          title={isSetFavorited(set) ? 'Remove from Favourites' : 'Add to Favourites'}
+          onClick={(e) => { e.stopPropagation(); toggleFavoriteSet(set); }}
+          aria-label="Toggle favourite"
+        >
+          {isSetFavorited(set) ? <FaStar /> : <FaRegStar />}
+        </button>
+        <button
+          className="action-btn zap"
+          title={isSetInToCheck(set) ? 'Remove from To Check' : 'Quick add to To Check'}
+          onClick={(e) => { e.stopPropagation(); quickAddToCheck(set); }}
+          aria-label="Quick add To Check"
+        >
+          {isSetInToCheck(set) ? <BiSolidZap /> : <LuZap />}
+        </button>
+        <button
+          className="action-btn plus"
+          title="Add to collection"
+          onClick={(e) => { e.stopPropagation(); onAddToCollection(set); }}
+          aria-label="Open add modal"
+        >
+          +
+        </button>
+      </div>
       <div className="beatmapset-cover">
         <img
           src={imgSrc}

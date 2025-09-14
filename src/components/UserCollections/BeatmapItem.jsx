@@ -68,6 +68,20 @@ const BeatmapItem = ({ beatmap, collections, onEdit, onDelete, onToggleFavorite 
         return null; // W przypadku błędu lub niepasującego typu
     };
     
+    // Resolve cover URL (osu!api v2): prefer structured beatmapset.covers, fallback to stored beatmap.cover
+    const getCoverUrl = (bm) => {
+        const setId = bm.setId || bm.beatmapset_id || bm.beatmapsetId || bm.beatmapset?.id;
+        const covers = bm.beatmapset?.covers || {};
+        if (typeof bm.cover === 'string' && bm.cover.length > 0) return bm.cover;
+        if (covers.list) return covers.list;
+        if (covers.card) return covers.card;
+        if (covers.cover) return covers.cover;
+        if (covers.slimcover) return covers.slimcover;
+        if (setId) return `https://assets.ppy.sh/beatmaps/${setId}/covers/list.jpg`;
+        return '/favicon.ico';
+    };
+    const resolvedCover = getCoverUrl(beatmap);
+
     return (
         <div 
             id={`beatmap-${beatmap.id}`} 
@@ -87,7 +101,7 @@ const BeatmapItem = ({ beatmap, collections, onEdit, onDelete, onToggleFavorite 
 
             <div
                 className="beatmap-cover"
-                style={{ backgroundImage: `url(${beatmap.cover})` }}
+                style={{ backgroundImage: `url(${resolvedCover})` }}
             />
             <div className="beatmap-info">
                 <div className="beatmap-title">{beatmap.artist} - {beatmap.title}</div>

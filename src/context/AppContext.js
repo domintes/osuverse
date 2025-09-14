@@ -10,6 +10,11 @@ export function AppProvider({ children }) {
     const saved = localStorage.getItem('osuverse-simple-mode');
     if (saved) {
       setSimpleMode(JSON.parse(saved));
+      try {
+        if (JSON.parse(saved) && typeof document !== 'undefined') {
+          document.body.classList.add('focus-mode');
+        }
+      } catch {}
     }
   }, []);
 
@@ -17,6 +22,11 @@ export function AppProvider({ children }) {
     const newMode = !simpleMode;
     setSimpleMode(newMode);
     localStorage.setItem('osuverse-simple-mode', JSON.stringify(newMode));
+    try {
+      if (typeof document !== 'undefined') {
+        document.body.classList.toggle('focus-mode', newMode);
+      }
+    } catch {}
   };
 
   return (

@@ -46,6 +46,11 @@ export default function UserCollectionsSection({ editMode = false }) {
   const filterFn = (bm) => doesBeatmapMatchTags(bm, globalTags);
 
   const groups = useMemo(() => Object.values(grouped), [grouped]);
+  const favoritesId = useMemo(() => (collections.collections || []).find(c => c.name === 'Favorites')?.id, [collections]);
+  const toCheckId = useMemo(() => (collections.collections || []).find(c => c.name === 'To Check')?.id, [collections]);
+  const normalGroups = useMemo(() => groups.filter(g => g.collectionId !== favoritesId && g.collectionId !== toCheckId), [groups, favoritesId, toCheckId]);
+  const favGroup = useMemo(() => groups.find(g => g.collectionId === favoritesId), [groups, favoritesId]);
+  const toCheckGroup = useMemo(() => groups.find(g => g.collectionId === toCheckId), [groups, toCheckId]);
 
   // Stabilniejsza logika expand/collapse: domyślnie true i explicit boolean
   const toggleGroup = (key) => {
@@ -156,7 +161,89 @@ export default function UserCollectionsSection({ editMode = false }) {
     <div className="user-collections-section">
       <SortToolbar sortMode={sortMode} sortDirection={sortDirection} setModeDir={{ toggleSortMode, toggleSortDirection }} />
 
-      {groups.map(group => {
+      {/* Special sections */}
+      {favGroup && (
+        <div className="collection-group" key="special_fav">
+          <div className="collection-group-header" onClick={() => toggleGroup('special_fav')}>
+            <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <span className="collection-name">Favourites Beatmaps</span>
+              <span className="count">({(favGroup.items||[]).filter(filterFn).length})</span>
+            </div>
+            <span className={`expander-arrow ${isExpanded('special_fav') ? 'expanded' : ''}`} aria-hidden>⮟</span>
+          </div>
+          {isExpanded('special_fav') && (
+            <div className="collection-group-body">
+              {/* reuse existing renderer by temporarily mapping favGroup to expected shape */}
+              {/* Render beatmaps grouped by set as in the default map below */}
+              {/* We inline same logic by setting group variable */}
+              {(() => { const group = favGroup; const itemsFiltered = group.items.filter(filterFn); const itemsSorted = sortBeatmaps(itemsFiltered); const tagGroups = groupTagsByCategory(group.items); return (
+                <div className="beatmaps-list">
+                  {(() => {
+                    const bySet = itemsSorted.reduce((acc, bm) => { const setKey = getSetId(bm) || `single_${bm.id}`; if (!acc[setKey]) acc[setKey] = []; acc[setKey].push(bm); return acc; }, {});
+                    return Object.entries(bySet).map(([setKey, arr]) => {
+                      if (arr.length === 1) {
+                        const item = arr[0];
+                        const cover = getSetCoverListUrl(item);
+                        return (
+                          <div className={`beatmap-row ${editMode ? 'draggable' : ''}`} key={`fav_${setKey}`} style={{ backgroundImage: `url(${cover})` }} data-beatmap-id={item.id} onClick={(e) => { if (editMode) return; openDifficultyInNewTab(item); }}>
+                            <div className="row-overlay" />
+                            <div className="row-content">
+                              <div className="row-title">{item.artist} - {item.title}</div>
+                              <div className="row-meta"><span className="mapper">mapped by {item.creator}</span>{typeof item.difficulty_rating === 'number' && (<span className="diff">[{item.version}] {(item.difficulty_rating).toFixed(2)}★</span>)}</div>
+                            </div>
+                          </div>
+                        );
+                      }
+                      const first = arr[0];
+                      const setId = getSetId(first);
+                      const cover = getSetCoverListUrl(first);
+                      const sortedDiffs = [...arr].sort((a, b) => (a.difficulty_rating || 0) - (b.difficulty_rating || 0));
+                      return (
+                        <div className="beatmapset-row" key={`favset_${setKey}`} style={{ backgroundImage: `url(${cover})` }} onClick={(e) => { if (editMode) return; openSetInNewTab(setId); }}>
+                          <div className="row-overlay" />
+                          <div className="row-content">
+                            <div className="row-title">{first.artist} - {first.title}</div>
+                            <div className="row-meta"><span className="mapper">mapped by {first.creator}</span></div>
+                          </div>
+                        </div>
+                      );
+                    }); })()}
+                </div>
+              ); })()}
+            </div>
+          )}
+        </div>
+      )}
+      {toCheckGroup && (
+        <div className="collection-group" key="special_check">
+          <div className="collection-group-header" onClick={() => toggleGroup('special_check')}>
+            <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <span className="collection-name">Beatmaps to Check</span>
+              <span className="count">({(toCheckGroup.items||[]).filter(filterFn).length})</span>
+            </div>
+            <span className={`expander-arrow ${isExpanded('special_check') ? 'expanded' : ''}`} aria-hidden>⮟</span>
+          </div>
+          {isExpanded('special_check') && (
+            <div className="collection-group-body">
+              {(() => { const group = toCheckGroup; const itemsFiltered = group.items.filter(filterFn); const itemsSorted = sortBeatmaps(itemsFiltered); return (
+                <div className="beatmaps-list">
+                  {itemsSorted.map((item) => { const cover = getSetCoverListUrl(item); return (
+                    <div className={`beatmap-row`} key={`check_${item.id}`} style={{ backgroundImage: `url(${cover})` }} data-beatmap-id={item.id} onClick={(e) => { if (editMode) return; openDifficultyInNewTab(item); }}>
+                      <div className="row-overlay" />
+                      <div className="row-content">
+                        <div className="row-title">{item.artist} - {item.title}</div>
+                        <div className="row-meta"><span className="mapper">mapped by {item.creator}</span>{typeof item.difficulty_rating === 'number' && (<span className="diff">[{item.version}] {(item.difficulty_rating).toFixed(2)}★</span>)}</div>
+                      </div>
+                    </div>
+                  ); })}
+                </div>
+              ); })()}
+            </div>
+          )}
+        </div>
+      )}
+
+      {normalGroups.map(group => {
         const itemsFiltered = group.items.filter(filterFn);
         const itemsSorted = sortBeatmaps(itemsFiltered);
         const tagGroups = groupTagsByCategory(group.items);

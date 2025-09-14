@@ -4,6 +4,8 @@ import { atomWithStorage } from 'jotai/utils';
 const UNSORTED_COLLECTION_ID = '00000000-0000-0000-0000-000000000000';
 // Generate a stable UUID for the "Favorites" collection
 const FAVORITES_COLLECTION_ID = '11111111-1111-1111-1111-111111111111';
+// Generate a stable UUID for the "To Check" collection
+const TO_CHECK_COLLECTION_ID = '22222222-2222-2222-2222-222222222222';
 
 // Collection structure with beatmaps and UI state
 export const collectionsAtom = atomWithStorage('userCollections', {
@@ -20,6 +22,13 @@ export const collectionsAtom = atomWithStorage('userCollections', {
             name: 'Favorites',
             order: -2, // Show above Unsorted
             isSystemCollection: true, // Mark as system collection that can't be deleted
+            subcollections: []
+        },
+        {
+            id: TO_CHECK_COLLECTION_ID,
+            name: 'To Check',
+            order: -3, // Show above Favorites
+            isSystemCollection: true,
             subcollections: []
         }
     ],

@@ -70,6 +70,23 @@
   margin-bottom: 24px;
   text-align: center;
   text-shadow: 0 0 16px rgba(234, 129, 251, 0.4);
+
+.beatmap-modal-quick {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(126, 224, 255, 0.5);
+  background: rgba(126, 224, 255, 0.12);
+  color: #fff;
+  cursor: pointer;
+  transition: all .2s ease;
+  font-size: .9rem;
+}
+.beatmap-modal-quick:hover { filter: brightness(1.1); }
+.beatmap-modal-quick.special-fav { border-color: #ffd54f88; background: rgba(255, 213, 79, 0.12); }
+.beatmap-modal-quick.special-check { border-color: #7ee0ff88; background: rgba(126, 224, 255, 0.12); }
   
   @media (max-width: 768px) {
     font-size: 1.5rem;

@@ -91,14 +91,14 @@ export default function SearchPage() {
                             type="text"
                             value={artist}
                             onChange={(e) => setArtist(e.target.value)}
-                            placeholder="Artist filter"
+                            placeholder="Search by Artist"
                             className="beatmap-search-input"
                         />
                         <input
                             type="text"
                             value={mapper}
                             onChange={(e) => setMapper(e.target.value)}
-                            placeholder="Mapper filter"
+                            placeholder="Search by mapper"
                             className="beatmap-search-input"
                         />
                     </div>
