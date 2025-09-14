@@ -387,6 +387,204 @@
   margin-bottom: 14px; /* Zmniejszona wartość */
 }
 
+/* --- Collections grouping UI --- */
+.user-collections-section {
+  .collection-group {
+    margin: 14px 0 20px;
+    border: 1px solid rgba(234, 129, 251, 0.25);
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(234, 129, 251, 0.06);
+    box-shadow: 0 6px 18px rgba(47, 15, 58, 0.35);
+  }
+
+  .collection-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    cursor: pointer;
+    padding: 10px 14px;
+    background: linear-gradient(90deg, rgba(47, 15, 58, 0.9), rgba(58, 26, 77, 0.8));
+    border-bottom: 1px solid rgba(234, 129, 251, 0.25);
+
+    .collection-name {
+      font-weight: 700;
+      color: #ffcae6;
+      text-shadow: 0 0 10px rgba(242, 100, 164, 0.35);
+    }
+    .subcollection-name {
+      color: #c9b2d0;
+    }
+    .count {
+      color: #b8a6c1;
+      font-size: 0.95em;
+    }
+    .expander-arrow {
+      transition: transform 0.2s ease;
+      filter: drop-shadow(0 0 6px rgba(234, 129, 251, 0.5));
+      &.expanded {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .collection-group-body {
+    background: radial-gradient(1200px 300px at 10% -10%, rgba(242, 100, 164, 0.08), transparent 40%),
+                radial-gradient(1200px 300px at 80% 120%, rgba(100, 200, 255, 0.08), transparent 40%),
+                rgba(32, 10, 40, 0.45);
+    padding: 14px;
+  }
+
+  /* Nowy widok listy */
+  .beatmaps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .beatmap-row,
+  .beatmapset-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 4px 10px rgba(47, 15, 58, 0.25);
+    isolation: isolate;
+  }
+
+  .beatmap-row:hover,
+  .beatmapset-row:hover {
+    border-color: rgba(234, 129, 251, 0.35);
+    box-shadow: 0 8px 18px rgba(47, 15, 58, 0.35);
+  }
+
+  .row-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(16, 6, 22, 0.85) 0%, rgba(16, 6, 22, 0.55) 60%, rgba(16, 6, 22, 0.25) 100%);
+    z-index: 0;
+  }
+
+  .row-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .row-title {
+    font-weight: 700;
+    color: #ffd6ec;
+    text-shadow: 0 0 8px rgba(242, 100, 164, 0.35);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .row-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: #c9b2d0;
+    font-size: 0.92em;
+  }
+
+  .row-meta .mapper { color: #c9b2d0; }
+  .row-meta .diff { color: #64c8ff; font-weight: 600; }
+
+  .diff-chips {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(234, 129, 251, 0.12);
+    border: 1px solid rgba(234, 129, 251, 0.25);
+    color: #ffd6ec;
+    font-size: 0.9em;
+    .stars { color: #64c8ff; font-weight: 700; }
+    .version { color: #b8a6c1; }
+  }
+
+  .beatmap-card .cover,
+  .beatmapset-cover {
+    width: 96px;
+    height: 64px;
+    border-radius: 8px;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .beatmap-card .meta,
+  .beatmapset-meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .beatmap-card .title,
+  .beatmapset-title {
+    font-weight: 700;
+    color: #ffd6ec;
+  }
+
+  .beatmap-card .mapper,
+  .beatmapset-mapper {
+    color: #c9b2d0;
+    font-size: 0.93em;
+    margin-top: 2px;
+  }
+
+  .beatmap-card .diff {
+    color: #64c8ff;
+    font-size: 0.9em;
+    margin-top: 4px;
+  }
+
+  .beatmapset-difficulties {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .difficulty-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(234, 129, 251, 0.12);
+    border: 1px solid rgba(234, 129, 251, 0.25);
+    color: #ffd6ec;
+    .stars { color: #64c8ff; font-weight: 700; }
+    .version { color: #b8a6c1; }
+  }
+}
+
+@media (max-width: 640px) {
+  .user-collections-section {
+    .beatmap-row, .beatmapset-row { min-height: 44px; padding: 8px; }
+  }
+}
+
 /* Globalne kontrolki sortowania i filtrowania */
 .sort-filter-controls.global {
   margin: 8px 0 16px; /* Zmniejszona wartość */

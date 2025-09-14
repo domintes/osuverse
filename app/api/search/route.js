@@ -1,13 +1,40 @@
 export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url);
-        const authHeader = request.headers.get('Authorization');
+        // Try to get user session cookie with access token
+        let token = null;
+        try {
+            const cookie = request.cookies.get('osu_session');
+            if (cookie?.value) {
+                const session = JSON.parse(cookie.value);
+                token = session?.access_token || null;
+            }
+        } catch {}
 
-        if (!authHeader?.startsWith('Bearer ')) {
-            return Response.json({ error: 'Missing or invalid authorization token' }, { status: 401 });
+        // If no token in cookie, try client credentials (public scope)
+        if (!token) {
+            const clientId = process.env.OSU_API_CLIENT_ID;
+            const clientSecret = process.env.OSU_API_CLIENT_SECRET;
+            if (!clientId || !clientSecret) {
+                return Response.json({ error: 'Missing API credentials' }, { status: 500 });
+            }
+            const authRes = await fetch('https://osu.ppy.sh/oauth/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    client_id: clientId,
+                    client_secret: clientSecret,
+                    grant_type: 'client_credentials',
+                    scope: 'public'
+                })
+            });
+            if (authRes.ok) {
+                const data = await authRes.json();
+                token = data.access_token;
+            } else {
+                return Response.json({ error: 'Failed to authorize with osu! API' }, { status: 500 });
+            }
         }
-
-        const token = authHeader.split(' ')[1];
         const query = searchParams.get('query');
         const artist = searchParams.get('artist');
         const mapper = searchParams.get('mapper');
@@ -52,9 +79,7 @@ export async function GET(request) {
         } else {
             if (status && status !== 'all') params.append('s', status);
             const res = await fetch(`https://osu.ppy.sh/api/v2/beatmapsets/search?${params}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                headers: { Authorization: `Bearer ${token}` }
             });
             if (!res.ok) {
                 throw new Error('Failed to fetch from osu! API');

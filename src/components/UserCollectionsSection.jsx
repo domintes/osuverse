@@ -5,7 +5,7 @@ import { useAtom } from 'jotai';
 import { collectionsAtom } from '@/store/collectionAtom';
 import { selectedTagsAtom } from '@/store/selectedTagsAtom';
 import { useBeatmapSort } from '@/components/UserCollections/hooks/useBeatmapSort';
-import { groupTagsByCategory, extractTagsText } from '@/utils/tagUtils';
+import { groupTagsByCategory, extractTagsText, doesBeatmapMatchTags } from '@/utils/tagUtils';
 import './userCollections.scss';
 
 export default function UserCollectionsSection() {
@@ -36,21 +36,20 @@ export default function UserCollectionsSection() {
     return result;
   }, [collections, collectionsById]);
 
-  const filterFn = (bm) => {
-    const active = [...globalTags].map(t => String(t).toLowerCase());
-    if (active.length === 0) return true;
-
-    const artist = (bm.artist || '').toLowerCase();
-    const mapper = (bm.creator || '').toLowerCase();
-    const tags = extractTagsText(bm.userTags || []).map(t => String(t).toLowerCase());
-
-    return active.every(tag => artist === tag || mapper === tag || tags.includes(tag));
-  };
+  // Użyj tej samej logiki co w tagUtils (obsługuje zakresy Stars)
+  const filterFn = (bm) => doesBeatmapMatchTags(bm, globalTags);
 
   const groups = useMemo(() => Object.values(grouped), [grouped]);
 
-  const toggleGroup = (key) => setExpandedGroups(prev => ({ ...prev, [key]: !prev[key] }));
-  const isExpanded = (key) => expandedGroups[key] !== false; // domyślnie otwarty
+  // Stabilniejsza logika expand/collapse: domyślnie true i explicit boolean
+  const toggleGroup = (key) => {
+    setExpandedGroups(prev => {
+      const current = prev[key];
+      const next = current === false ? true : current === true ? false : false;
+      return { ...prev, [key]: next };
+    });
+  };
+  const isExpanded = (key) => expandedGroups[key] === undefined ? true : !!expandedGroups[key];
 
   if (!groups.length) {
     return (
@@ -79,39 +78,74 @@ export default function UserCollectionsSection() {
 
         return (
           <div className="collection-group" key={group.key}>
-            <div className="collection-group-header" onClick={() => toggleGroup(group.key)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between' }}>
+            <div className="collection-group-header" onClick={() => toggleGroup(group.key)}>
               <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                 <span className="collection-name">{group.collection}</span>
                 {group.subcollection && <span className="subcollection-name">/ {group.subcollection}</span>}
                 <span className="count">({itemsFiltered.length})</span>
               </div>
-              <span className="expander" aria-hidden>{isExpanded(group.key) ? '−' : '+'}</span>
+              <span className={`expander-arrow ${isExpanded(group.key) ? 'expanded' : ''}`} aria-hidden>⮟</span>
             </div>
 
             {isExpanded(group.key) && (
               <div className="collection-group-body">
-                {/* Lista beatmap */}
-                {itemsSorted.length === 0 ? (
-                  <div className="empty-state">No beatmaps match selected tags.</div>
-                ) : (
-                  <div className="beatmaps-grid">
-                    {itemsSorted.map(item => (
-                      <div className="beatmap-card" key={item.id}>
-                        <div
-                          className="cover"
-                          style={{
-                            backgroundImage: `url(${item.cover || (item.setId ? `https://assets.ppy.sh/beatmaps/${item.setId}/covers/card.jpg` : '/favicon.ico')})`
-                          }}
-                        />
-                        <div className="meta">
-                          <div className="title">{item.artist} - {item.title}</div>
-                          <div className="mapper">mapped by {item.creator}</div>
-                          {typeof item.difficulty_rating === 'number' && (
-                            <div className="diff">{item.version} ({item.difficulty_rating.toFixed(2)}★)</div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
+                {/* Widok listy beatmap pogrupowanych po beatmapsecie */}
+                {itemsSorted.length > 0 && (
+                  <div className="beatmaps-list">
+                    {(() => {
+                      const bySet = itemsSorted.reduce((acc, bm) => {
+                        const setKey = bm.setId || bm.beatmapset_id || `single_${bm.id}`;
+                        if (!acc[setKey]) acc[setKey] = [];
+                        acc[setKey].push(bm);
+                        return acc;
+                      }, {});
+
+                      return Object.entries(bySet).map(([setKey, arr]) => {
+                        if (arr.length === 1) {
+                          const item = arr[0];
+                          const setId = item.setId || item.beatmapset_id;
+                          const cover = item.cover || (setId ? `https://assets.ppy.sh/beatmaps/${setId}/covers/list.jpg` : '/favicon.ico');
+                          return (
+                            <div className="beatmap-row" key={setKey} style={{ backgroundImage: `url(${cover})` }}>
+                              <div className="row-overlay" />
+                              <div className="row-content">
+                                <div className="row-title">{item.artist} - {item.title}</div>
+                                <div className="row-meta">
+                                  <span className="mapper">mapped by {item.creator}</span>
+                                  {typeof item.difficulty_rating === 'number' && (
+                                    <span className="diff">[{item.version}] {(item.difficulty_rating).toFixed(2)}★</span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        const first = arr[0];
+                        const setId = first.setId || first.beatmapset_id;
+                        const cover = first.cover || (setId ? `https://assets.ppy.sh/beatmaps/${setId}/covers/list.jpg` : '/favicon.ico');
+                        const sortedDiffs = [...arr].sort((a, b) => (a.difficulty_rating || 0) - (b.difficulty_rating || 0));
+                        return (
+                          <div className="beatmapset-row" key={setKey} style={{ backgroundImage: `url(${cover})` }}>
+                            <div className="row-overlay" />
+                            <div className="row-content">
+                              <div className="row-title">{first.artist} - {first.title}</div>
+                              <div className="row-meta">
+                                <span className="mapper">mapped by {first.creator}</span>
+                                <div className="diff-chips">
+                                  {sortedDiffs.map(diff => (
+                                    <span className="chip" key={diff.id} title={`${diff.version} (${(diff.difficulty_rating || 0).toFixed(2)}★)`}>
+                                      <span className="stars">{(diff.difficulty_rating || 0).toFixed(2)}★</span>
+                                      <span className="version">[{diff.version}]</span>
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      });
+                    })()}
                   </div>
                 )}
               </div>

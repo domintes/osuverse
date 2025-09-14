@@ -115,16 +115,6 @@ export default function Navigation() {
   };
   const debouncedSearch = debounce(async (query) => {
     if (query.trim()) {
-      // Szukaj w API osu!
-      try {
-        const res = await fetch(`/api/search?query=${encodeURIComponent(query)}`);
-        const data = await res.json();
-        setSearchResults(data.beatmaps || []);
-      } catch (err) {
-        console.error('Search error:', err);
-        setSearchResults([]);
-      }
-      
       // Szukaj w kolekcjach użytkownika
       if (collections && collections.beatmaps) {
         const userBeatmaps = Object.values(collections.beatmaps).filter(beatmap => 
@@ -138,6 +128,16 @@ export default function Navigation() {
         );
         setUserCollectionResults(userBeatmaps);
       }
+
+      // Szukaj w API osu! po kolekcjach (backend sam doda Authorization)
+      try {
+        const res = await fetch(`/api/search?query=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        setSearchResults(data.beatmaps || []);
+      } catch (err) {
+        console.error('Search error:', err);
+        setSearchResults([]);
+      }
     } else {
       setSearchResults([]);
       setUserCollectionResults([]);
@@ -149,36 +149,7 @@ export default function Navigation() {
     if (!showSearchBox || (!searchResults.length && !userCollectionResults.length && !searchQuery)) return null;
     return (
       <div className="search-results-dropdown">
-        {/* Sekcja: Wyniki z osu! API */}
-        <div className="search-results-section">
-          <div className="search-results-header">Wyniki z osu! API</div>
-          {searchResults.length > 0 ? (
-            searchResults.slice(0, 5).map((result) => (
-              <a
-                key={result.id}
-                className="search-result-item"
-                href={`https://osu.ppy.sh/beatmapsets/${result.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src={result.covers?.card || result.covers?.cover || result.covers?.list || result.covers?.slimcover || '/favicon.ico'}
-                  alt="cover"
-                  className="search-result-cover"
-                  style={{ width: 36, height: 36, borderRadius: 6, marginRight: 10, objectFit: 'cover', background: '#23262f' }}
-                  onError={e => { e.target.src = '/favicon.ico'; }}
-                />
-                <span style={{ fontWeight: 600 }}>{result.artist} - {result.title}</span>
-                {result.creator && (
-                  <span style={{ color: '#b8a6c1', marginLeft: 8, fontSize: '0.95em' }}>by {result.creator}</span>
-                )}
-              </a>
-            ))
-          ) : (
-            <div className="search-result-empty">Brak wyników z osu! API</div>
-          )}
-        </div>
-        {/* Sekcja: Beatmapy powiązane z kolekcjami użytkownika */}
+        {/* Najpierw: Beatmapy powiązane z kolekcjami użytkownika */}
         <div className="search-results-section">
           <div className="search-results-header">Powiązane z Twoimi kolekcjami</div>
           {userCollectionResults.length > 0 ? (
@@ -216,6 +187,35 @@ export default function Navigation() {
             <div className="search-result-empty">Brak powiązanych beatmap w Twoich kolekcjach</div>
           )}
         </div>
+        {/* Następnie: Wyniki z osu! API */}
+        <div className="search-results-section">
+          <div className="search-results-header">Wyniki z osu! API</div>
+          {searchResults.length > 0 ? (
+            searchResults.slice(0, 5).map((result) => (
+              <a
+                key={result.id}
+                className="search-result-item"
+                href={`https://osu.ppy.sh/beatmapsets/${result.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src={result.covers?.card || result.covers?.cover || result.covers?.list || result.covers?.slimcover || '/favicon.ico'}
+                  alt="cover"
+                  className="search-result-cover"
+                  style={{ width: 36, height: 36, borderRadius: 6, marginRight: 10, objectFit: 'cover', background: '#23262f' }}
+                  onError={e => { e.target.src = '/favicon.ico'; }}
+                />
+                <span style={{ fontWeight: 600 }}>{result.artist} - {result.title}</span>
+                {result.creator && (
+                  <span style={{ color: '#b8a6c1', marginLeft: 8, fontSize: '0.95em' }}>by {result.creator}</span>
+                )}
+              </a>
+            ))
+          ) : (
+            <div className="search-result-empty">Brak wyników z osu! API</div>
+          )}
+        </div>
       </div>
     );
   };
@@ -223,7 +223,7 @@ export default function Navigation() {
   return (
     <nav>
       <div className="navbar-container">
-        <ul className={`nav-links ${mobileMenuOpen ? 'open' : ''}`}>
+        <ul id="primary-navigation" className={`nav-links ${mobileMenuOpen ? 'open' : ''}`}>
           <li className="logo-container">
             <Link href="/" className={pathname === '/' ? 'active logo-link' : 'logo-link'} onClick={handleNavLinkClick}>
               <OsuverseLogo />
@@ -288,11 +288,18 @@ export default function Navigation() {
           </li>
         </ul>
         {/* Przycisk menu hamburgera dla mniejszych ekranów */}
-        <div className="hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        <button
+          className="hamburger"
+          aria-label="Toggle navigation menu"
+          aria-controls="primary-navigation"
+          aria-expanded={mobileMenuOpen}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          type="button"
+        >
           <div className="line"></div>
           <div className="line"></div>
           <div className="line"></div>
-        </div>
+        </button>
       </div>
     </nav>
   );
