@@ -247,8 +247,8 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  border: 1px solid #f264a4;
+  padding: 2px;
+  border: none;
   border-radius: 8px;
   background: rgba(47, 15, 58, 0.5);
   color: #f264a4;
@@ -258,8 +258,6 @@
 }
 
 .action-btn:hover {
-  background: rgba(47, 15, 58, 0.8);
-  border-color: #ff7eba;
   color: #ff7eba;
 }
 

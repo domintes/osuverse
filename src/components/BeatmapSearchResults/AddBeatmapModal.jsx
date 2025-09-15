@@ -41,6 +41,19 @@ export default function AddBeatmapModal({
   // Get collections and dispatch from the reducer atom
   const [state, dispatch] = useAtom(collectionsReducerAtom);
 
+  // Close on ESCAPE
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        onClose && onClose();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
+
   const handleAddTag = () => {
     setTags([...tags, { tag: '', tag_value: 0 }]);
     // Focus on tag input after adding new tag

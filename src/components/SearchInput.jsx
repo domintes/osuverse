@@ -450,8 +450,8 @@ export default function SearchInput() {
                     />
                 ))}
             </div>                {modalOpen && modalTarget && (
-                <div className="search-artist-modal-overlay">
-                    <div className="search-artist-modal-content">
+                <div className="search-artist-modal-overlay" onClick={closeModal} onKeyDown={(e)=>{ if(e.key==='Escape'){ e.stopPropagation(); closeModal(); }}} tabIndex={-1}>
+                    <div className="search-artist-modal-content" onClick={(e)=>e.stopPropagation()}>
                         <button className="search-artist-modal-close" onClick={closeModal}>✕</button>
                         <h2 className="search-artist-modal-title">Select collection to add</h2>
                         <div className="search-artist-modal-items">

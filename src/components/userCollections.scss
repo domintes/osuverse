@@ -649,6 +649,30 @@
     .stars { color: #64c8ff; font-weight: 700; }
     .version { color: #b8a6c1; }
   }
+
+  /* Grid layout for collections page (mirrors search page columns) */
+  .collections-grid {
+    display: grid;
+    grid-gap: 12px;
+  }
+  .collections-grid-1-columns { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  .collections-grid-2-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .collections-grid-3-columns { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .collections-grid-4-columns { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+  /* Ensure expanded diffs span full width under the grid */
+  .collections-grid .beatmapset-diffs {
+    grid-column: 1 / -1;
+  }
+
+  /* Make titles clickable like in search without changing color */
+  .row-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .row-title a:hover {
+    text-decoration: underline;
+  }
 }
 
 @media (max-width: 640px) {

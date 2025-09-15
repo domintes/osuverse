@@ -12,7 +12,7 @@ import { useAtom as useReducerAtom } from 'jotai';
 import { collectionsReducerAtom } from '@/store/collectionsReducerAtom';
 import { reorderBeatmaps, moveBeatmap } from '@/store/reducers/actions';
 
-export default function UserCollectionsSection({ editMode = false }) {
+export default function UserCollectionsSection({ editMode = false, rowCount = 2 }) {
   const [collections] = useAtom(collectionsAtom);
   const [globalTags] = useAtom(selectedTagsAtom);
   const { sortMode, sortDirection, sortBeatmaps, toggleSortMode, toggleSortDirection } = useBeatmapSort();
@@ -100,6 +100,19 @@ export default function UserCollectionsSection({ editMode = false }) {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  const getSetUrl = (bmOrSet) => {
+    const setId = getSetId(bmOrSet);
+    return setId ? `https://osu.ppy.sh/beatmapsets/${setId}` : undefined;
+  };
+  const getDiffUrl = (bm) => {
+    const setId = getSetId(bm);
+    const beatmapId = getBeatmapId(bm);
+    const mode = getModeSlug(bm);
+    if (beatmapId && setId) return `https://osu.ppy.sh/beatmapsets/${setId}#${mode}/${beatmapId}`;
+    if (beatmapId) return `https://osu.ppy.sh/beatmaps/${beatmapId}`;
+    return getSetUrl(bm);
+  };
+
   // Prefer list-type covers for list layout (Beatmapset.covers.list), with robust fallbacks
   const getSetCoverListUrl = (bmOrSet) => {
     const setId = getSetId(bmOrSet);
@@ -158,7 +171,7 @@ export default function UserCollectionsSection({ editMode = false }) {
   }
 
   return (
-    <div className="user-collections-section">
+  <div className="user-collections-section">
       <SortToolbar sortMode={sortMode} sortDirection={sortDirection} setModeDir={{ toggleSortMode, toggleSortDirection }} />
 
       {/* Special sections */}
@@ -177,7 +190,7 @@ export default function UserCollectionsSection({ editMode = false }) {
               {/* Render beatmaps grouped by set as in the default map below */}
               {/* We inline same logic by setting group variable */}
               {(() => { const group = favGroup; const itemsFiltered = group.items.filter(filterFn); const itemsSorted = sortBeatmaps(itemsFiltered); const tagGroups = groupTagsByCategory(group.items); return (
-                <div className="beatmaps-list">
+                <div className={`beatmaps-list collections-grid collections-grid-${rowCount}-columns`}>
                   {(() => {
                     const bySet = itemsSorted.reduce((acc, bm) => { const setKey = getSetId(bm) || `single_${bm.id}`; if (!acc[setKey]) acc[setKey] = []; acc[setKey].push(bm); return acc; }, {});
                     return Object.entries(bySet).map(([setKey, arr]) => {
@@ -188,7 +201,9 @@ export default function UserCollectionsSection({ editMode = false }) {
                           <div className={`beatmap-row ${editMode ? 'draggable' : ''}`} key={`fav_${setKey}`} style={{ backgroundImage: `url(${cover})` }} data-beatmap-id={item.id} onClick={(e) => { if (editMode) return; openDifficultyInNewTab(item); }}>
                             <div className="row-overlay" />
                             <div className="row-content">
-                              <div className="row-title">{item.artist} - {item.title}</div>
+                              <div className="row-title">
+                                <a href={getDiffUrl(item)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{item.artist} - {item.title}</a>
+                              </div>
                               <div className="row-meta"><span className="mapper">mapped by {item.creator}</span>{typeof item.difficulty_rating === 'number' && (<span className="diff">[{item.version}] {(item.difficulty_rating).toFixed(2)}★</span>)}</div>
                             </div>
                           </div>
@@ -202,7 +217,9 @@ export default function UserCollectionsSection({ editMode = false }) {
                         <div className="beatmapset-row" key={`favset_${setKey}`} style={{ backgroundImage: `url(${cover})` }} onClick={(e) => { if (editMode) return; openSetInNewTab(setId); }}>
                           <div className="row-overlay" />
                           <div className="row-content">
-                            <div className="row-title">{first.artist} - {first.title}</div>
+                            <div className="row-title">
+                              <a href={getSetUrl(first)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{first.artist} - {first.title}</a>
+                            </div>
                             <div className="row-meta"><span className="mapper">mapped by {first.creator}</span></div>
                           </div>
                         </div>
@@ -226,12 +243,14 @@ export default function UserCollectionsSection({ editMode = false }) {
           {isExpanded('special_check') && (
             <div className="collection-group-body">
               {(() => { const group = toCheckGroup; const itemsFiltered = group.items.filter(filterFn); const itemsSorted = sortBeatmaps(itemsFiltered); return (
-                <div className="beatmaps-list">
+                <div className={`beatmaps-list collections-grid collections-grid-${rowCount}-columns`}>
                   {itemsSorted.map((item) => { const cover = getSetCoverListUrl(item); return (
                     <div className={`beatmap-row`} key={`check_${item.id}`} style={{ backgroundImage: `url(${cover})` }} data-beatmap-id={item.id} onClick={(e) => { if (editMode) return; openDifficultyInNewTab(item); }}>
                       <div className="row-overlay" />
                       <div className="row-content">
-                        <div className="row-title">{item.artist} - {item.title}</div>
+                        <div className="row-title">
+                          <a href={getDiffUrl(item)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{item.artist} - {item.title}</a>
+                        </div>
                         <div className="row-meta"><span className="mapper">mapped by {item.creator}</span>{typeof item.difficulty_rating === 'number' && (<span className="diff">[{item.version}] {(item.difficulty_rating).toFixed(2)}★</span>)}</div>
                       </div>
                     </div>
@@ -263,7 +282,7 @@ export default function UserCollectionsSection({ editMode = false }) {
               <div className="collection-group-body">
                 {/* Widok listy beatmap pogrupowanych po beatmapsecie */}
                 {itemsSorted.length > 0 && (
-                  <div className="beatmaps-list">
+                  <div className={`beatmaps-list collections-grid collections-grid-${rowCount}-columns`}>
                     {(() => {
                       const bySet = itemsSorted.reduce((acc, bm) => {
                         const setKey = getSetId(bm) || `single_${bm.id}`;
@@ -309,7 +328,9 @@ export default function UserCollectionsSection({ editMode = false }) {
                             >
                               <div className="row-overlay" />
                               <div className="row-content">
-                                <div className="row-title">{item.artist} - {item.title}</div>
+                                <div className="row-title">
+                                  <a href={getDiffUrl(item)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{item.artist} - {item.title}</a>
+                                </div>
                                 <div className="row-meta">
                                   <span className="mapper">mapped by {item.creator}</span>
                                   {typeof item.difficulty_rating === 'number' && (
@@ -354,7 +375,9 @@ export default function UserCollectionsSection({ editMode = false }) {
                             >
                               <div className="row-overlay" />
                               <div className="row-content">
-                                <div className="row-title">{first.artist} - {first.title}</div>
+                                <div className="row-title">
+                                  <a href={getSetUrl(first)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{first.artist} - {first.title}</a>
+                                </div>
                                 <div className="row-meta">
                                   <span className="mapper">mapped by {first.creator}</span>
                                   {!isSetExpanded(setId) && (

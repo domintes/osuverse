@@ -409,23 +409,8 @@ function BeatmapsetItem({
       className={classNames('beatmapset-item', { 'expanded': expanded })}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="beatmapset-actions">
-        <button
-          className="action-btn star"
-          title={isSetFavorited(set) ? 'Remove from Favourites' : 'Add to Favourites'}
-          onClick={(e) => { e.stopPropagation(); toggleFavoriteSet(set); }}
-          aria-label="Toggle favourite"
-        >
-          {isSetFavorited(set) ? <FaStar /> : <FaRegStar />}
-        </button>
-        <button
-          className="action-btn zap"
-          title={isSetInToCheck(set) ? 'Remove from To Check' : 'Quick add to To Check'}
-          onClick={(e) => { e.stopPropagation(); quickAddToCheck(set); }}
-          aria-label="Quick add To Check"
-        >
-          {isSetInToCheck(set) ? <BiSolidZap /> : <LuZap />}
-        </button>
+      {/* Left edge vertical action (plus full-height) */}
+      <div className="beatmapset-action-rail left">
         <button
           className="action-btn plus"
           title="Add to collection"
@@ -445,6 +430,25 @@ function BeatmapsetItem({
 
       <div className="beatmapset-info">
         <div className="beatmapset-title">
+          <div className="title-actions">
+
+            <button
+              className="action-btn zap"
+              title={isSetInToCheck(set) ? 'Remove from To Check' : 'Quick add to To Check'}
+              onClick={(e) => { e.stopPropagation(); quickAddToCheck(set); }}
+              aria-label="Quick add To Check"
+            >
+              {isSetInToCheck(set) ? <BiSolidZap /> : <LuZap />}
+            </button>
+            <button
+              className="action-btn star"
+              title={isSetFavorited(set) ? 'Remove from Favourites' : 'Add to Favourites'}
+              onClick={(e) => { e.stopPropagation(); toggleFavoriteSet(set); }}
+              aria-label="Toggle favourite"
+            >
+              {isSetFavorited(set) ? <FaStar /> : <FaRegStar />}
+            </button>
+          </div>
           <a
             href={`https://osu.ppy.sh/beatmapsets/${set.id}`}
             target="_blank"
@@ -578,6 +582,17 @@ function BeatmapsetItem({
           )}
         </motion.div>
       )}
+      {/* Bottom-right download button */}
+      <a
+        className="download-btn"
+        href={`https://osu.ppy.sh/beatmapsets/${set.id}/download`}
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Download from Bancho"
+        onClick={(e) => e.stopPropagation()}
+      >
+        ⬇
+      </a>
     </div>
   );
 }

@@ -49,8 +49,8 @@ export default function AddBeatmapModal() {
         <>
             <button className="add-beatmap-button" onClick={() => setIsOpen(true)}>Add beatmap</button>
             {isOpen && (
-                <div className="modal">
-                    <div className="modal-content">
+                <div className="modal" onClick={()=>setIsOpen(false)} onKeyDown={(e)=>{ if(e.key==='Escape'){ e.stopPropagation(); setIsOpen(false);} }} tabIndex={-1}>
+                    <div className="modal-content" onClick={(e)=>e.stopPropagation()}>
                         <span className="close" onClick={() => setIsOpen(false)}>&times;</span>
                         <input
                             type="text"

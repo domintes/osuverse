@@ -17,6 +17,7 @@ export default function Collections() {
   const [importOpen, setImportOpen] = useState(false);
   const [importError, setImportError] = useState('');
   const [notifications, setNotifications] = useState([]);
+  const [rowCount, setRowCount] = useState(2);
   const fileInputRef = useRef(null);
 
   // Funkcja do wczytania danych testowych
@@ -123,6 +124,20 @@ export default function Collections() {
       <div className="collections-header">
         <h1 style={{ fontSize: 32, color: '#ea81fb', textShadow: '0 0 16px #2f0f3a' }}>Collections</h1>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          {/* Layout selector */}
+          <div className="collections-layout-select" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <label style={{ color: '#b8a6c1' }}>Layout</label>
+            <select
+              value={rowCount}
+              onChange={(e) => setRowCount(Number(e.target.value))}
+              style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid rgba(234,129,251,0.35)', background: 'rgba(0,0,0,0.2)', color: '#fff' }}
+            >
+              <option value={1}>1 column</option>
+              <option value={2}>2 columns</option>
+              <option value={3}>3 columns</option>
+              <option value={4}>4 columns</option>
+            </select>
+          </div>
           {/* Import / Export */}
           <button
             onClick={() => setImportOpen(true)}
@@ -201,6 +216,8 @@ export default function Collections() {
           className="import-modal-backdrop"
           style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           onClick={() => setImportOpen(false)}
+          onKeyDown={(e)=>{ if(e.key==='Escape'){ e.stopPropagation(); setImportOpen(false); } }}
+          tabIndex={-1}
         >
           <div
             className="import-modal"
@@ -277,7 +294,7 @@ export default function Collections() {
         </div>
       )}
       
-      <UserCollectionsSection editMode={editMode} />
+      <UserCollectionsSection editMode={editMode} rowCount={rowCount} />
     </MainOsuverseDiv>
   );
 }
