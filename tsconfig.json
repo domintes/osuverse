@@ -30,9 +30,7 @@
     "types": [
       "node",
       "react",
-      "react-dom",
-      "estree",
-      "json-schema"
+      "react-dom"
     ],
     "typeRoots": [
       "./node_modules/@types"
