@@ -55,55 +55,56 @@
 .beatmap-search-select-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #ea81fb;
+  color: var(--accent);
 }
 
 .beatmap-search-input {
   padding: 0.75rem 1rem;
-  border: 1px solid #4d2f6c;
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
   border-radius: 0.5rem;
-  background: rgba(47, 15, 58, 0.3);
-  color: #ffcae6;
+  background: var(--overlay-30);
+  color: var(--text);
   width: 100%;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
-  
+
   &:focus {
-    border-color: #ea81fb;
-    box-shadow: 0 0 0 2px rgba(234, 129, 251, 0.2);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent) 25%, transparent);
   }
-  
+
   &::placeholder {
-    color: rgba(255, 202, 230, 0.5);
+    color: color-mix(in oklab, var(--text) 55%, transparent);
   }
 }
 
 .beatmap-search-select {
   padding: 0.75rem 1rem;
-  border: 1px solid #4d2f6c;
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
   border-radius: 0.5rem;
-  background: rgba(47, 15, 58, 0.3);
-  color: #ffcae6;
+  background: var(--overlay-30);
+  color: var(--text);
   width: 100%;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
   cursor: pointer;
-  
+
   &:focus {
-    border-color: #ea81fb;
-    box-shadow: 0 0 0 2px rgba(234, 129, 251, 0.2);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent) 25%, transparent);
   }
-  
+
   option {
-    background: #2f0f3a;
+    background: var(--panel1);
+    color: var(--text);
   }
 }
 
 .beatmap-search-button {
   align-self: flex-start;
   padding: 0.75rem 2rem;
-  background: linear-gradient(135deg, #4d2f6c 0%, #ea81fb 100%);
-  color: white;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 35%, var(--panel2)) 0%, var(--accent) 100%);
+  color: var(--accent-contrast);
   font-weight: 600;
   border: none;
   border-radius: 0.5rem;
@@ -112,12 +113,12 @@
   
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(234, 129, 251, 0.3);
+    box-shadow: 0 4px 12px color-mix(in oklab, var(--accent) 35%, transparent);
   }
   
   &:active:not(:disabled) {
     transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(234, 129, 251, 0.3);
+    box-shadow: 0 2px 6px color-mix(in oklab, var(--accent) 30%, transparent);
   }
   
   &:disabled {
@@ -132,7 +133,7 @@
 
 .beatmap-search-results-info {
   margin-bottom: 1rem;
-  color: #ea81fb;
+  color: var(--accent);
   font-size: 0.9rem;
   text-align: center;
 }
@@ -140,8 +141,8 @@
 .beatmap-search-instructions {
   margin-top: 12px;
   padding: 10px 15px;
-  background: rgba(47, 15, 58, 0.3);
-  border: 1px solid rgba(234, 129, 251, 0.3);
+  background: var(--overlay-30);
+  border: 1px solid color-mix(in oklab, var(--accent) 20%, transparent);
   border-radius: 8px;
   text-align: left;
   max-width: 600px;
@@ -151,7 +152,7 @@
 
 .beatmap-search-help-button {
   margin-left: 10px;
-  background-color: rgba(47, 15, 58, 0.3);
+  background-color: var(--overlay-30);
   border-radius: 50%;
   width: 32px;
   height: 32px;
@@ -161,7 +162,7 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background-color: rgba(234, 129, 251, 0.3);
+    background-color: color-mix(in oklab, var(--accent) 20%, transparent);
     transform: scale(1.1);
   }
 }
@@ -169,7 +170,7 @@
 .beatmap-search-instructions-title {
   font-weight: 600;
   margin-bottom: 8px;
-  color: #ffcae6;
+  color: var(--text);
   text-align: center;
 }
 

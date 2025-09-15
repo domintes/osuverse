@@ -17,17 +17,23 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange }) 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [themeColor, setThemeColor] = useState('purple');
+  const [customAccent, setCustomAccent] = useState('');
   const fileInputRef = useRef(null);
 
   useEffect(() => {
     const savedAvatar = localStorage.getItem('customAvatar');
     const savedNickname = localStorage.getItem('customNickname');
-    const savedTheme = localStorage.getItem('themeColor');
+  const savedTheme = localStorage.getItem('themeColor');
+  const savedAccent = localStorage.getItem('customAccentColor');
     if (savedAvatar) setCustomAvatar(savedAvatar);
     if (savedNickname) setCustomNickname(savedNickname);
     if (savedTheme) {
       setThemeColor(savedTheme);
       document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+    if (savedAccent) {
+      setCustomAccent(savedAccent);
+      try { document.documentElement.style.setProperty('--accent', savedAccent); } catch {}
     }
   }, []);
 
@@ -102,10 +108,17 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange }) 
   const handleSave = () => {
     localStorage.setItem('customNickname', customNickname);
     localStorage.setItem('themeColor', themeColor);
+    if (customAccent) {
+      localStorage.setItem('customAccentColor', customAccent);
+    } else {
+      localStorage.removeItem('customAccentColor');
+    }
     try {
       document.documentElement.setAttribute('data-theme', themeColor);
+      if (customAccent) document.documentElement.style.setProperty('--accent', customAccent);
     } catch {}
     setUnsavedChanges(false);
+    setOpen(false);
   };
 
   const handleExit = () => {
@@ -140,7 +153,24 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange }) 
     setThemeColor(color);
     setUnsavedChanges(true);
     // live preview
-    try { document.documentElement.setAttribute('data-theme', color); } catch {}
+    try {
+      document.documentElement.setAttribute('data-theme', color);
+      if (customAccent) document.documentElement.style.setProperty('--accent', customAccent);
+    } catch {}
+  };
+
+  const handleCustomAccentChange = (e) => {
+    const val = e.target.value;
+    setCustomAccent(val);
+    setUnsavedChanges(true);
+    try { document.documentElement.style.setProperty('--accent', val); } catch {}
+  };
+
+  const resetCustomAccent = () => {
+    setCustomAccent('');
+    try {
+      document.documentElement.style.removeProperty('--accent');
+    } catch {}
   };
 
   return (
@@ -178,12 +208,12 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange }) 
                       <>
                         {dragging ? (
                           <>
-                            <CloudUpload size={40} color="#ff4fd8" />
+                            <CloudUpload size={40} />
                             <span>Drop here</span>
                           </>
                         ) : (
                           <>
-                            <LucideImage size={40} color="#ff4fd8" />
+                            <LucideImage size={40} />
                             <span>Change Avatar</span>
                           </>
                         )}
@@ -232,6 +262,19 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange }) 
                         title={c}
                       />
                     ))}
+                  </div>
+                  <div className="custom-accent">
+                    <label htmlFor="custom-accent-color">Custom accent</label>
+                    <input
+                      id="custom-accent-color"
+                      type="color"
+                      value={customAccent || '#000000'}
+                      onChange={handleCustomAccentChange}
+                      aria-label="Pick custom accent color"
+                    />
+                    <button type="button" className="reset-accent" onClick={resetCustomAccent}>
+                      Reset
+                    </button>
                   </div>
                 </div>
                 <div className="action-buttons">
@@ -287,7 +330,7 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange }) 
           <Dialog.Overlay className="user-panel-overlay" />
           <Dialog.Content className="warning-modal">
             <div className="warning-header">
-              <h2 style={{ color: '#ff4fd8' }}>WARNING</h2>
+              <h2>WARNING</h2>
               <button onClick={() => setShowWarningModal(false)}><X /></button>
             </div>
             <p>This action will permanently delete all your collections data and remove Osuverse OAuth authorization.</p>

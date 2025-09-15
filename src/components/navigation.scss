@@ -86,7 +86,7 @@ nav {
   }
 
   a {
-    color: #ffcae6;
+    color: var(--text);
     text-decoration: none;
     padding: 0.5rem 1.2rem;
     border-radius: 8px;
@@ -96,12 +96,8 @@ nav {
     position: relative;
     z-index: 1;
     letter-spacing: 0.04em;
-    background: linear-gradient(
-      90deg,
-      rgba(60, 20, 60, 0.7) 0%,
-      rgba(120, 44, 90, 0.2) 100%
-    );
-    box-shadow: 0 2px 8px 0 #2f0f3a44;
+    background: linear-gradient(90deg, color-mix(in oklab, var(--panel2) 60%, transparent) 0%, color-mix(in oklab, var(--panel1) 20%, transparent) 100%);
+    box-shadow: 0 2px 8px 0 color-mix(in oklab, var(--bg) 30%, transparent);
     border: 1px solid transparent;
     
     @media (max-width: 768px) {
@@ -116,19 +112,19 @@ nav {
     }
 
     &:hover {
-      background: linear-gradient(90deg, #4d1a3a 0%, #780f56 100%);
-      color: var(--accent);
-      box-shadow: 0 2px 16px 0 #4d1a3a99;
+      background: linear-gradient(90deg, color-mix(in oklab, var(--accent) 22%, var(--panel1)) 0%, color-mix(in oklab, var(--accent) 35%, var(--panel2)) 100%);
+      color: var(--accent-contrast);
+      box-shadow: 0 2px 16px 0 color-mix(in oklab, var(--accent) 30%, transparent);
       border: 1px solid var(--accent);
     }
     &.active {
-      background: linear-gradient(90deg, #2f0f3a 0%, var(--accent) 100%);
-      color: #fff;
+      background: linear-gradient(90deg, color-mix(in oklab, var(--panel1) 30%, var(--accent)) 0%, var(--accent) 100%);
+      color: var(--accent-contrast);
       box-shadow: 0 2px 24px 0 color-mix(in oklab, var(--accent) 80%, transparent);
       border: 1px solid var(--accent);
     }
   }  .login-btn {
-    background: linear-gradient(90deg, var(--accent) 60%, #2f0f3a 100%);
+    background: linear-gradient(90deg, var(--accent) 60%, color-mix(in oklab, var(--panel1) 30%, transparent) 100%);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -138,7 +134,7 @@ nav {
     font-weight: bold;
     text-decoration: none;
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 12px 0 color-mix(in oklab, var(--accent) 30%, transparent), 0 0 16px 0 #2f0f3a55;
+  box-shadow: 0 2px 12px 0 color-mix(in oklab, var(--accent) 30%, transparent), 0 0 16px 0 color-mix(in oklab, var(--bg) 35%, transparent);
   border: 1px solid var(--accent);
     
     @media (max-width: 768px) {
@@ -153,8 +149,8 @@ nav {
     }
 
     &:hover {
-      background: linear-gradient(90deg, color-mix(in oklab, var(--accent) 80%, #ffffff) 60%, #2f0f3a 100%);
-      color: #fff;
+      background: linear-gradient(90deg, color-mix(in oklab, var(--accent) 80%, #ffffff) 60%, color-mix(in oklab, var(--panel1) 30%, transparent) 100%);
+      color: var(--accent-contrast);
       box-shadow: 0 2px 24px 0 color-mix(in oklab, var(--accent) 80%, transparent);
       border: 1px solid var(--accent);
     }
@@ -356,7 +352,7 @@ nav {
     cursor: pointer;
     font-family: 'Orbitron', Arial, sans-serif;
     font-size: 0.9rem;
-    color: #ffcae6;
+  color: var(--text);
     user-select: none;
   }
   
@@ -368,9 +364,9 @@ nav {
     position: relative;
     width: 40px;
     height: 20px;
-    background: #3a1a4d;
+  background: var(--panel2);
     border-radius: 20px;
-    border: 1px solid #f264a4;
+  border: 1px solid color-mix(in oklab, var(--accent) 35%, transparent);
     transition: background 0.3s;
     
     &::before {
@@ -380,27 +376,27 @@ nav {
       left: 2px;
       width: 14px;
       height: 14px;
-      background: #f264a4;
+  background: var(--accent);
       border-radius: 50%;
       transition: transform 0.3s;
     }
   }
   
   .toggle-input:checked + .toggle-slider {
-    background: #f264a4;
+    background: var(--accent);
     
     &::before {
       transform: translateX(20px);
-      background: #2f0f3a;
+  background: var(--panel1);
     }
   }
   
   .toggle-text {
-    color: #f264a4;
+    color: var(--accent);
     transition: color 0.3s;
   }
   
   .toggle-input:checked ~ .toggle-text {
-    color: #ff7eba;
+    color: color-mix(in oklab, var(--accent) 80%, #ffffff);
   }
 }
