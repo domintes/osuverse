@@ -5,8 +5,17 @@
   --accent-contrast: #0b0b0f;
   --bg: #0b0b0f;
   --bg-soft: #111118;
-  --panel: #141420;
   --text: #e6e6f0;
+  /* Background and panel palette */
+  --bg1: #2f0f3a;
+  --bg2: #1a0a24;
+  --panel1: #2f0f3a;
+  --panel2: #3a1a4d;
+  /* Overlays with alpha baked in */
+  --overlay-88: rgba(47, 15, 58, 0.88);
+  --overlay-70: rgba(47, 15, 58, 0.7);
+  --overlay-50: rgba(47, 15, 58, 0.5);
+  --overlay-30: rgba(47, 15, 58, 0.3);
   --muted: #9aa0a6;
   --border: #2a2a3d;
   --success: #21c55d;
@@ -15,24 +24,68 @@
 }
 
 /* Themes */
+html[data-theme='purple'] {
+  --accent: #ff4fd8;
+  --accent-contrast: #0b0b0f;
+  --bg1: #2f0f3a;
+  --bg2: #1a0a24;
+  --panel1: #2f0f3a;
+  --panel2: #3a1a4d;
+  --overlay-88: rgba(47, 15, 58, 0.88);
+  --overlay-70: rgba(47, 15, 58, 0.7);
+  --overlay-50: rgba(47, 15, 58, 0.5);
+  --overlay-30: rgba(47, 15, 58, 0.3);
+}
 html[data-theme='green'] {
   --accent: #22c55e; /* emerald-500 */
   --accent-contrast: #06130b;
+  --bg1: #0f2a1b;
+  --bg2: #091610;
+  --panel1: #0d1f16;
+  --panel2: #123423;
+  --overlay-88: rgba(13, 31, 22, 0.88);
+  --overlay-70: rgba(13, 31, 22, 0.7);
+  --overlay-50: rgba(13, 31, 22, 0.5);
+  --overlay-30: rgba(13, 31, 22, 0.3);
 }
 
 html[data-theme='blue'] {
   --accent: #3b82f6; /* blue-500 */
   --accent-contrast: #06101a;
+  --bg1: #0f1e2a;
+  --bg2: #081219;
+  --panel1: #0d1a27;
+  --panel2: #122a3b;
+  --overlay-88: rgba(13, 26, 39, 0.88);
+  --overlay-70: rgba(13, 26, 39, 0.7);
+  --overlay-50: rgba(13, 26, 39, 0.5);
+  --overlay-30: rgba(13, 26, 39, 0.3);
 }
 
 html[data-theme='red'] {
   --accent: #ef4444; /* red-500 */
   --accent-contrast: #1a0606;
+  --bg1: #2a0f12;
+  --bg2: #19080a;
+  --panel1: #1f0d0f;
+  --panel2: #3b1214;
+  --overlay-88: rgba(31, 13, 15, 0.88);
+  --overlay-70: rgba(31, 13, 15, 0.7);
+  --overlay-50: rgba(31, 13, 15, 0.5);
+  --overlay-30: rgba(31, 13, 15, 0.3);
 }
 
 html[data-theme='gray'] {
   --accent: #9ca3af; /* gray-400 */
   --accent-contrast: #0d0d0d;
+  --bg1: #171717;
+  --bg2: #0f0f0f;
+  --panel1: #141414;
+  --panel2: #1f1f1f;
+  --overlay-88: rgba(20, 20, 20, 0.88);
+  --overlay-70: rgba(20, 20, 20, 0.7);
+  --overlay-50: rgba(20, 20, 20, 0.5);
+  --overlay-30: rgba(20, 20, 20, 0.3);
 }
 
 /* Common utility using theme */
@@ -98,7 +151,7 @@ a {
 
 body, html {
   min-height: 100vh;
-  background: linear-gradient(135deg, #2f0f3a 0%, #1a0a24 100%);
+  background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
   color: #f5f5f5;
   font-family: 'Orbitron', 'Bruno Ace', 'Rubik Glitch', 'Cracked Code', 'Segoe UI', 'Arial', sans-serif;
   letter-spacing: 0.01em;
@@ -108,9 +161,9 @@ body, html {
   box-sizing: border-box;
   overflow-x: hidden;
   background-image: 
-    linear-gradient(rgba(47, 15, 58, 0.92), rgba(10, 4, 18, 0.96)),
-    repeating-linear-gradient(90deg, rgba(180, 120, 255, 0.04) 0px, rgba(180, 120, 255, 0.04) 1px, transparent 1px, transparent 30px),
-    repeating-linear-gradient(0deg, rgba(180, 120, 255, 0.04) 0px, rgba(180, 120, 255, 0.04) 1px, transparent 1px, transparent 30px);
+    linear-gradient(color-mix(in oklab, var(--bg1) 92%, var(--bg2)), color-mix(in oklab, var(--bg2) 96%, black)),
+    repeating-linear-gradient(90deg, color-mix(in oklab, var(--accent) 15%, transparent) 0px, color-mix(in oklab, var(--accent) 15%, transparent) 1px, transparent 1px, transparent 30px),
+    repeating-linear-gradient(0deg, color-mix(in oklab, var(--accent) 15%, transparent) 0px, color-mix(in oklab, var(--accent) 15%, transparent) 1px, transparent 1px, transparent 30px);
 }
 
 .app-body {

@@ -1,5 +1,5 @@
 .user-panel-overlay {
-  background: rgba(47, 15, 58, 0.88);
+  background: var(--overlay-88);
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -20,7 +20,7 @@
 }
 
 .user-panel-content {
-  background: linear-gradient(120deg, #2f0f3a 60%, #3a1a4d 100%);
+  background: linear-gradient(120deg, var(--panel1) 60%, var(--panel2) 100%);
   border-radius: 18px;
   box-shadow: 0 0 40px 0 color-mix(in oklab, var(--accent) 40%, transparent), 0 0 80px 0 #2f0f3a55;
   border: 2px solid color-mix(in oklab, var(--accent) 30%, transparent);
@@ -34,7 +34,7 @@
   max-height: 90vh;
   padding: 2rem 2.5rem 2rem 2rem;
   z-index: 1100;
-  color: #ffcae6;
+  color: var(--text);
   animation: popIn 0.22s;
   overflow-y: auto;
 }
@@ -52,7 +52,7 @@
   border-radius: 50%;
   border: 2.5px solid var(--accent);
   box-shadow: 0 0 16px color-mix(in oklab, var(--accent) 50%, transparent);
-  background: #2f0f3a;
+  background: var(--panel1);
 }
 
 .user-panel-username {
@@ -91,7 +91,7 @@
   box-shadow: 0 2px 8px 0 #2f0f3a44;
 }
 .user-panel-button:hover {
-  background: linear-gradient(90deg, #2f0f3a 0%, #4D2F6C 100%);
+  background: linear-gradient(90deg, var(--panel1) 0%, #4D2F6C 100%);
   color: var(--accent);
   box-shadow: 0 2px 16px 0 #2f0f3a99;
   filter: brightness(1.1);
@@ -179,7 +179,7 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s;
-  background: rgba(47, 15, 58, 0.5);
+  background: var(--overlay-50);
   color: var(--accent);
   font-family: 'Orbitron', Arial, sans-serif;
   text-align: center;
@@ -188,7 +188,7 @@
 
 .avatar-upload:hover {
   border-color: var(--accent);
-  background: rgba(47, 15, 58, 0.8);
+  background: color-mix(in oklab, var(--panel1) 80%, black);
 }
 
 .avatar-upload.dragging {
@@ -222,10 +222,10 @@
 }
 
 .nickname-section input {
-  background: rgba(47, 15, 58, 0.8);
+  background: color-mix(in oklab, var(--panel1) 80%, black);
   border: 1px solid var(--accent);
   border-radius: 6px;
-  color: #ffcae6;
+  color: var(--text);
   padding: 0.5rem;
   font-family: 'Orbitron', Arial, sans-serif;
   text-align: center;
@@ -244,21 +244,41 @@
 }
 
 .action-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 2px;
-  border: none;
-  border-radius: 8px;
-  background: rgba(47, 15, 58, 0.5);
+  padding: 0.5rem 0.75rem;
+  border: 1px solid currentColor;
+  border-radius: 10px;
+  background: var(--overlay-30);
   color: var(--accent);
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.08s ease;
   font-family: 'Orbitron', Arial, sans-serif;
+  line-height: 1.2;
+  box-shadow: 0 2px 10px 0 color-mix(in oklab, var(--accent) 20%, transparent);
+  white-space: nowrap;
+}
+
+.action-btn svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  flex-shrink: 0;
 }
 
 .action-btn:hover {
-  color: var(--accent);
+  background: color-mix(in oklab, var(--panel1) 85%, transparent);
+  box-shadow: 0 3px 14px 0 color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
+.action-btn:active {
+  transform: translateY(1px);
+}
+
+.action-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px color-mix(in oklab, var(--accent) 55%, transparent);
 }
 
 .logout-btn {
@@ -317,12 +337,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem;
-  background: rgba(47, 15, 58, 0.3);
+  background: var(--overlay-30);
   border-radius: 6px;
 }
 
 .stat-label {
-  color: #ffcae6;
+  color: var(--text);
   font-family: 'Orbitron', Arial, sans-serif;
 }
 
@@ -344,7 +364,7 @@
   padding: 0.75rem 1.5rem;
   border: 1px solid var(--accent);
   border-radius: 8px;
-  background: rgba(47, 15, 58, 0.5);
+  background: var(--overlay-50);
   color: var(--accent);
   cursor: pointer;
   transition: all 0.3s;
@@ -358,7 +378,7 @@
 }
 
 .warning-modal, .confirm-modal {
-  background: linear-gradient(120deg, #2f0f3a 60%, #3a1a4d 100%);
+  background: linear-gradient(120deg, var(--panel1) 60%, var(--panel2) 100%);
   border-radius: 18px;
   box-shadow: 0 0 40px 0 color-mix(in oklab, var(--accent) 40%, transparent), 0 0 80px 0 #2f0f3a55;
   border: 2px solid color-mix(in oklab, var(--accent) 40%, transparent);
@@ -434,6 +454,7 @@
 .theme-swatch.blue { background: #3b82f6; }
 .theme-swatch.red { background: #ef4444; }
 .theme-swatch.gray { background: #9ca3af; }
+.theme-swatch.purple { background: #a855f7; }
 .theme-swatch.active {
   border-color: #fff;
   box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent) 60%, transparent), 0 0 12px color-mix(in oklab, var(--accent) 50%, transparent);

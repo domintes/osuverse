@@ -13,7 +13,7 @@ const FloatingParticles = () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        class Particle {            constructor(x, y) {
+    class Particle {            constructor(x, y) {
                 this.x = x;
                 this.y = y;
                 this.size = Math.random() * 3 + 1;
@@ -21,9 +21,11 @@ const FloatingParticles = () => {
                 this.speedY = (Math.random() - 0.5) * 2;
                 this.life = Math.random() * 100 + 200;
                 this.opacity = 1;
-                // Osu! style colors
-                const colors = ['#f264a4', '#ffffff', '#9370DB', '#4D2F6C', '#FFC3E6'];
-                this.color = colors[Math.floor(Math.random() * colors.length)];
+                // Theme-aware colors: prefer accent with a few subtle variants
+                const styles = getComputedStyle(document.documentElement);
+                const accent = styles.getPropertyValue('--accent')?.trim() || '#f264a4';
+                const variants = [accent, 'rgba(255,255,255,0.8)'];
+                this.color = variants[Math.floor(Math.random() * variants.length)];
             }
             update() {
                 this.life--;
@@ -63,7 +65,7 @@ const FloatingParticles = () => {
                     ctx.shadowBlur = 0;
                 }
             }
-        }        function initParticles() {
+    }        function initParticles() {
             // Add matrix-like vertical lines occasionally
             setInterval(() => {
                 const addMatrixLine = Math.random() > 0.85;
@@ -92,8 +94,11 @@ const FloatingParticles = () => {
                 canvas.height / 2, 
                 canvas.width
             );
-            gradient.addColorStop(0, "rgba(47, 15, 58, 1)");
-            gradient.addColorStop(1, "rgba(0, 0, 0, 1)");
+            const styles = getComputedStyle(document.documentElement);
+            const bg1 = styles.getPropertyValue('--bg1')?.trim() || 'rgba(47, 15, 58, 1)';
+            const bg2 = styles.getPropertyValue('--bg2')?.trim() || 'rgba(0, 0, 0, 1)';
+            gradient.addColorStop(0, bg1);
+            gradient.addColorStop(1, bg2);
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 

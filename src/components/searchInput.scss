@@ -32,10 +32,10 @@
 }
 
 .search-artist-beatmap-item {
-  background: linear-gradient(90deg, #2f0f3a 80%, #3a1a4d 100%);
-  color: #ffcae6;
-  box-shadow: 0 2px 16px 0 #f264a455;
-  border: 1px solid #4d2f6c;
+  background: linear-gradient(90deg, var(--panel1) 80%, var(--panel2) 100%);
+  color: var(--text);
+  box-shadow: 0 2px 16px 0 color-mix(in oklab, var(--accent) 40%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent);
   margin: 12px 0;
   display: grid;
   align-items: center;
@@ -85,11 +85,11 @@
   height: auto;
   opacity: 1;
   filter: none;
-  box-shadow: 0 4px 32px 0 #f264a4cc;
+  box-shadow: 0 4px 32px 0 color-mix(in oklab, var(--accent) 80%, transparent);
   z-index: 5; /* Zwiększony z-index */
-  background: linear-gradient(90deg, #3a1a4d 80%, #f264a4 100%);
+  background: linear-gradient(90deg, var(--panel2) 80%, var(--accent) 100%);
   color: #fff;
-  border: 1px solid #f264a4;
+  border: 1px solid var(--accent);
   overflow: visible; /* Zapewnienie widoczności rozwinięcia */
   padding-bottom: 15px; /* Dodatkowy padding na dole */
   display: block;
@@ -108,8 +108,8 @@
   overflow: hidden;
   border-radius: 8px;
   transition: width 0.35s, height 0.35s;
-  box-shadow: 0 0 12px 0 #1a2a4d99;
-  border: 1px solid #4447b1;
+  box-shadow: 0 0 12px 0 color-mix(in oklab, var(--panel2) 60%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent) 45%, transparent);
 
   @media (max-width: 768px) {
     width: 80px;
@@ -184,8 +184,8 @@
   border-radius: 4px;
   margin-right: 4px;
   display: inline-block;
-  border: 1px solid #b144b1;
-  box-shadow: 0 0 4px #ea81fb44;
+  border: 1px solid color-mix(in oklab, var(--accent) 60%, transparent);
+  box-shadow: 0 0 4px color-mix(in oklab, var(--accent) 35%, transparent);
   transition: transform 0.15s;
 
   &.difficulty-easy {
@@ -222,10 +222,10 @@
   position: absolute;
   left: 0;
   top: 22px;
-  z-index: 10;  background: #1e0a24;
-  color: #ea81fb;
-  border: 1px solid #b144b1;
-  box-shadow: 0 2px 16px 0 #1a2a4d99;
+  z-index: 10;  background: color-mix(in oklab, var(--panel1) 80%, black);
+  color: var(--accent);
+  border: 1px solid color-mix(in oklab, var(--accent) 60%, transparent);
+  box-shadow: 0 2px 16px 0 color-mix(in oklab, var(--panel2) 60%, transparent);
   padding: 8px 12px;
   min-width: 180px;
   opacity: 0;
@@ -268,10 +268,10 @@
     left: 0;
     right: 0;
     top: 100%;
-    background: linear-gradient(145deg, #1e0a24 0%, #2f0f3a 50%, #3a1a4d 100%);
-    color: #ea81fb;
-    border: 1px solid #b144b1;
-    box-shadow: 0 4px 24px 4px rgba(47, 15, 58, 0.7), 0 0 16px #ea81fb22;
+  background: linear-gradient(145deg, color-mix(in oklab, var(--panel1) 90%, black) 0%, var(--panel1) 50%, var(--panel2) 100%);
+  color: var(--accent);
+  border: 1px solid color-mix(in oklab, var(--accent) 60%, transparent);
+  box-shadow: 0 4px 24px 4px color-mix(in oklab, var(--panel1) 70%, transparent), 0 0 16px color-mix(in oklab, var(--accent) 15%, transparent);
     padding: 12px;
     min-width: 200px;
     border-radius: 8px;
@@ -302,9 +302,9 @@
   position: absolute;
   right: 12px;
   top: 50%;
-  transform: translateY(-50%);  background: linear-gradient(90deg, rgba(47,15,58,0.8) 0%, rgba(120,44,90,0.5) 100%);
-  color: #ea81fb;
-  border: 1px solid #b144b1;
+  transform: translateY(-50%);  background: linear-gradient(90deg, color-mix(in oklab, var(--panel1) 80%, transparent) 0%, color-mix(in oklab, var(--panel2) 50%, transparent) 100%);
+  color: var(--accent);
+  border: 1px solid color-mix(in oklab, var(--accent) 60%, transparent);
   border-radius: 50%;
   cursor: pointer;
   font-size: 1rem;
@@ -319,8 +319,8 @@
   animation: pulse-glow 1.5s ease-in-out infinite alternate;
   &:hover {
     color: #fff;
-    background: linear-gradient(90deg, #2f0f3a 0%, #b144b1 100%);
-    filter: drop-shadow(0 0 12px #ea81fb);
+  background: linear-gradient(90deg, var(--panel1) 0%, var(--accent) 100%);
+  filter: drop-shadow(0 0 12px color-mix(in oklab, var(--accent) 80%, transparent));
     transform: translateY(-50%) scale(1.15);
     animation: none;
   }
@@ -434,15 +434,15 @@
 }
 
 .search-artist-modal-content {
-  background: linear-gradient(120deg, #2f0f3a 60%, #3a1a4d 100%);
+  background: linear-gradient(120deg, var(--panel1) 60%, var(--panel2) 100%);
   border-radius: 0.5rem;
   padding: 1.5rem;
   width: 100%;
   max-width: 26rem;
-  box-shadow: 0 0 32px rgba(242, 100, 164, 0.3);
+  box-shadow: 0 0 32px color-mix(in oklab, var(--accent) 30%, transparent);
   position: relative;
   color: #ffcae6;
-  border: 1px solid rgba(242, 100, 164, 0.3);
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
 }
 
 .search-artist-modal-close {
@@ -477,12 +477,12 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(242, 100, 164, 0.3);
+    background: color-mix(in oklab, var(--accent) 30%, transparent);
     border-radius: 4px;
   }
 
   &::-webkit-scrollbar-track {
-    background: rgba(47, 15, 58, 0.5);
+    background: var(--overlay-50);
   }
 }
 

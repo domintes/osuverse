@@ -16,7 +16,7 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange }) 
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [dragging, setDragging] = useState(false);
-  const [themeColor, setThemeColor] = useState('green');
+  const [themeColor, setThemeColor] = useState('purple');
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -222,7 +222,7 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange }) 
                     <span>Theme color</span>
                   </div>
                   <div className="theme-options">
-                    {['green','blue','red','gray'].map((c) => (
+                    {['purple','green','blue','red','gray'].map((c) => (
                       <button
                         key={c}
                         type="button"

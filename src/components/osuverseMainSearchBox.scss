@@ -30,9 +30,9 @@ input[type="text"] {
   width: 100%;
   padding: 12px 16px;
   font-size: 1.2rem;
-  border: 2px solid #3a1a4d;
+  border: 2px solid var(--panel2);
   border-radius: 8px;
-  background: #2f0f3a;
+  background: var(--panel1);
   color: #fff;
   outline: none;
   transition: border 0.2s, box-shadow 0.2s;
