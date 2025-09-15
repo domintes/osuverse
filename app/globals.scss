@@ -195,11 +195,11 @@ body.focus-mode {
   background: #1e1420;
 }
 ::-webkit-scrollbar-thumb {
-  background: #4D2F6C;
+  background: color-mix(in oklab, var(--panel1) 60%, var(--panel2));
   border-radius: 8px;
-  box-shadow: 0 0 8px #f264a466;
-  background-image: linear-gradient(45deg, rgba(242, 100, 164, 0.1) 25%, transparent 25%, 
-                    transparent 50%, rgba(242, 100, 164, 0.1) 50%, rgba(242, 100, 164, 0.1) 75%, 
+  box-shadow: 0 0 8px color-mix(in oklab, var(--accent) 40%, transparent);
+  background-image: linear-gradient(45deg, color-mix(in oklab, var(--accent) 10%, transparent) 25%, transparent 25%, 
+                    transparent 50%, color-mix(in oklab, var(--accent) 10%, transparent) 50%, color-mix(in oklab, var(--accent) 10%, transparent) 75%, 
                     transparent 75%, transparent);
 }
 
@@ -224,14 +224,14 @@ a:hover {
 .neon-border {
   border: 2.5px solid #fff;
   border-radius: 18px;
-  box-shadow: 0 0 32px color-mix(in oklab, var(--accent) 80%, transparent), 0 0 0 2px #fff, 0 0 80px 0 #2f0f3a55;
+  box-shadow: 0 0 32px color-mix(in oklab, var(--accent) 80%, transparent), 0 0 0 2px #fff, 0 0 80px 0 color-mix(in oklab, var(--bg1) 33%, transparent);
 }
 
 // Grid pattern background
 .grid-pattern {
   background-image: 
-    repeating-linear-gradient(90deg, rgba(242, 100, 164, 0.03) 0px, rgba(242, 100, 164, 0.03) 1px, transparent 1px, transparent 16px),
-    repeating-linear-gradient(0deg, rgba(242, 100, 164, 0.03) 0px, rgba(242, 100, 164, 0.03) 1px, transparent 1px, transparent 16px);
+    repeating-linear-gradient(90deg, color-mix(in oklab, var(--accent) 3%, transparent) 0px, color-mix(in oklab, var(--accent) 3%, transparent) 1px, transparent 1px, transparent 16px),
+    repeating-linear-gradient(0deg, color-mix(in oklab, var(--accent) 3%, transparent) 0px, color-mix(in oklab, var(--accent) 3%, transparent) 1px, transparent 1px, transparent 16px);
 }
 
 // Neon glow text

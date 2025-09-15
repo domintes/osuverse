@@ -2,9 +2,9 @@
   width: 100%;
   max-width: 700px;
   margin: 0 auto;
-  background: rgba(47, 15, 58, 0.92);
+  background: color-mix(in oklab, var(--overlay-88) 100%, transparent);
   border-radius: 16px;
-  box-shadow: 0 0 24px 0 color-mix(in oklab, var(--accent) 66%, transparent), 0 0 0 2px #fff, 0 0 56px 0 #2f0f3a55;
+  box-shadow: 0 0 24px 0 color-mix(in oklab, var(--accent) 66%, transparent), 0 0 0 2px #fff, 0 0 56px 0 color-mix(in oklab, var(--bg1) 33%, transparent);
   border: 2px solid var(--accent);
   padding: 24px 32px 32px 32px;
   position: relative;

@@ -3,18 +3,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(32, 8, 36, 0.7);
+  background: var(--overlay-70);
   padding: 8px 12px;
   border-radius: 6px;
   margin-bottom: 4px;
-  border-left: 3px solid rgba(234, 129, 251, 0.6);
+  border-left: 3px solid color-mix(in oklab, var(--accent) 60%, transparent);
   box-sizing: border-box;
   transition: transform 0.2s, background 0.2s;
   position: relative;
   overflow: hidden;
   
   &:hover {
-    background: rgba(53, 18, 65, 0.7);
+  background: var(--overlay-70);
     transform: translateY(-1px);
   }
   
@@ -85,17 +85,17 @@
   flex-direction: column;
   gap: 4px;
   padding: 0.5rem;
-  background-color: rgba(46, 21, 59, 0.82);
+  background-color: var(--overlay-70);
   margin-top: 8px; 
   margin-bottom: 8px;
   
   .beatmapset-difficulty-item {
     padding: 6px 10px; /* Mniejsze wypełnienie */
     margin-bottom: 3px; /* Mniejszy margines między trudnościami */
-    background: rgba(32, 8, 36, 0.5); /* Bardziej przezroczyste tło */
+  background: var(--overlay-50); /* Bardziej przezroczyste tło */
     
     &:hover {
-      background: rgba(53, 18, 65, 0.6);
+  background: color-mix(in oklab, var(--overlay-70) 85%, transparent);
     }
     
     .difficulty-name {
@@ -110,7 +110,7 @@
     
     .difficulty-tags {
       font-size: 0.85rem;
-      color: #c3a9ff;
+  color: color-mix(in oklab, var(--accent) 25%, white);
     }
   }
   
@@ -157,7 +157,7 @@
     position: relative;
     z-index: 1;
     padding: 10px 15px;
-    background-color: rgba(46, 21, 59, 0.9);
+  background-color: color-mix(in oklab, var(--overlay-88) 100%, transparent);
     cursor: pointer;
     
     .beatmapset-info {
@@ -195,7 +195,7 @@
     
     &:hover {
       color: rgba(255, 255, 255, 0.9);
-      background-color: rgba(234, 129, 251, 0.2);
+      background-color: color-mix(in oklab, var(--accent) 20%, transparent);
     }
     
     &.edit-button:hover {

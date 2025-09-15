@@ -4,13 +4,13 @@
   font-family: inherit;
   
   /* Styl tagify dostosowany do motywu osuverse */
-  --tagify-dd-color-primary: #ea81fb;
+  --tagify-dd-color-primary: var(--accent);
   --tagify-dd-bg-color: #0f0f1a;
   
   .tagify {
     --tags-border-color: rgba(234, 129, 251, 0.4);
     --tags-hover-border-color: rgba(234, 129, 251, 0.8);
-    --tags-focus-border-color: #ea81fb;
+  --tags-focus-border-color: var(--accent);
     --tag-bg: rgba(234, 129, 251, 0.2);
     --tag-hover: rgba(234, 129, 251, 0.4);
     --tag-text-color: #ffffff;

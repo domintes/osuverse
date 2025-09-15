@@ -9,7 +9,7 @@
     transition: filter 0.3s;
 
     &:hover {
-        filter: brightness(1.2) drop-shadow(0 0 10px rgba(234, 129, 251, 0.7));
+        filter: brightness(1.2) drop-shadow(0 0 10px color-mix(in oklab, var(--accent) 70%, transparent));
     }
 }
 

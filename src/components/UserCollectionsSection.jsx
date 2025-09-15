@@ -502,7 +502,7 @@ function SortToolbar({ sortMode, sortDirection, setModeDir }) {
           if (setModeDir.setSortDirection) setModeDir.setSortDirection(next);
         }}
         title="Toggle direction"
-        style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid #ea81fb', background: 'rgba(234,129,251,0.25)', color: '#fff' }}
+  style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid var(--accent)', background: 'color-mix(in oklab, var(--accent) 25%, transparent)', color: 'var(--text)' }}
       >
         {dir === 'asc' ? '↑' : '↓'}
       </button>

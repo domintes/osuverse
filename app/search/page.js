@@ -72,7 +72,7 @@ export default function SearchPage() {
 
     return (
         <MainOsuverseDiv className="search-container">
-            <h1 className="text-2xl font-bold mb-4" style={{ color: '#ea81fb', textShadow: '0 0 16px #2f0f3a' }}>Find beatmaps by artist</h1>
+            <h1 className="text-2xl font-bold mb-4" style={{ color: 'var(--accent)', textShadow: '0 0 16px color-mix(in oklab, var(--bg1) 60%, transparent)' }}>Find beatmaps by artist</h1>
             
             <form onSubmit={handleSearch} className="beatmap-search-form">
                 <div className="beatmap-search-form-inputs">

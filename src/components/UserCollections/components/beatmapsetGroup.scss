@@ -5,7 +5,7 @@
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.3s ease;
-  box-shadow: 0 0 8px rgba(134, 29, 251, 0.2);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--accent) 20%, transparent);
   position: relative;
   
   // Efekt neonu dla bordera
@@ -16,22 +16,22 @@
     left: -1px;
     right: -1px;
     bottom: -1px;
-    border: 1px solid rgba(234, 129, 251, 0.3);
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
     border-radius: 8px;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s ease;
     box-shadow: 
-      0 0 5px rgba(234, 129, 251, 0.3),
-      0 0 10px rgba(234, 129, 251, 0.2),
-      inset 0 0 5px rgba(234, 129, 251, 0.1);
+      0 0 5px color-mix(in oklab, var(--accent) 30%, transparent),
+      0 0 10px color-mix(in oklab, var(--accent) 20%, transparent),
+      inset 0 0 5px color-mix(in oklab, var(--accent) 10%, transparent);
   }
   
   &:hover {
-    border-color: rgba(234, 129, 251, 0.5);
+  border-color: color-mix(in oklab, var(--accent) 50%, transparent);
     box-shadow: 
-      0 0 10px rgba(234, 129, 251, 0.3),
-      0 0 20px rgba(134, 29, 251, 0.2);
+  0 0 10px color-mix(in oklab, var(--accent) 30%, transparent),
+  0 0 20px color-mix(in oklab, var(--accent) 20%, transparent);
     
     &::before {
       opacity: 1;
@@ -50,7 +50,7 @@
   align-items: center;
   padding: 0.8rem;
   cursor: pointer;
-  background-color: rgba(30, 10, 36, 0.7);
+  background-color: var(--overlay-70);
   transition: all 0.3s ease;
   position: relative;
   border-radius: 8px 8px 0 0;
@@ -66,9 +66,9 @@
     background: linear-gradient(
       90deg, 
       transparent 0%, 
-      rgba(234, 129, 251, 0.4) 25%, 
-      rgba(234, 129, 251, 0.6) 50%, 
-      rgba(234, 129, 251, 0.4) 75%, 
+      color-mix(in oklab, var(--accent) 40%, transparent) 25%, 
+      color-mix(in oklab, var(--accent) 60%, transparent) 50%, 
+      color-mix(in oklab, var(--accent) 40%, transparent) 75%, 
       transparent 100%
     );
     opacity: 0;
@@ -76,7 +76,7 @@
   }
   
   &:hover {
-    background-color: rgba(58, 26, 77, 0.7);
+  background-color: var(--overlay-70);
     
     &::after {
       opacity: 1;
@@ -84,16 +84,16 @@
   }
   
   &.expanded {
-    border-bottom: 1px solid rgba(234, 129, 251, 0.3);
+  border-bottom: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
   }
   
   // Specjalne style dla pojedynczych trudności
   .single-difficulty & {
     cursor: default;
-    background-color: rgba(25, 8, 30, 0.7);
+  background-color: var(--overlay-70);
     
     &:hover {
-      background-color: rgba(25, 8, 30, 0.7);
+  background-color: var(--overlay-70);
     }
   }
 }
@@ -121,7 +121,7 @@
 .beatmapset-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #ea81fb;
+  color: var(--accent);
   margin-bottom: 0.3rem;
   white-space: nowrap;
   overflow: hidden;
@@ -138,8 +138,8 @@
 
 .beatmapset-difficulty-count {
   font-size: 0.75rem;
-  color: #ea81fb;
-  background-color: rgba(234, 129, 251, 0.1);
+  color: var(--accent);
+  background-color: color-mix(in oklab, var(--accent) 10%, transparent);
   padding: 0.2rem 0.5rem;
   border-radius: 10px;
   margin-left: 0.5rem;
@@ -176,16 +176,16 @@
     justify-content: center;
     padding: 0.6rem;
     margin-top: 0.7rem;
-    background-color: rgba(134, 29, 251, 0.2);
-    border: 1px solid rgba(234, 129, 251, 0.3);
+  background-color: color-mix(in oklab, var(--accent) 20%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
     border-radius: 6px;
-    color: #ea81fb;
+  color: var(--accent);
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    text-shadow: 0 0 5px rgba(234, 129, 251, 0.7);
+  text-shadow: 0 0 5px color-mix(in oklab, var(--accent) 70%, transparent);
     
     // Efekt cyberpunkowego animowanego bordera
     &::before {
@@ -195,7 +195,7 @@
       left: -2px;
       right: -2px;
       bottom: -2px;
-      background: linear-gradient(45deg, #ff00cc, #3333ff, #00ffcc);
+  background: linear-gradient(45deg, var(--accent), color-mix(in oklab, var(--accent) 50%, white), color-mix(in oklab, var(--accent) 30%, black));
       background-size: 400% 400%;
       opacity: 0;
       animation: glowingBorder 3s ease infinite;
@@ -205,11 +205,11 @@
     }
     
     &:hover {
-      background-color: rgba(134, 29, 251, 0.3);
-      border-color: rgba(234, 129, 251, 0.6);
+  background-color: color-mix(in oklab, var(--accent) 30%, transparent);
+  border-color: color-mix(in oklab, var(--accent) 60%, transparent);
       box-shadow: 
-        0 0 10px rgba(234, 129, 251, 0.3),
-        0 0 20px rgba(134, 29, 251, 0.2);
+    0 0 10px color-mix(in oklab, var(--accent) 30%, transparent),
+    0 0 20px color-mix(in oklab, var(--accent) 20%, transparent);
       transform: translateY(-1px);
       
       &::before {
@@ -219,7 +219,7 @@
     
     &:active {
       transform: translateY(1px);
-      box-shadow: 0 0 5px rgba(234, 129, 251, 0.3);
+  box-shadow: 0 0 5px color-mix(in oklab, var(--accent) 30%, transparent);
     }
   }
 }

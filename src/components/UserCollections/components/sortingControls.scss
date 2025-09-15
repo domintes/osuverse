@@ -31,7 +31,7 @@
   background-color: rgba(30, 10, 36, 0.7);
   border: 1px solid rgba(88, 91, 105, 0.5);
   border-radius: 4px;
-  color: #ea81fb;
+  color: var(--accent);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -42,7 +42,7 @@
   }
   
   option {
-    background-color: #2f0f3a;
+  background-color: var(--panel1);
   }
 }
 
@@ -66,13 +66,13 @@
   
   &:hover {
     border-color: rgba(234, 129, 251, 0.5);
-    color: #ea81fb;
+  color: var(--accent);
   }
   
   &.active {
     background-color: rgba(58, 26, 77, 0.7);
     border-color: rgba(234, 129, 251, 0.5);
-    color: #ea81fb;
+  color: var(--accent);
   }
 }
 

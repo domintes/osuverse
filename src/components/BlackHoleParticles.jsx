@@ -23,7 +23,7 @@ const FloatingParticles = () => {
                 this.opacity = 1;
                 // Theme-aware colors: prefer accent with a few subtle variants
                 const styles = getComputedStyle(document.documentElement);
-                const accent = styles.getPropertyValue('--accent')?.trim() || '#f264a4';
+                const accent = styles.getPropertyValue('--accent')?.trim() || '#ff4fd8';
                 const variants = [accent, 'rgba(255,255,255,0.8)'];
                 this.color = variants[Math.floor(Math.random() * variants.length)];
             }
@@ -95,7 +95,7 @@ const FloatingParticles = () => {
                 canvas.width
             );
             const styles = getComputedStyle(document.documentElement);
-            const bg1 = styles.getPropertyValue('--bg1')?.trim() || 'rgba(47, 15, 58, 1)';
+            const bg1 = styles.getPropertyValue('--bg1')?.trim() || 'rgba(0, 0, 0, 1)';
             const bg2 = styles.getPropertyValue('--bg2')?.trim() || 'rgba(0, 0, 0, 1)';
             gradient.addColorStop(0, bg1);
             gradient.addColorStop(1, bg2);

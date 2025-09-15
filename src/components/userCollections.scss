@@ -7,17 +7,17 @@
 
 /* Nadpisanie stylów dla NeonBorderBox w kolekcjach */
 .collection-item.neon-border-box {
-  background: linear-gradient(140deg, #2f0f3a 0%, #3a1a4d 100%);
-  border: 1px solid rgba(234, 129, 251, 0.5);
-  box-shadow: 0 0 20px rgba(234, 129, 251, 0.2), 0 0 40px rgba(47, 15, 58, 0.3);
+  background: linear-gradient(140deg, var(--panel1) 0%, var(--panel2) 100%);
+  border: 1px solid color-mix(in oklab, var(--accent) 50%, transparent);
+  box-shadow: 0 0 20px color-mix(in oklab, var(--accent) 30%, transparent), 0 0 40px color-mix(in oklab, var(--bg1) 35%, transparent);
   margin: 8px 0; /* Zmniejszona wartość */
   padding: 12px 16px; /* Zmniejszona wartość */
   transition: all 0.3s ease;
 }
 
 .collection-item.neon-border-box:hover {
-  border-color: rgba(234, 129, 251, 0.7);
-  box-shadow: 0 0 15px rgba(234, 129, 251, 0.2), 0 0 30px rgba(47, 15, 58, 0.3);
+  border-color: var(--accent);
+  box-shadow: 0 0 15px color-mix(in oklab, var(--accent) 30%, transparent), 0 0 30px color-mix(in oklab, var(--bg1) 35%, transparent);
   transform: translateY(-1px); /* Subtelny efekt uniesienia */
 }
 
@@ -54,25 +54,25 @@
 }
 
 .collection-item .collection-name:hover {
-  background-color: rgba(234, 129, 251, 0.1);
+  background-color: color-mix(in oklab, var(--accent) 10%, transparent);
 }
 
 /* Animacja podświetlająca znalezioną beatmapę */
 @keyframes highlight-pulse {
   0% {
-    box-shadow: 0 0 10px 5px rgba(234, 129, 251, 0.3);
+    box-shadow: 0 0 10px 5px color-mix(in oklab, var(--accent) 30%, transparent);
   }
   50% {
-    box-shadow: 0 0 20px 10px rgba(234, 129, 251, 0.6);
+    box-shadow: 0 0 20px 10px color-mix(in oklab, var(--accent) 60%, transparent);
   }
   100% {
-    box-shadow: 0 0 10px 5px rgba(234, 129, 251, 0.3);
+    box-shadow: 0 0 10px 5px color-mix(in oklab, var(--accent) 30%, transparent);
   }
 }
 
 .highlighted-beatmap {
   animation: highlight-pulse 1.5s ease-in-out infinite;
-  border-color: rgba(234, 129, 251, 0.8) !important;
+  border-color: var(--accent) !important;
   position: relative;
   z-index: 1;
 }
@@ -98,8 +98,8 @@
 }
 
 .collection-item .edit-btn:hover {
-  color: #ea81fb;
-  background-color: rgba(234, 129, 251, 0.1);
+  color: var(--accent);
+  background-color: color-mix(in oklab, var(--accent) 10%, transparent);
 }
 
 .collection-item .remove-btn:hover {
@@ -123,8 +123,8 @@
 }
 
 .collection-item.drag-over {
-  border-color: #ea81fb;
-  box-shadow: 0 0 30px rgba(234, 129, 251, 0.5);
+  border-color: var(--accent);
+  box-shadow: 0 0 30px color-mix(in oklab, var(--accent) 50%, transparent);
 }
 
 .collection-item .beatmap-count {
@@ -138,15 +138,15 @@
   padding: 6px 10px; /* Mniejsze wypełnienie */
   margin-top: 6px; /* Mniejszy margines górny */
   margin-bottom: 6px; /* Mniejszy margines dolny */
-  border-left: 2px solid rgba(234, 129, 251, 0.3);
+  border-left: 2px solid color-mix(in oklab, var(--accent) 30%, transparent);
   border-radius: 0 8px 8px 0;
-  background: rgba(234, 129, 251, 0.05);
+  background: color-mix(in oklab, var(--accent) 5%, transparent);
   transition: all 0.2s;
 }
 
 .subcollection-item:hover {
-  border-left-color: rgba(234, 129, 251, 0.6);
-  background: rgba(234, 129, 251, 0.1);
+  border-left-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
 }
 
 .subcollection-header {
@@ -171,7 +171,7 @@
 }
 
 .subcollection-name:hover {
-  background-color: rgba(234, 129, 251, 0.15);
+  background-color: color-mix(in oklab, var(--accent) 15%, transparent);
 }
 
 .add-collection,
@@ -179,8 +179,8 @@
   margin-top: 16px;
   padding: 12px;
   border-radius: 8px;
-  background: rgba(234, 129, 251, 0.05);
-  border: 1px dashed rgba(234, 129, 251, 0.3);
+  background: color-mix(in oklab, var(--accent) 5%, transparent);
+  border: 1px dashed color-mix(in oklab, var(--accent) 30%, transparent);
 }
 
 .input-container {
@@ -194,22 +194,22 @@
   flex: 1;
   padding: 8px 12px;
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(234, 129, 251, 0.3);
+  background: var(--overlay-30);
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
   color: white;
 }
 
 .new-collection-input:focus,
 .new-subcollection-input:focus,
 .edit-name-input:focus {
-  border-color: rgba(234, 129, 251, 0.7);
+  border-color: var(--accent);
   outline: none;
 }
 
 .add-btn {
-  background: rgba(234, 129, 251, 0.2);
-  border: 1px solid rgba(234, 129, 251, 0.4);
-  color: white;
+  background: color-mix(in oklab, var(--accent) 20%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent);
+  color: var(--text);
   border-radius: 6px;
   padding: 0 12px;
   cursor: pointer;
@@ -220,8 +220,8 @@
 }
 
 .add-btn:hover {
-  background: rgba(234, 129, 251, 0.3);
-  border-color: rgba(234, 129, 251, 0.6);
+  background: color-mix(in oklab, var(--accent) 30%, transparent);
+  border-color: var(--accent);
 }
 
 .validation-error {
@@ -250,7 +250,7 @@
 }
 
 .beatmap-item:hover {
-  border-color: rgba(234, 129, 251, 0.3);
+  border-color: color-mix(in oklab, var(--accent) 30%, transparent);
   background: rgba(0, 0, 0, 0.3);
 }
 
@@ -294,8 +294,8 @@
 }
 
 .beatmap-tag {
-  background: rgba(234, 129, 251, 0.1);
-  border: 1px solid rgba(234, 129, 251, 0.2);
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent) 20%, transparent);
   border-radius: 20px;
   padding: 2px 8px;
   font-size: 0.8em;
@@ -340,8 +340,8 @@
 }
 
 .beatmap-edit:hover {
-  color: #ea81fb;
-  background: rgba(234, 129, 251, 0.1);
+  color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
 }
 
 .beatmap-delete:hover {
@@ -391,11 +391,11 @@
 .user-collections-section {
   .collection-group {
     margin: 14px 0 20px;
-    border: 1px solid rgba(234, 129, 251, 0.25);
+    border: 1px solid color-mix(in oklab, var(--accent) 25%, transparent);
     border-radius: 10px;
     overflow: hidden;
-    background: rgba(234, 129, 251, 0.06);
-    box-shadow: 0 6px 18px rgba(47, 15, 58, 0.35);
+    background: color-mix(in oklab, var(--accent) 6%, transparent);
+  box-shadow: 0 6px 18px color-mix(in oklab, var(--bg1) 40%, transparent);
   }
 
   .collection-group-header {
@@ -405,13 +405,13 @@
     gap: 8px;
     cursor: pointer;
     padding: 10px 14px;
-    background: linear-gradient(90deg, rgba(47, 15, 58, 0.9), rgba(58, 26, 77, 0.8));
-    border-bottom: 1px solid rgba(234, 129, 251, 0.25);
+  background: linear-gradient(90deg, var(--overlay-88), color-mix(in oklab, var(--overlay-70) 100%, transparent));
+    border-bottom: 1px solid color-mix(in oklab, var(--accent) 25%, transparent);
 
     .collection-name {
       font-weight: 700;
-      color: #ffcae6;
-      text-shadow: 0 0 10px rgba(242, 100, 164, 0.35);
+  color: color-mix(in oklab, var(--accent) 25%, white);
+  text-shadow: 0 0 10px color-mix(in oklab, var(--accent) 35%, transparent);
     }
     .subcollection-name {
       color: #c9b2d0;
@@ -422,7 +422,7 @@
     }
     .expander-arrow {
       transition: transform 0.2s ease;
-      filter: drop-shadow(0 0 6px rgba(234, 129, 251, 0.5));
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--accent) 50%, transparent));
       &.expanded {
         transform: rotate(180deg);
       }
@@ -430,9 +430,9 @@
   }
 
   .collection-group-body {
-    background: radial-gradient(1200px 300px at 10% -10%, rgba(242, 100, 164, 0.08), transparent 40%),
-                radial-gradient(1200px 300px at 80% 120%, rgba(100, 200, 255, 0.08), transparent 40%),
-                rgba(32, 10, 40, 0.45);
+  background: radial-gradient(1200px 300px at 10% -10%, color-mix(in oklab, var(--accent) 8%, transparent), transparent 40%),
+        radial-gradient(1200px 300px at 80% 120%, color-mix(in oklab, var(--accent) 8%, transparent), transparent 40%),
+        color-mix(in oklab, var(--bg1) 60%, transparent);
     padding: 14px;
   }
 
@@ -454,8 +454,8 @@
     background-size: cover;
     background-position: center;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 4px 10px rgba(47, 15, 58, 0.25);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 4px 10px color-mix(in oklab, var(--bg1) 30%, transparent);
     isolation: isolate;
     cursor: pointer;
     
@@ -464,7 +464,7 @@
       right: 8px;
       top: 50%;
       transform: translateY(-50%);
-      color: #ffcae6;
+  color: color-mix(in oklab, var(--accent) 25%, white);
       opacity: 0.8;
       display: none;
       cursor: grab;
@@ -475,14 +475,14 @@
 
   .beatmap-row:hover,
   .beatmapset-row:hover {
-    border-color: rgba(234, 129, 251, 0.35);
-    box-shadow: 0 8px 18px rgba(47, 15, 58, 0.35);
+  border-color: color-mix(in oklab, var(--accent) 35%, transparent);
+  box-shadow: 0 8px 18px color-mix(in oklab, var(--bg1) 40%, transparent);
   }
 
   .row-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, rgba(16, 6, 22, 0.85) 0%, rgba(16, 6, 22, 0.55) 60%, rgba(16, 6, 22, 0.25) 100%);
+  background: linear-gradient(90deg, color-mix(in oklab, var(--bg1) 85%, transparent) 0%, color-mix(in oklab, var(--bg1) 55%, transparent) 60%, color-mix(in oklab, var(--bg1) 25%, transparent) 100%);
     z-index: 0;
   }
 
@@ -497,8 +497,8 @@
 
   .row-title {
     font-weight: 700;
-    color: #ffd6ec;
-    text-shadow: 0 0 8px rgba(242, 100, 164, 0.35);
+  color: color-mix(in oklab, var(--accent) 20%, white);
+  text-shadow: 0 0 8px color-mix(in oklab, var(--accent) 35%, transparent);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -509,12 +509,12 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
-    color: #c9b2d0;
+  color: color-mix(in oklab, var(--text) 80%, var(--panel2));
     font-size: 0.92em;
   }
 
   .row-meta .mapper { color: #c9b2d0; }
-  .row-meta .diff { color: #64c8ff; font-weight: 600; }
+  .row-meta .diff { color: color-mix(in oklab, var(--accent) 35%, white); font-weight: 600; }
 
   .diff-chips {
     display: inline-flex;
@@ -528,9 +528,9 @@
     gap: 6px;
     padding: 2px 8px;
     border-radius: 999px;
-    background: rgba(234, 129, 251, 0.12);
-    border: 1px solid rgba(234, 129, 251, 0.25);
-    color: #ffd6ec;
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent) 25%, transparent);
+  color: color-mix(in oklab, var(--accent) 20%, white);
     font-size: 0.9em;
     .stars { color: #64c8ff; font-weight: 700; }
     .version { color: #b8a6c1; }
@@ -581,7 +581,7 @@
       right: 8px;
       top: 50%;
       transform: translateY(-50%);
-      color: #ffcae6;
+  color: color-mix(in oklab, var(--accent) 25%, white);
       opacity: 0.8;
       display: none;
       cursor: grab;
@@ -591,7 +591,7 @@
   }
   .diff-row:hover {
     border-color: rgba(234, 129, 251, 0.35);
-    box-shadow: 0 6px 14px rgba(47, 15, 58, 0.3);
+  box-shadow: 0 6px 14px color-mix(in oklab, var(--bg1) 35%, transparent);
   }
 
   .beatmap-card .cover,
@@ -643,9 +643,9 @@
     gap: 6px;
     padding: 4px 8px;
     border-radius: 999px;
-    background: rgba(234, 129, 251, 0.12);
-    border: 1px solid rgba(234, 129, 251, 0.25);
-    color: #ffd6ec;
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent) 25%, transparent);
+  color: color-mix(in oklab, var(--accent) 20%, white);
     .stars { color: #64c8ff; font-weight: 700; }
     .version { color: #b8a6c1; }
   }
@@ -769,7 +769,7 @@
     appearance: none;
     width: 36px;
     height: 18px;
-    background: rgba(47, 15, 58, 0.5);
+  background: var(--overlay-50);
     border-radius: 10px;
     position: relative;
     cursor: pointer;
@@ -781,7 +781,7 @@
       width: 14px;
       height: 14px;
       border-radius: 50%;
-      background: #ea81fb;
+  background: var(--accent);
       left: 2px;
       top: 1px;
       transition: transform 0.2s;

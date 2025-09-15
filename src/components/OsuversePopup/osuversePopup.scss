@@ -1,7 +1,7 @@
 .osuverse-popup-button {
   background: none;
   border: none;
-  color: #ea81fb;
+  color: var(--accent);
   cursor: pointer;
   padding: 4px;
   display: inline-flex;
@@ -22,19 +22,19 @@
   max-width: 550px;
   
   .osuverse-popup-title {
-    color: #ea81fb;
+  color: var(--accent);
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
     text-align: center;
     font-weight: bold;
-    text-shadow: 0 0 16px #2f0f3a;
+  text-shadow: 0 0 16px color-mix(in oklab, var(--bg1) 60%, transparent);
   }
   
   .osuverse-popup-section {
     margin-bottom: 1.5rem;
     
     h3 {
-      color: #ea81fb;
+  color: var(--accent);
       font-size: 1.1rem;
       margin-bottom: 0.75rem;
       font-weight: 600;

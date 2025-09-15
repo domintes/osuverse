@@ -140,12 +140,12 @@
   }
 
   a {
-    color: #ffcae6;
+  color: color-mix(in oklab, var(--accent) 25%, white);
     text-decoration: none;
 
     &:hover {
       text-decoration: underline;
-      color: #ea81fb;
+  color: var(--accent);
     }
   }
 }
@@ -170,9 +170,9 @@
   height: 100%;
   width: 32px;
   border-radius: 10px;
-  background: rgba(47, 15, 58, 0.4);
-  border: 1px solid #4d2f6c;
-  color: #ea81fb;
+  background: color-mix(in oklab, var(--overlay-50) 80%, transparent);
+  border: 1px solid color-mix(in oklab, var(--panel1) 60%, var(--panel2));
+  color: var(--accent);
   font-weight: 900;
 }
 .beatmapset-action-rail .action-btn.plus:hover {
@@ -189,8 +189,8 @@
   border-radius: 8px;
   display: grid;
   place-items: center;
-  background: rgba(47, 15, 58, 0.5);
-  border: 1px solid #4d2f6c;
+  background: var(--overlay-50);
+  border: 1px solid color-mix(in oklab, var(--panel1) 60%, var(--panel2));
   color: #7ee0ff;
   text-decoration: none;
   font-size: 18px;
@@ -211,7 +211,7 @@
   place-items: center;
   background: none;
   border: none;
-  color: #ffcae6;
+  color: color-mix(in oklab, var(--accent) 25%, white);
   cursor: pointer;
   transition: transform 0.12s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
@@ -221,7 +221,7 @@
 }
 .action-btn.star svg { color: #ffd54f; }
 .action-btn.zap svg { color: #7ee0ff; }
-.action-btn.plus { color: #ea81fb; font-weight: 700; }
+.action-btn.plus { color: var(--accent); font-weight: 700; }
 .action-btn.plus:hover { background: rgba(234, 129, 251, 0.2); }
 
 .beatmapset-mapper {
@@ -230,7 +230,7 @@
   margin-bottom: 0.5rem;
 
   a {
-    color: #ea81fb;
+  color: var(--accent);
     text-decoration: none;
 
     &:hover {
@@ -293,15 +293,15 @@
 }
 
 .beatmapset-difficulties {
-  border-top: 1px solid rgba(234, 129, 251, 0.3);
-  background: rgb(34, 13, 45);
+  border-top: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+  background: var(--overlay-70);
   position: absolute;
   left: 0;
   right: 0;
   width: 100%;
   top: 100%;
   z-index: 10;
-  box-shadow: 0 6px 25px rgba(134, 0, 255, 0.3);
+  box-shadow: 0 6px 25px color-mix(in oklab, var(--accent) 30%, transparent);
   border-radius: 0 0 14px 14px;
   animation: slideDown 0.25s ease-out forwards, glow 3s ease-in-out infinite;
   overflow: hidden;
@@ -320,16 +320,16 @@
   }
   
   &::-webkit-scrollbar-track {
-    background: rgba(26, 9, 35, 0.4);
+    background: color-mix(in oklab, var(--overlay-50) 100%, transparent);
     border-radius: 4px;
   }
   
   &::-webkit-scrollbar-thumb {
-    background: rgba(234, 129, 251, 0.4);
+    background: color-mix(in oklab, var(--accent) 40%, transparent);
     border-radius: 4px;
     
     &:hover {
-      background: rgba(234, 129, 251, 0.6);
+  background: color-mix(in oklab, var(--accent) 60%, transparent);
     }
   }
 }
@@ -339,16 +339,16 @@
   grid-template-columns: 75% 25%;
   justify-content: space-between;
   align-items: center;
-  background: rgba(42, 13, 53, 0.5);
+  background: var(--overlay-50);
   padding: 0.4rem 0.6rem;
   border-radius: 6px;
-  border-left: 4px solid #ff1744;
+  border-left: 4px solid var(--accent);
   transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
 
   &:hover {
-    background: rgba(53, 18, 65, 0.7);
+    background: var(--overlay-70);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(242, 100, 164, 0.3);
+    box-shadow: 0 4px 12px color-mix(in oklab, var(--accent) 30%, transparent);
   }
 }
 
@@ -368,7 +368,7 @@
 
 .beatmapset-difficulty-name {
   font-weight: 500;
-  color: #ea81fb;
+  color: var(--accent);
   text-decoration: none;
 
   &:hover {
@@ -394,17 +394,17 @@
   flex-shrink: 0;
 
   &.add {
-    background: #4d2f6c;
-    color: #ffcae6;
+  background: color-mix(in oklab, var(--panel1) 50%, var(--panel2));
+  color: color-mix(in oklab, var(--accent) 25%, white);
 
     &:hover {
-      background: #ea81fb;
-      color: #2f0f3a;
+  background: var(--accent);
+  color: var(--panel1);
     }
   }
 
   &.remove {
-    background: #f264a4;
+  background: var(--accent);
     color: #ffffff;
 
     &:hover {
@@ -423,20 +423,20 @@
 .beatmapset-add-all-button {
   padding: 4px 12px;
   border-radius: 8px;
-  background: #4d2f6c;
-  color: #ffcae6;
+  background: color-mix(in oklab, var(--panel1) 50%, var(--panel2));
+  color: color-mix(in oklab, var(--accent) 25%, white);
   font-weight: 500;
   border: none;
   cursor: pointer;
   transition: background 0.2s;
   font-size: .85rem;
   &:hover {
-    background: #ea81fb;
-    color: #2f0f3a;
+  background: var(--accent);
+  color: var(--panel1);
   }
 
   &.remove {
-    background: #f264a4;
+  background: var(--accent);
     color: #ffffff;
 
     &:hover {
@@ -452,7 +452,7 @@
   gap: 0.5rem;
   margin-top: 1.5rem;
   flex-wrap: wrap;
-  background: #1a0823ed;
+  background: color-mix(in oklab, var(--bg1) 90%, transparent);
   position: fixed;
   bottom: 0;
   left: 0;
@@ -471,14 +471,14 @@
 .beatmap-search-pagination-button {
   padding: 0.5rem 1rem;
   border-radius: 8px;
-  border: 1px solid #4d2f6c;
-  background: rgba(47, 15, 58, 0.5);
-  color: #ea81fb;
+  border: 1px solid color-mix(in oklab, var(--panel1) 60%, var(--panel2));
+  background: var(--overlay-50);
+  color: var(--accent);
   cursor: pointer;
   transition: background 0.2s;
 
   &:hover:not(:disabled) {
-    background: rgba(234, 129, 251, 0.2);
+    background: color-mix(in oklab, var(--accent) 20%, transparent);
   }
 
   &:disabled {
@@ -489,7 +489,7 @@
 
 .beatmap-search-pagination-info {
   padding: 0.5rem;
-  color: #ea81fb;
+  color: var(--accent);
 }
 
 .beatmap-search-modal {
@@ -506,13 +506,13 @@
 }
 
 .beatmap-search-modal-content {
-  background: linear-gradient(120deg, #2f0f3a 0%, #3a1a4d 100%);
-  border: 1px solid #ea81fb;
+  background: linear-gradient(120deg, var(--panel1) 0%, var(--panel2) 100%);
+  border: 1px solid var(--accent);
   border-radius: 12px;
   padding: 1.5rem;
   width: 90%;
   max-width: 500px;
-  box-shadow: 0 0 30px rgba(234, 129, 251, 0.4);
+  box-shadow: 0 0 30px color-mix(in oklab, var(--accent) 40%, transparent);
   animation: modalFadeIn 0.3s forwards;
 }
 
@@ -534,14 +534,14 @@
 
 .beatmap-search-modal-content h3 {
   font-size: 1.5rem;
-  color: #ea81fb;
+  color: var(--accent);
   margin-top: 0;
   margin-bottom: 1rem;
   text-align: center;
 }
 
 .beatmap-search-modal-content p {
-  color: #ffcae6;
+  color: color-mix(in oklab, var(--accent) 25%, white);
   margin-bottom: 1.5rem;
   text-align: center;
 }
@@ -555,15 +555,15 @@
 .beatmap-search-modal-confirm {
   padding: 0.6rem 2rem;
   border-radius: 8px;
-  background: #ea81fb;
-  color: #2f0f3a;
+  background: var(--accent);
+  color: var(--panel1);
   border: none;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
 
   &:hover {
-    background: #f264a4;
+  background: var(--accent);
   }
 }
 
@@ -571,8 +571,8 @@
   padding: 0.6rem 2rem;
   border-radius: 8px;
   background: transparent;
-  color: #ea81fb;
-  border: 1px solid #ea81fb;
+  color: var(--accent);
+  border: 1px solid var(--accent);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;

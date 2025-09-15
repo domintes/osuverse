@@ -68,7 +68,7 @@
   .beatmapset-difficulty-stars {
     margin-left: auto;
     font-size: 0.85rem;
-    color: #ffcae6;
+  color: color-mix(in oklab, var(--accent) 25%, white);
     white-space: nowrap;
   }
   
@@ -78,11 +78,11 @@
     margin-left: 8px;
     
     .difficulty-tag {
-      background: rgba(234, 129, 251, 0.2);
+      background: color-mix(in oklab, var(--accent) 20%, transparent);
       border-radius: 4px;
       padding: 2px 6px;
       font-size: 0.75rem;
-      color: #ea81fb;
+      color: var(--accent);
     }
   }
   
@@ -106,21 +106,21 @@
     z-index: 1;
     
     &.add {
-      background: #4d2f6c;
-      color: #ffcae6;
+      background: color-mix(in oklab, var(--panel1) 50%, var(--panel2));
+      color: color-mix(in oklab, var(--accent) 25%, white);
       
       &:hover {
-        background: #ea81fb;
-        color: #2f0f3a;
+        background: var(--accent);
+        color: var(--panel1);
       }
     }
     
     &.remove {
-      background: #f264a4;
+      background: var(--accent);
       color: #ffffff;
       
       &:hover {
-        background: #ff417e;
+        background: color-mix(in oklab, var(--accent) 85%, black);
       }
     }
   }
@@ -197,19 +197,19 @@
     position: relative;
     z-index: 1;
     padding: 8px;
-    background: rgba(46, 21, 59, 0.82);
+  background: var(--overlay-70);
     border-radius: 8px;
   }
   
   .beatmapset-header {
     margin-bottom: 6px;
     padding-bottom: 6px;
-    border-bottom: 1px solid rgba(234, 129, 251, 0.3);
+  border-bottom: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
     
     .beatmapset-title {
       font-size: 1rem;
       font-weight: 600;
-      color: #ffcae6;
+  color: color-mix(in oklab, var(--accent) 25%, white);
       margin-bottom: 4px;
     }
     

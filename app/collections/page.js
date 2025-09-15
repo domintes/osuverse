@@ -122,15 +122,15 @@ export default function Collections() {
   return (
     <MainOsuverseDiv className={`collections-container`}>
       <div className="collections-header">
-        <h1 style={{ fontSize: 32, color: '#ea81fb', textShadow: '0 0 16px #2f0f3a' }}>Collections</h1>
+  <h1 style={{ fontSize: 32, color: 'var(--accent)', textShadow: '0 0 16px color-mix(in oklab, var(--bg1) 60%, transparent)' }}>Collections</h1>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           {/* Layout selector */}
           <div className="collections-layout-select" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <label style={{ color: '#b8a6c1' }}>Layout</label>
+            <label style={{ color: 'color-mix(in oklab, var(--accent) 30%, white)' }}>Layout</label>
             <select
               value={rowCount}
               onChange={(e) => setRowCount(Number(e.target.value))}
-              style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid rgba(234,129,251,0.35)', background: 'rgba(0,0,0,0.2)', color: '#fff' }}
+              style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid color-mix(in oklab, var(--accent) 35%, transparent)', background: 'var(--overlay-30)', color: 'var(--text)' }}
             >
               <option value={1}>1 column</option>
               <option value={2}>2 columns</option>
@@ -143,8 +143,8 @@ export default function Collections() {
             onClick={() => setImportOpen(true)}
             style={{
               padding: '8px 16px', borderRadius: '8px',
-              background: 'rgba(100, 200, 255, 0.2)',
-              border: '1px solid #64c8ff', color: 'white', display: 'flex',
+              background: 'color-mix(in oklab, var(--accent) 20%, transparent)',
+              border: '1px solid var(--accent)', color: 'var(--text)', display: 'flex',
               alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'all 0.3s ease'
             }}
           >
@@ -154,8 +154,8 @@ export default function Collections() {
             onClick={handleExport}
             style={{
               padding: '8px 16px', borderRadius: '8px',
-              background: 'rgba(234, 129, 251, 0.2)',
-              border: '1px solid #ea81fb', color: 'white', display: 'flex',
+              background: 'color-mix(in oklab, var(--accent) 20%, transparent)',
+              border: '1px solid var(--accent)', color: 'var(--text)', display: 'flex',
               alignItems: 'center', gap: '8px', cursor: 'pointer', transition: 'all 0.3s ease'
             }}
           >
@@ -168,9 +168,9 @@ export default function Collections() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: 'rgba(100, 200, 255, 0.2)',
-              border: '1px solid #64c8ff',
-              color: 'white',
+              background: 'color-mix(in oklab, var(--accent) 20%, transparent)',
+              border: '1px solid var(--accent)',
+              color: 'var(--text)',
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
@@ -187,9 +187,9 @@ export default function Collections() {
             style={{
               padding: '8px 16px',
               borderRadius: '8px',
-              background: editMode ? 'rgba(234, 129, 251, 0.4)' : 'rgba(234, 129, 251, 0.2)',
-              border: '1px solid #ea81fb',
-              color: 'white',
+              background: editMode ? 'color-mix(in oklab, var(--accent) 35%, transparent)' : 'color-mix(in oklab, var(--accent) 20%, transparent)',
+              border: '1px solid var(--accent)',
+              color: 'var(--text)',
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
@@ -221,11 +221,11 @@ export default function Collections() {
         >
           <div
             className="import-modal"
-            style={{ width: 'min(640px, 95vw)', background: '#2f0f3a', border: '1px solid #ea81fb', borderRadius: 12, padding: 16, boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}
+            style={{ width: 'min(640px, 95vw)', background: 'var(--panel1)', border: '1px solid var(--accent)', borderRadius: 12, padding: 16, boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}
             onClick={(e) => e.stopPropagation()}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-              <h3 style={{ color: '#ea81fb', margin: 0 }}>Import Collections</h3>
+              <h3 style={{ color: 'var(--accent)', margin: 0 }}>Import Collections</h3>
               <button onClick={() => setImportOpen(false)} style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: 20, cursor: 'pointer' }}>×</button>
             </div>
             <div
@@ -239,7 +239,7 @@ export default function Collections() {
               }}
               style={{
                 border: '2px dashed rgba(234,129,251,0.5)', borderRadius: 10, padding: 20,
-                textAlign: 'center', color: '#ffcae6', background: 'rgba(234,129,251,0.05)'
+                textAlign: 'center', color: 'color-mix(in oklab, var(--accent) 25%, white)', background: 'color-mix(in oklab, var(--accent) 8%, transparent)'
               }}
             >
               <p style={{ margin: 0, marginBottom: 8 }}>Select or Drop Collection File</p>

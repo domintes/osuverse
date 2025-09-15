@@ -2,7 +2,7 @@
   position: relative;
   padding: 1.5rem 2rem;
   border-radius: 18px;
-  box-shadow: 0 0 32px 0 var(--neon-color, var(--accent)), 0 0 0 2.5px #fff, 0 0 80px 0 #2f0f3a55;
+  box-shadow: 0 0 32px 0 var(--neon-color, var(--accent)), 0 0 0 2.5px #fff, 0 0 80px 0 color-mix(in oklab, var(--bg1) 33%, transparent);
   border: 3px solid var(--neon-color, var(--accent));
   overflow: hidden;
   margin: 1.5rem 0;
@@ -64,39 +64,39 @@
   font-family: 'Orbitron', 'Bruno Ace', 'Rubik Glitch', 'Cracked Code', 'Segoe UI', 'Arial', sans-serif;
   font-size: 1.1rem;
   color: #fff;
-  text-shadow: 0 0 8px var(--neon-color, #ff4fd8), 0 0 24px var(--neon-color, #ff4fd8);
+  text-shadow: 0 0 8px var(--neon-color, var(--accent)), 0 0 24px var(--neon-color, var(--accent));
   transition: color 0.2s, text-shadow 0.2s, transform 0.2s cubic-bezier(.4,2,.6,1);
   will-change: transform;
   
   @media (max-width: 768px) {
     font-size: 1rem;
-    text-shadow: 0 0 6px var(--neon-color, #ff4fd8), 0 0 18px var(--neon-color, #ff4fd8);
+  text-shadow: 0 0 6px var(--neon-color, var(--accent)), 0 0 18px var(--neon-color, var(--accent));
   }
   
   @media (max-width: 480px) {
     font-size: 0.9rem;
-    text-shadow: 0 0 4px var(--neon-color, #ff4fd8), 0 0 12px var(--neon-color, #ff4fd8);
+  text-shadow: 0 0 4px var(--neon-color, var(--accent)), 0 0 12px var(--neon-color, var(--accent));
   }
 }
 
 .neon-border-box.neon-error {
   border-color: #ff1744;
-  box-shadow: 0 0 32px 0 #ff1744cc, 0 0 0 2.5px #fff, 0 0 80px 0 #2f0f3a55;
+  box-shadow: 0 0 32px 0 #ff1744cc, 0 0 0 2.5px #fff, 0 0 80px 0 color-mix(in oklab, var(--bg1) 33%, transparent);
 }
 
 .neon-border-box.neon-success {
   border-color: #00e676;
-  box-shadow: 0 0 32px 0 #00e676cc, 0 0 0 2.5px #fff, 0 0 80px 0 #2f0f3a55;
+  box-shadow: 0 0 32px 0 #00e676cc, 0 0 0 2.5px #fff, 0 0 80px 0 color-mix(in oklab, var(--bg1) 33%, transparent);
 }
 
 .neon-border-box.neon-info {
   border-color: #9370DB;
-  box-shadow: 0 0 32px 0 #9370DBcc, 0 0 0 2.5px #fff, 0 0 80px 0 #2f0f3a55;
+  box-shadow: 0 0 32px 0 #9370DBcc, 0 0 0 2.5px #fff, 0 0 80px 0 color-mix(in oklab, var(--bg1) 33%, transparent);
 }
 
 .neon-border-box.neon-warning {
   border-color: #ffb300;
-  box-shadow: 0 0 32px 0 #ffb300cc, 0 0 0 2.5px #fff, 0 0 80px 0 #2f0f3a55;
+  box-shadow: 0 0 32px 0 #ffb300cc, 0 0 0 2.5px #fff, 0 0 80px 0 color-mix(in oklab, var(--bg1) 33%, transparent);
 }
 
 .neon-border-title {

@@ -339,21 +339,21 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: linear-gradient(45deg, 
-          rgba(234, 129, 251, 0) 0%, 
-          rgba(234, 129, 251, 0.03) 50%,
-          rgba(234, 129, 251, 0) 100%
-        );
+                background: linear-gradient(45deg, 
+                    transparent 0%, 
+                    color-mix(in oklab, var(--accent) 3%, transparent) 50%,
+                    transparent 100%
+                );
         opacity: 0;
         transition: opacity 0.3s ease;
         pointer-events: none;
     }
     
     &:hover {
-        border-color: rgba(234, 129, 251, 0.3);
+    border-color: color-mix(in oklab, var(--accent) 30%, transparent);
         box-shadow: 
-          0 0 10px rgba(234, 129, 251, 0.15),
-          inset 0 0 5px rgba(234, 129, 251, 0.1);
+          0 0 10px color-mix(in oklab, var(--accent) 15%, transparent),
+          inset 0 0 5px color-mix(in oklab, var(--accent) 10%, transparent);
         transform: translateY(-1px);
         
         &::before {
@@ -361,8 +361,8 @@
         }
         
         .beatmap-title {
-            color: #ea81fb;
-            text-shadow: 0 0 8px rgba(234, 129, 251, 0.5);
+            color: var(--accent);
+            text-shadow: 0 0 8px color-mix(in oklab, var(--accent) 50%, transparent);
         }
         
         .beatmap-actions {
@@ -377,12 +377,12 @@
     
     @keyframes highlight-beatmap {
         0% {
-            box-shadow: 0 0 15px rgba(234, 129, 251, 0.7);
-            border-color: rgba(234, 129, 251, 0.8);
+            box-shadow: 0 0 15px color-mix(in oklab, var(--accent) 70%, transparent);
+            border-color: color-mix(in oklab, var(--accent) 80%, transparent);
         }
         70% {
-            box-shadow: 0 0 15px rgba(234, 129, 251, 0.3);
-            border-color: rgba(234, 129, 251, 0.5);
+            box-shadow: 0 0 15px color-mix(in oklab, var(--accent) 30%, transparent);
+            border-color: color-mix(in oklab, var(--accent) 50%, transparent);
         }
         100% {
             box-shadow: none;

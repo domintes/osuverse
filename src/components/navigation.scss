@@ -177,7 +177,7 @@ nav {
       .line {
         width: 25px;
         height: 3px;
-        background-color: #f264a4;
+  background-color: var(--accent);
         margin: 3px;
         border-radius: 3px;
         transition: all 0.3s ease;
@@ -278,7 +278,7 @@ nav {
   }
   .search-results-header {
     font-size: 1.05rem;
-    color: #ea81fb;
+  color: var(--accent);
     font-weight: 700;
     margin-bottom: 0.3rem;
     margin-top: 0.2rem;
@@ -321,7 +321,7 @@ nav {
     background: var(--overlay-70);
     border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent);
       border-radius: 8px;
-      color: #ffcae6;
+  color: color-mix(in oklab, var(--accent) 25%, white);
       padding: 0.5rem 0.9rem;
       width: 100%;
       font-size: 0.95rem;
@@ -334,7 +334,7 @@ nav {
       }
       
       &::placeholder {
-        color: #ffcae680;
+  color: color-mix(in oklab, var(--accent) 30%, transparent);
       }
     }
   }

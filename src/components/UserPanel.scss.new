@@ -1,5 +1,5 @@
 .user-panel-overlay {
-  background: rgba(47, 15, 58, 0.88);
+  background: var(--overlay-88);
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -7,10 +7,10 @@
 }
 
 .user-panel-content {
-  background: linear-gradient(120deg, #2f0f3a 60%, #3a1a4d 100%);
+  background: linear-gradient(120deg, var(--panel1) 60%, var(--panel2) 100%);
   border-radius: 18px;
-  box-shadow: 0 0 40px 0 #f264a499, 0 0 80px 0 #2f0f3a55;
-  border: 2px solid #f264a444;
+  box-shadow: 0 0 40px 0 color-mix(in oklab, var(--accent) 60%, transparent), 0 0 80px 0 color-mix(in oklab, var(--bg1) 33%, transparent);
+  border: 2px solid color-mix(in oklab, var(--accent) 35%, transparent);
   position: fixed;
   top: 50%;
   left: 50%;
@@ -21,7 +21,7 @@
   max-height: 90vh;
   padding: 2rem 2.5rem 2rem 2rem;
   z-index: 1100;
-  color: #ffcae6;
+  color: color-mix(in oklab, var(--accent) 25%, white);
   animation: popIn 0.22s;
   overflow-y: auto;
 }
@@ -37,23 +37,23 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  border: 2.5px solid #f264a4;
-  box-shadow: 0 0 16px #f264a499;
-  background: #2f0f3a;
+  border: 2.5px solid var(--accent);
+  box-shadow: 0 0 16px color-mix(in oklab, var(--accent) 60%, transparent);
+  background: var(--panel1);
 }
 
 .user-panel-username {
   font-size: 1.4rem;
   font-family: 'Orbitron', 'Bruno Ace', 'Rubik Glitch', Arial, sans-serif;
-  color: #f264a4;
-  text-shadow: 0 0 8px #2f0f3a, 0 0 4px #f264a4;
+  color: var(--accent);
+  text-shadow: 0 0 8px color-mix(in oklab, var(--bg1) 60%, transparent), 0 0 4px color-mix(in oklab, var(--accent) 70%, transparent);
 }
 
 .user-panel-close {
   margin-left: auto;
   background: none;
   border: none;
-  color: #f264a4;
+  color: var(--accent);
   font-size: 1.5rem;
   cursor: pointer;
   transition: color 0.2s;
@@ -68,19 +68,19 @@
   gap: 0.5rem;
   background: none;
   border: none;
-  color: #f264a4;
+  color: var(--accent);
   font-family: 'Orbitron', 'Bruno Ace', Arial, sans-serif;
   font-size: 1.1rem;
   cursor: pointer;
   padding: 0.25rem 0.75rem;
   border-radius: 8px;
   transition: background 0.18s, color 0.18s, box-shadow 0.18s;
-  box-shadow: 0 2px 8px 0 #2f0f3a44;
+  box-shadow: 0 2px 8px 0 color-mix(in oklab, var(--bg1) 26%, transparent);
 }
 .user-panel-trigger:hover {
-  background: linear-gradient(90deg, #2f0f3a 0%, #4D2F6C 100%);
+  background: linear-gradient(90deg, var(--panel1) 0%, color-mix(in oklab, var(--panel1) 50%, var(--panel2)) 100%);
   color: #ff7eba;
-  box-shadow: 0 2px 16px 0 #2f0f3a99;
+  box-shadow: 0 2px 16px 0 color-mix(in oklab, var(--bg1) 60%, transparent);
 }
 
 .user-panel-homepage-options {

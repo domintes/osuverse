@@ -313,7 +313,7 @@
   padding: 0;
   display: flex;
   align-items: center;
-  justify-content: center;  filter: drop-shadow(0 0 6px #ea81fb44);
+  justify-content: center;  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--accent) 30%, transparent));
   transition: color 0.2s, filter 0.2s, background 0.2s, transform 0.2s;
   z-index: 5;
   animation: pulse-glow 1.5s ease-in-out infinite alternate;
@@ -332,10 +332,10 @@
 
 @keyframes pulse-glow {
   0% {
-    filter: drop-shadow(0 0 5px #ea81fb33);
+  filter: drop-shadow(0 0 5px color-mix(in oklab, var(--accent) 25%, transparent));
   }
   100% {
-    filter: drop-shadow(0 0 12px #ea81fb66);
+  filter: drop-shadow(0 0 12px color-mix(in oklab, var(--accent) 45%, transparent));
   }
 }
 
@@ -399,9 +399,9 @@
   .search-artist-pagination-button {
     padding: 0.5rem 1rem;
     border-radius: 8px;
-    border: 1px solid #4d2f6c;
-    background: linear-gradient(90deg, #2f0f3a 0%, #3a1a4d 100%);
-    color: #ffcae6;
+    border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+    background: linear-gradient(90deg, var(--panel1) 0%, var(--panel2) 100%);
+    color: var(--text);
     font-size: 0.9rem;
 
     &:disabled {
@@ -410,15 +410,15 @@
     }
 
     &:not(:disabled):hover {
-      background: linear-gradient(90deg, #3a1a4d 0%, #4d2f6c 100%);
-      box-shadow: 0 0 12px rgba(242, 100, 164, 0.4);
+      background: linear-gradient(90deg, color-mix(in oklab, var(--panel2) 80%, var(--accent)) 0%, color-mix(in oklab, var(--accent) 18%, var(--panel2)) 100%);
+      box-shadow: 0 0 12px color-mix(in oklab, var(--accent) 35%, transparent);
     }
   }
 
   .search-artist-pagination-info {
     padding: 0 1rem;
     font-size: 0.9rem;
-    color: #ffcae6;
+    color: var(--text);
   }
 }
 
@@ -441,7 +441,7 @@
   max-width: 26rem;
   box-shadow: 0 0 32px color-mix(in oklab, var(--accent) 30%, transparent);
   position: relative;
-  color: #ffcae6;
+  color: var(--text);
   border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
 }
 
@@ -449,22 +449,20 @@
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
-  color: #ffcae6;
+  color: var(--text);
   background: none;
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
 
-  &:hover {
-    color: #f264a4;
-  }
+  &:hover { color: var(--accent); }
 }
 
 .search-artist-modal-title {
   font-size: 1.25rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  color: #ea81fb;
+  color: var(--accent);
 }
 
 .search-artist-modal-items {
@@ -488,7 +486,7 @@
 
 // Klasy dla kolekcji w modalu
 .search-artist-collection-item {
-  border: 1px solid rgba(242, 100, 164, 0.2);
+  border: 1px solid color-mix(in oklab, var(--accent) 20%, transparent);
   border-radius: 0.5rem;
   padding: 0.5rem;
   margin-bottom: 0.25rem;
@@ -507,15 +505,15 @@
 .search-artist-collection-button {
   margin-left: 0.5rem;
   padding: 0.25rem 0.5rem;
-  background: #ea81fb;
+  background: var(--accent);
   border: none;
-  color: #2f0f3a;
+  color: var(--accent-contrast);
   border-radius: 0.25rem;
   font-size: 0.75rem;
   cursor: pointer;
 
   &:hover {
-    background: #f264a4;
+    background: color-mix(in oklab, var(--accent) 85%, #ffffff);
   }
 }
 
@@ -533,16 +531,16 @@
 
 .search-artist-subcollection-button {
   padding: 0.25rem 0.5rem;
-  background: #4d2f6c;
+  background: color-mix(in oklab, var(--accent) 22%, var(--panel2));
   border: none;
-  color: #ffcae6;
+  color: var(--text);
   border-radius: 0.25rem;
   font-size: 0.75rem;
   cursor: pointer;
 
   &:hover {
-    background: #ea81fb;
-    color: #2f0f3a;
+    background: var(--accent);
+    color: var(--accent-contrast);
   }
 }
 
@@ -560,12 +558,12 @@
   margin-bottom: 0.25rem;
 
   a {
-    color: #ffcae6;
+    color: var(--text);
     text-decoration: none;
 
     &:hover {
       text-decoration: underline;
-      color: #ea81fb;
+      color: var(--accent);
     }
   }
 }
@@ -574,19 +572,19 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #b8a6c1;
+  color: var(--muted);
 }
 
 .search-artist-beatmap-mapper {
   font-size: 0.875rem;
 
   a {
-    color: #ea81fb;
+    color: var(--accent);
     text-decoration: none;
 
     &:hover {
       text-decoration: underline;
-      color: #f264a4;
+      color: color-mix(in oklab, var(--accent) 85%, #ffffff);
     }
   }
 }
@@ -595,8 +593,8 @@
   font-size: 0.875rem;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
-  background: rgba(242, 100, 164, 0.1);
-  color: #ea81fb;
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  color: var(--accent);
 }
 
 // Style dla difficulty controls
@@ -644,7 +642,7 @@
 
 .search-artist-beatmap-difficulty-name {
   font-weight: 500;
-  color: #ea81fb;
+  color: var(--accent);
   text-decoration: none;
 
   &:hover {
@@ -654,7 +652,7 @@
 
 .search-artist-beatmap-difficulty-rating {
   font-size: 0.75rem;
-  color: #b8a6c1;
+  color: var(--muted);
 }
 
 .search-artist-beatmap-difficulty-button {
@@ -666,21 +664,21 @@
   border: none;
 
   &.add {
-    background: #4d2f6c;
-    color: #ffcae6;
+    background: color-mix(in oklab, var(--accent) 22%, var(--panel2));
+    color: var(--text);
 
     &:hover {
-      background: #ea81fb;
-      color: #2f0f3a;
+      background: var(--accent);
+      color: var(--accent-contrast);
     }
   }
 
   &.remove {
-    background: #f264a4;
-    color: #ffffff;
+    background: color-mix(in oklab, var(--accent) 85%, #ffffff);
+    color: var(--accent-contrast);
 
     &:hover {
-      background: #ff417e;
+      background: color-mix(in oklab, var(--accent) 70%, #ffffff);
     }
   }
 }
@@ -700,20 +698,20 @@
 
 .search-artist-input {
   padding: 0.5rem;
-  border: 1px solid #4d2f6c;
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
   border-radius: 0.375rem;
   width: 100%;
-  background: rgba(47, 15, 58, 0.3);
-  color: #ffcae6;
+  background: var(--overlay-30);
+  color: var(--text);
 
   &::placeholder {
-    color: rgba(255, 202, 230, 0.5);
+    color: color-mix(in oklab, var(--text) 55%, transparent);
   }
 
   &:focus {
     outline: none;
-    border-color: #ea81fb;
-    box-shadow: 0 0 0 2px rgba(234, 129, 251, 0.2);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent) 25%, transparent);
   }
 }
 
@@ -722,21 +720,21 @@
   font-size: 0.875rem;
   font-weight: 500;
   margin-bottom: 0.25rem;
-  color: #ea81fb;
+  color: var(--accent);
 }
 
 .search-artist-select {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #4d2f6c;
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
   border-radius: 0.375rem;
-  background: rgba(47, 15, 58, 0.3);
-  color: #ffcae6;
+  background: var(--overlay-30);
+  color: var(--text);
 
   &:focus {
     outline: none;
-    border-color: #ea81fb;
-    box-shadow: 0 0 0 2px rgba(234, 129, 251, 0.2);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent) 25%, transparent);
   }
 }
 
@@ -745,12 +743,12 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
-  color: #b8a6c1;
+  color: var(--muted);
 }
 
 .search-artist-loading {
   text-align: center;
-  color: #ea81fb;
+  color: var(--accent);
   padding: 1rem;
 }
 
@@ -768,14 +766,14 @@
   }
 
   .search-artist-error-message {
-    color: #ffcae6;
+  color: color-mix(in oklab, var(--accent) 25%, white);
     font-size: 1rem;
     margin-bottom: 1rem;
   }
 
   .search-artist-try-again {
     background: rgba(255, 23, 68, 0.2);
-    color: #ffcae6;
+  color: color-mix(in oklab, var(--accent) 25%, white);
     border: 1px solid #ff1744;
     padding: 0.5rem 1.5rem;
     border-radius: 0.5rem;

@@ -21,7 +21,7 @@ export default function CollectionsManager() {
       background: 'rgba(234,129,251,0.08)', border: '1px solid rgba(234,129,251,0.25)'
     }}>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 10 }}>
-        <strong style={{ color: '#ea81fb' }}>Manage Collections</strong>
+  <strong style={{ color: 'var(--accent)' }}>Manage Collections</strong>
         <input
           type="text"
           value={newCollectionName}
@@ -29,7 +29,7 @@ export default function CollectionsManager() {
           placeholder="New collection name"
           style={{ flex: 1, padding: '6px 10px', borderRadius: 6, border: '1px solid rgba(234,129,251,0.35)', background: 'rgba(0,0,0,0.2)', color: '#fff' }}
         />
-        <button onClick={handleAddCollection} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #ea81fb', background: 'rgba(234,129,251,0.25)', color: '#fff' }}>Add</button>
+  <button onClick={handleAddCollection} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid var(--accent)', background: 'color-mix(in oklab, var(--accent) 25%, transparent)', color: 'var(--text)' }}>Add</button>
       </div>
 
       <div className="collections-list" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
