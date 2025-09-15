@@ -22,8 +22,8 @@
 .user-panel-content {
   background: linear-gradient(120deg, #2f0f3a 60%, #3a1a4d 100%);
   border-radius: 18px;
-  box-shadow: 0 0 40px 0 #f264a499, 0 0 80px 0 #2f0f3a55;
-  border: 2px solid #f264a444;
+  box-shadow: 0 0 40px 0 color-mix(in oklab, var(--accent) 40%, transparent), 0 0 80px 0 #2f0f3a55;
+  border: 2px solid color-mix(in oklab, var(--accent) 30%, transparent);
   position: fixed;
   top: 50%;
   left: 50%;
@@ -50,29 +50,29 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  border: 2.5px solid #f264a4;
-  box-shadow: 0 0 16px #f264a499;
+  border: 2.5px solid var(--accent);
+  box-shadow: 0 0 16px color-mix(in oklab, var(--accent) 50%, transparent);
   background: #2f0f3a;
 }
 
 .user-panel-username {
   font-size: 1.4rem;
   font-family: 'Orbitron', 'Bruno Ace', 'Rubik Glitch', Arial, sans-serif;
-  color: #f264a4;
-  text-shadow: 0 0 8px #2f0f3a, 0 0 4px #f264a4;
+  color: var(--accent);
+  text-shadow: 0 0 8px #2f0f3a, 0 0 4px color-mix(in oklab, var(--accent) 70%, transparent);
 }
 
 .user-panel-close {
   margin-left: auto;
   background: none;
   border: none;
-  color: #f264a4;
+  color: var(--accent);
   font-size: 1.5rem;
   cursor: pointer;
   transition: color 0.2s;
 }
 .user-panel-close:hover {
-  color: #ff7eba;
+  color: var(--accent);
 }
 
 .user-panel-button {
@@ -81,7 +81,7 @@
   gap: 0.5rem;
   background: none;
   border: none;
-  color: #f264a4;
+  color: var(--accent);
   font-family: 'Orbitron', 'Bruno Ace', Arial, sans-serif;
   font-size: 1.1rem;
   cursor: pointer;
@@ -92,7 +92,7 @@
 }
 .user-panel-button:hover {
   background: linear-gradient(90deg, #2f0f3a 0%, #4D2F6C 100%);
-  color: #ff7eba;
+  color: var(--accent);
   box-shadow: 0 2px 16px 0 #2f0f3a99;
   filter: brightness(1.1);
 }
@@ -101,8 +101,8 @@
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  border: 1.5px solid #f264a4;
-  box-shadow: 0 0 8px rgba(242, 100, 164, 0.4);
+  border: 1.5px solid var(--accent);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--accent) 35%, transparent);
   object-fit: cover;
 }
 
@@ -171,7 +171,7 @@
 .avatar-upload {
   width: 120px;
   height: 120px;
-  border: 2px dashed #f264a4;
+  border: 2px dashed var(--accent);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -180,20 +180,20 @@
   cursor: pointer;
   transition: all 0.3s;
   background: rgba(47, 15, 58, 0.5);
-  color: #f264a4;
+  color: var(--accent);
   font-family: 'Orbitron', Arial, sans-serif;
   text-align: center;
   gap: 0.5rem;
 }
 
 .avatar-upload:hover {
-  border-color: #ff7eba;
+  border-color: var(--accent);
   background: rgba(47, 15, 58, 0.8);
 }
 
 .avatar-upload.dragging {
-  border-color: #ff4fd8;
-  background: rgba(255, 79, 216, 0.1);
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
 }
 
 .custom-avatar {
@@ -209,7 +209,7 @@
 
 .nickname-display {
   font-size: 1.2rem;
-  color: #f264a4;
+  color: var(--accent);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -218,12 +218,12 @@
 }
 
 .nickname-display:hover {
-  color: #ff7eba;
+  color: var(--accent);
 }
 
 .nickname-section input {
   background: rgba(47, 15, 58, 0.8);
-  border: 1px solid #f264a4;
+  border: 1px solid var(--accent);
   border-radius: 6px;
   color: #ffcae6;
   padding: 0.5rem;
@@ -251,14 +251,14 @@
   border: none;
   border-radius: 8px;
   background: rgba(47, 15, 58, 0.5);
-  color: #f264a4;
+  color: var(--accent);
   cursor: pointer;
   transition: all 0.3s;
   font-family: 'Orbitron', Arial, sans-serif;
 }
 
 .action-btn:hover {
-  color: #ff7eba;
+  color: var(--accent);
 }
 
 .logout-btn {
@@ -292,7 +292,7 @@
 }
 
 .user-panel-stats {
-  border-top: 1px solid #f264a444;
+  border-top: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
   padding-top: 1rem;
   margin-bottom: 1rem;
 }
@@ -327,7 +327,7 @@
 }
 
 .stat-value {
-  color: #f264a4;
+  color: var(--accent);
   font-weight: bold;
   font-family: 'Orbitron', Arial, sans-serif;
 }
@@ -336,16 +336,16 @@
   display: flex;
   justify-content: center;
   gap: 1rem;
-  border-top: 1px solid #f264a444;
+  border-top: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
   padding-top: 1rem;
 }
 
 .save-btn, .exit-btn {
   padding: 0.75rem 1.5rem;
-  border: 1px solid #f264a4;
+  border: 1px solid var(--accent);
   border-radius: 8px;
   background: rgba(47, 15, 58, 0.5);
-  color: #f264a4;
+  color: var(--accent);
   cursor: pointer;
   transition: all 0.3s;
   font-family: 'Orbitron', Arial, sans-serif;
@@ -353,15 +353,15 @@
 
 .save-btn:hover, .exit-btn:hover {
   background: rgba(47, 15, 58, 0.8);
-  border-color: #ff7eba;
-  color: #ff7eba;
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .warning-modal, .confirm-modal {
   background: linear-gradient(120deg, #2f0f3a 60%, #3a1a4d 100%);
   border-radius: 18px;
-  box-shadow: 0 0 40px 0 #f264a499, 0 0 80px 0 #2f0f3a55;
-  border: 2px solid #d0021b;
+  box-shadow: 0 0 40px 0 color-mix(in oklab, var(--accent) 40%, transparent), 0 0 80px 0 #2f0f3a55;
+  border: 2px solid color-mix(in oklab, var(--accent) 40%, transparent);
   position: fixed;
   top: 50%;
   left: 50%;
@@ -394,13 +394,49 @@
 
 .confirm-btn, .cancel-btn, .save-close-btn, .back-btn {
   padding: 0.5rem 1rem;
-  border: 1px solid #f264a4;
+  border: 1px solid var(--accent);
   border-radius: 6px;
   background: rgba(47, 15, 58, 0.5);
-  color: #f264a4;
+  color: var(--accent);
   cursor: pointer;
   transition: all 0.3s;
   font-family: 'Orbitron', Arial, sans-serif;
+}
+
+/* Theme picker styles */
+.theme-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.theme-picker-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--accent);
+  font-family: 'Orbitron', Arial, sans-serif;
+}
+.theme-options {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.theme-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+}
+.theme-swatch.green { background: #22c55e; }
+.theme-swatch.blue { background: #3b82f6; }
+.theme-swatch.red { background: #ef4444; }
+.theme-swatch.gray { background: #9ca3af; }
+.theme-swatch.active {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent) 60%, transparent), 0 0 12px color-mix(in oklab, var(--accent) 50%, transparent);
 }
 
 .confirm-btn:hover {

@@ -2,8 +2,8 @@
   position: relative;
   padding: 1.5rem 2rem;
   border-radius: 18px;
-  box-shadow: 0 0 32px 0 var(--neon-color, #f264a4), 0 0 0 2.5px #fff, 0 0 80px 0 #2f0f3a55;
-  border: 3px solid var(--neon-color, #f264a4);
+  box-shadow: 0 0 32px 0 var(--neon-color, var(--accent)), 0 0 0 2.5px #fff, 0 0 80px 0 #2f0f3a55;
+  border: 3px solid var(--neon-color, var(--accent));
   overflow: hidden;
   margin: 1.5rem 0;
   background: rgba(22, 14, 28, 0.92);

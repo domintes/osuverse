@@ -1,5 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { User, LogOut, Download, Image as LucideImage, Settings, Home, CheckSquare, X, Edit, Trash2, BarChart3, Upload, CloudUpload } from 'lucide-react';
+import { User, LogOut, Download, Image as LucideImage, Settings, Home, CheckSquare, X, Edit, Trash2, BarChart3, Upload, CloudUpload, Palette } from 'lucide-react';
 import { useAtom } from 'jotai';
 import { useState, useEffect, useRef } from 'react';
 import { collectionsAtom } from '@/store/collectionAtom';
@@ -16,13 +16,19 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange }) 
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [themeColor, setThemeColor] = useState('green');
   const fileInputRef = useRef(null);
 
   useEffect(() => {
     const savedAvatar = localStorage.getItem('customAvatar');
     const savedNickname = localStorage.getItem('customNickname');
+    const savedTheme = localStorage.getItem('themeColor');
     if (savedAvatar) setCustomAvatar(savedAvatar);
     if (savedNickname) setCustomNickname(savedNickname);
+    if (savedTheme) {
+      setThemeColor(savedTheme);
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
   }, []);
 
   useEffect(() => {
@@ -95,6 +101,10 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange }) 
 
   const handleSave = () => {
     localStorage.setItem('customNickname', customNickname);
+    localStorage.setItem('themeColor', themeColor);
+    try {
+      document.documentElement.setAttribute('data-theme', themeColor);
+    } catch {}
     setUnsavedChanges(false);
   };
 
@@ -118,11 +128,19 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange }) 
     setShowConfirmModal(false);
   };
 
+  const safeCollections = collections?.collections || [];
   const stats = {
-    collections: collections.collections.length,
-    subcollections: collections.collections.reduce((acc, col) => acc + col.subcollections.length, 0),
-    beatmaps: Object.keys(collections.beatmaps).length,
-    tags: Object.keys(collections.tags).length,
+    collections: safeCollections.length,
+    subcollections: safeCollections.reduce((acc, col) => acc + (col.subcollections?.length || 0), 0),
+    beatmaps: Object.keys(collections?.beatmaps || {}).length,
+    tags: Object.keys(collections?.tags || {}).length,
+  };
+
+  const selectTheme = (color) => {
+    setThemeColor(color);
+    setUnsavedChanges(true);
+    // live preview
+    try { document.documentElement.setAttribute('data-theme', color); } catch {}
   };
 
   return (
@@ -198,6 +216,24 @@ export default function UserPanel({ user, onLogout, onExport, onAvatarChange }) 
               </div>
               
               <div className="user-panel-right">
+                <div className="theme-picker">
+                  <div className="theme-picker-header">
+                    <Palette size={18} />
+                    <span>Theme color</span>
+                  </div>
+                  <div className="theme-options">
+                    {['green','blue','red','gray'].map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        aria-label={`Set theme ${c}`}
+                        className={`theme-swatch ${c} ${themeColor === c ? 'active' : ''}`}
+                        onClick={() => selectTheme(c)}
+                        title={c}
+                      />
+                    ))}
+                  </div>
+                </div>
                 <div className="action-buttons">
                   <button className="action-btn logout-btn" onClick={handleLogout}>
                     <LogOut size={20} />

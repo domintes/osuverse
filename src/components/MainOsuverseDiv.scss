@@ -2,7 +2,7 @@
   background: rgba(22, 14, 28, 0.92);
   border: 3px solid #fff;
   border-radius: 24px;
-  box-shadow: 0 0 40px 0 #f264a4cc, 0 0 0 2px #fff, 0 0 100px 0 #2f0f3a55;
+  box-shadow: 0 0 40px 0 color-mix(in oklab, var(--accent) 80%, transparent), 0 0 0 2px #fff, 0 0 100px 0 #2f0f3a55;
   padding: 3rem;
   margin: 3rem auto;
   max-width: 1400px;
@@ -40,6 +40,6 @@
 }
 
 .main-osuverse-div:hover {
-  box-shadow: 0 0 60px 0 #f264a4, 0 0 0 3px #d0d0d0, 0 0 140px 0 #2f0f3a99;
+  box-shadow: 0 0 60px 0 var(--accent), 0 0 0 3px #d0d0d0, 0 0 140px 0 #2f0f3a99;
   border-color: #d0d0d0;
 }

@@ -117,17 +117,18 @@ nav {
 
     &:hover {
       background: linear-gradient(90deg, #4d1a3a 0%, #780f56 100%);
-      color: #ffaed7;
+      color: var(--accent);
       box-shadow: 0 2px 16px 0 #4d1a3a99;
-      border: 1px solid #780f56;
-    }    &.active {
-      background: linear-gradient(90deg, #2f0f3a 0%, #f264a4 100%);
+      border: 1px solid var(--accent);
+    }
+    &.active {
+      background: linear-gradient(90deg, #2f0f3a 0%, var(--accent) 100%);
       color: #fff;
-      box-shadow: 0 2px 24px 0 #f264a4cc;
-      border: 1px solid #f264a4;
+      box-shadow: 0 2px 24px 0 color-mix(in oklab, var(--accent) 80%, transparent);
+      border: 1px solid var(--accent);
     }
   }  .login-btn {
-    background: linear-gradient(90deg, #f264a4 60%, #2f0f3a 100%);
+    background: linear-gradient(90deg, var(--accent) 60%, #2f0f3a 100%);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -137,8 +138,8 @@ nav {
     font-weight: bold;
     text-decoration: none;
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 12px 0 #f264a433, 0 0 16px 0 #2f0f3a55;
-    border: 1px solid #f264a4;
+  box-shadow: 0 2px 12px 0 color-mix(in oklab, var(--accent) 30%, transparent), 0 0 16px 0 #2f0f3a55;
+  border: 1px solid var(--accent);
     
     @media (max-width: 768px) {
       font-size: 0.95rem;
@@ -152,10 +153,10 @@ nav {
     }
 
     &:hover {
-      background: linear-gradient(90deg, #ff7eba 60%, #2f0f3a 100%);
+      background: linear-gradient(90deg, color-mix(in oklab, var(--accent) 80%, #ffffff) 60%, #2f0f3a 100%);
       color: #fff;
-      box-shadow: 0 2px 24px 0 #f264a4cc;
-      border: 1px solid #ff7eba;
+      box-shadow: 0 2px 24px 0 color-mix(in oklab, var(--accent) 80%, transparent);
+      border: 1px solid var(--accent);
     }
   }
   
@@ -206,7 +207,7 @@ nav {
       gap: 1rem !important;
       z-index: 100;
       transition: right 0.3s ease;
-      border-left: 2px solid #f264a4;
+  border-left: 2px solid var(--accent);
       box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
       overflow-y: auto;
       
@@ -331,8 +332,8 @@ nav {
       transition: all 0.2s;
       
       &:focus {
-        border-color: #f264a4;
-        box-shadow: 0 0 8px 0 #f264a455;
+        border-color: var(--accent);
+        box-shadow: 0 0 8px 0 color-mix(in oklab, var(--accent) 40%, transparent);
         outline: none;
       }
       

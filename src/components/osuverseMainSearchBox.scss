@@ -4,8 +4,8 @@
   margin: 0 auto;
   background: rgba(47, 15, 58, 0.92);
   border-radius: 16px;
-  box-shadow: 0 0 24px 0 #f264a4aa, 0 0 0 2px #fff, 0 0 56px 0 #2f0f3a55;
-  border: 2px solid #f264a4;
+  box-shadow: 0 0 24px 0 color-mix(in oklab, var(--accent) 66%, transparent), 0 0 0 2px #fff, 0 0 56px 0 #2f0f3a55;
+  border: 2px solid var(--accent);
   padding: 24px 32px 32px 32px;
   position: relative;
   
@@ -38,8 +38,8 @@ input[type="text"] {
   transition: border 0.2s, box-shadow 0.2s;
 }
 input[type="text"]:focus {
-  border: 2px solid #f264a4;
-  box-shadow: 0 0 12px #f264a466;
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 12px color-mix(in oklab, var(--accent) 40%, transparent);
 }
 
 .selected-tags {

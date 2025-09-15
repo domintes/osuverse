@@ -1,5 +1,64 @@
-@use "tailwindcss";
-@use '../src/components/OsuverseDiv.scss' as *;
+
+/* Theme variables */
+:root {
+  --accent: #ff4fd8; /* default accent (legacy/pink) */
+  --accent-contrast: #0b0b0f;
+  --bg: #0b0b0f;
+  --bg-soft: #111118;
+  --panel: #141420;
+  --text: #e6e6f0;
+  --muted: #9aa0a6;
+  --border: #2a2a3d;
+  --success: #21c55d;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+}
+
+/* Themes */
+html[data-theme='green'] {
+  --accent: #22c55e; /* emerald-500 */
+  --accent-contrast: #06130b;
+}
+
+html[data-theme='blue'] {
+  --accent: #3b82f6; /* blue-500 */
+  --accent-contrast: #06101a;
+}
+
+html[data-theme='red'] {
+  --accent: #ef4444; /* red-500 */
+  --accent-contrast: #1a0606;
+}
+
+html[data-theme='gray'] {
+  --accent: #9ca3af; /* gray-400 */
+  --accent-contrast: #0d0d0d;
+}
+
+/* Common utility using theme */
+.accent {
+  color: var(--accent);
+}
+
+.btn-accent {
+  background: var(--accent);
+  color: #000;
+}
+
+/* Prefer variables in base elements */
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Default links and focus */
+a {
+  color: var(--accent);
+}
+
+*:focus-visible {
+  outline-color: var(--accent);
+}
 
 @font-face {
   font-family: 'Orbitron';
@@ -73,8 +132,8 @@ body.focus-mode {
 
 // Cyberpunk neon glow for focus
 :focus {
-  outline: 2px solid #ffaed7;
-  box-shadow: 0 0 8px #f264a499;
+  outline: 2px solid var(--accent);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--accent) 60%, transparent);
 }
 
 // Scrollbar styling
@@ -99,20 +158,20 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a {
-  color: #f264a4;
+  color: var(--accent);
   text-decoration: none;
   transition: color 0.2s;
 }
 a:hover {
   color: #fff;
-  text-shadow: 0 0 8px #f264a499;
+  text-shadow: 0 0 8px color-mix(in oklab, var(--accent) 60%, transparent);
 }
 
 // Neon border utility
 .neon-border {
   border: 2.5px solid #fff;
   border-radius: 18px;
-  box-shadow: 0 0 32px #f264a4cc, 0 0 0 2px #fff, 0 0 80px 0 #2f0f3a55;
+  box-shadow: 0 0 32px color-mix(in oklab, var(--accent) 80%, transparent), 0 0 0 2px #fff, 0 0 80px 0 #2f0f3a55;
 }
 
 // Grid pattern background
@@ -125,7 +184,7 @@ a:hover {
 // Neon glow text
 .neon-text {
   color: #fff;
-  text-shadow: 0 0 8px #f264a4, 0 0 24px #f264a499;
+  text-shadow: 0 0 8px var(--accent), 0 0 24px color-mix(in oklab, var(--accent) 60%, transparent);
 }
 
 // Animacje motion (przykład)
