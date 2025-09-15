@@ -202,9 +202,9 @@ export default function UserCollectionsSection({ editMode = false, rowCount = 2 
                             <div className="row-overlay" />
                             <div className="row-content">
                               <div className="row-title">
-                                <a href={getDiffUrl(item)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{item.artist} - {item.title}</a>
+                                <a href={getDiffUrl(item)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{item.title}</a>{' '}<span>by</span>{' '}<a href={`/search?artist=${encodeURIComponent(item.artist || '')}`} onClick={(e)=>e.stopPropagation()} title={`Search by artist: ${item.artist}`}>{item.artist}</a>
                               </div>
-                              <div className="row-meta"><span className="mapper">mapped by {item.creator}</span>{typeof item.difficulty_rating === 'number' && (<span className="diff">[{item.version}] {(item.difficulty_rating).toFixed(2)}★</span>)}</div>
+                              <div className="row-meta"><span className="mapper">mapped by <a href={`/search?mapper=${encodeURIComponent(item.creator || '')}`} onClick={(e)=>e.stopPropagation()} title={`Search by mapper: ${item.creator}`}>{item.creator}</a></span>{typeof item.difficulty_rating === 'number' && (<span className="diff">[{item.version}] {(item.difficulty_rating).toFixed(2)}★</span>)}</div>
                             </div>
                           </div>
                         );
@@ -218,9 +218,9 @@ export default function UserCollectionsSection({ editMode = false, rowCount = 2 
                           <div className="row-overlay" />
                           <div className="row-content">
                             <div className="row-title">
-                              <a href={getSetUrl(first)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{first.artist} - {first.title}</a>
+                              <a href={getSetUrl(first)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{first.title}</a>{' '}<span>by</span>{' '}<a href={`/search?artist=${encodeURIComponent(first.artist || '')}`} onClick={(e)=>e.stopPropagation()} title={`Search by artist: ${first.artist}`}>{first.artist}</a>
                             </div>
-                            <div className="row-meta"><span className="mapper">mapped by {first.creator}</span></div>
+                            <div className="row-meta"><span className="mapper">mapped by <a href={`/search?mapper=${encodeURIComponent(first.creator || '')}`} onClick={(e)=>e.stopPropagation()} title={`Search by mapper: ${first.creator}`}>{first.creator}</a></span></div>
                           </div>
                         </div>
                       );
@@ -249,9 +249,9 @@ export default function UserCollectionsSection({ editMode = false, rowCount = 2 
                       <div className="row-overlay" />
                       <div className="row-content">
                         <div className="row-title">
-                          <a href={getDiffUrl(item)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{item.artist} - {item.title}</a>
+                          <a href={getDiffUrl(item)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{item.title}</a>{' '}<span>by</span>{' '}<a href={`/search?artist=${encodeURIComponent(item.artist || '')}`} onClick={(e)=>e.stopPropagation()} title={`Search by artist: ${item.artist}`}>{item.artist}</a>
                         </div>
-                        <div className="row-meta"><span className="mapper">mapped by {item.creator}</span>{typeof item.difficulty_rating === 'number' && (<span className="diff">[{item.version}] {(item.difficulty_rating).toFixed(2)}★</span>)}</div>
+                        <div className="row-meta"><span className="mapper">mapped by <a href={`/search?mapper=${encodeURIComponent(item.creator || '')}`} onClick={(e)=>e.stopPropagation()} title={`Search by mapper: ${item.creator}`}>{item.creator}</a></span>{typeof item.difficulty_rating === 'number' && (<span className="diff">[{item.version}] {(item.difficulty_rating).toFixed(2)}★</span>)}</div>
                       </div>
                     </div>
                   ); })}
@@ -329,10 +329,10 @@ export default function UserCollectionsSection({ editMode = false, rowCount = 2 
                               <div className="row-overlay" />
                               <div className="row-content">
                                 <div className="row-title">
-                                  <a href={getDiffUrl(item)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{item.artist} - {item.title}</a>
+                                  <a href={getDiffUrl(item)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{item.title}</a>{' '}<span>by</span>{' '}<a href={`/search?artist=${encodeURIComponent(item.artist || '')}`} onClick={(e)=>e.stopPropagation()} title={`Search by artist: ${item.artist}`}>{item.artist}</a>
                                 </div>
                                 <div className="row-meta">
-                                  <span className="mapper">mapped by {item.creator}</span>
+                                  <span className="mapper">mapped by <a href={`/search?mapper=${encodeURIComponent(item.creator || '')}`} onClick={(e)=>e.stopPropagation()} title={`Search by mapper: ${item.creator}`}>{item.creator}</a></span>
                                   {typeof item.difficulty_rating === 'number' && (
                                     <span className="diff">[{item.version}] {(item.difficulty_rating).toFixed(2)}★</span>
                                   )}
@@ -376,10 +376,10 @@ export default function UserCollectionsSection({ editMode = false, rowCount = 2 
                               <div className="row-overlay" />
                               <div className="row-content">
                                 <div className="row-title">
-                                  <a href={getSetUrl(first)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{first.artist} - {first.title}</a>
+                                  <a href={getSetUrl(first)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{first.title}</a>{' '}<span>by</span>{' '}<a href={`/search?artist=${encodeURIComponent(first.artist || '')}`} onClick={(e)=>e.stopPropagation()} title={`Search by artist: ${first.artist}`}>{first.artist}</a>
                                 </div>
                                 <div className="row-meta">
-                                  <span className="mapper">mapped by {first.creator}</span>
+                                  <span className="mapper">mapped by <a href={`/search?mapper=${encodeURIComponent(first.creator || '')}`} onClick={(e)=>e.stopPropagation()} title={`Search by mapper: ${first.creator}`}>{first.creator}</a></span>
                                   {!isSetExpanded(setId) && (
                                     <div className="diff-chips">
                                       {sortedDiffs.map(diff => (

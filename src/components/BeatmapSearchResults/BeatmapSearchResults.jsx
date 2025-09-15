@@ -453,16 +453,24 @@ function BeatmapsetItem({
             href={`https://osu.ppy.sh/beatmapsets/${set.id}`}
             target="_blank"
             rel="noopener noreferrer"
+            title={`${set.artist} - ${set.title}`}
           >
-            {set.artist} - {set.title}
+            {set.title}
+          </a>
+          {` `}
+          <span>by</span>{` `}
+          <a
+            href={`/search?artist=${encodeURIComponent(set.artist || '')}`}
+            title={`Search by artist: ${set.artist}`}
+          >
+            {set.artist}
           </a>
         </div>
 
         <div className="beatmapset-mapper">
           mapped by <a
-            href={`https://osu.ppy.sh/users/${set.user_id}`}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={`/search?mapper=${encodeURIComponent(set.creator || '')}`}
+            title={`Search by mapper: ${set.creator}`}
           >
             {set.creator}
           </a>

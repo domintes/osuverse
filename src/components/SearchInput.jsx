@@ -567,10 +567,14 @@ function BeatmapItem({ set, isHovered, singleDiff, openAddModal, handleRemoveFro
                 </div>
                 <div className="search-artist-beatmap-details">
                     <span className="search-artist-beatmap-mapper">
-                        mapped by <a href={`https://osu.ppy.sh/users/${set.user_id}`} target="_blank" rel="noopener noreferrer">{set.creator}</a>
+                        mapped by <a href={`/search?mapper=${encodeURIComponent(set.creator || '')}`} title={`Search by mapper: ${set.creator}`}>{set.creator}</a>
                     </span>
                     <span className="search-artist-beatmap-status">
                         {set.status}
+                    </span>
+                    {` `}
+                    <span className="search-artist-beatmap-artist">
+                        <a href={`/search?artist=${encodeURIComponent(set.artist || '')}`} title={`Search by artist: ${set.artist}`}>{set.artist}</a>
                     </span>
                 </div>{beatmaps.length > 0 && (
                     <>                        <button 
