@@ -18,6 +18,7 @@ export default function Collections() {
   const [importError, setImportError] = useState('');
   const [notifications, setNotifications] = useState([]);
   const [rowCount, setRowCount] = useState(2);
+  const [viewMode, setViewMode] = useState('list'); // 'list' | 'cards'
   const fileInputRef = useRef(null);
 
   // Funkcja do wczytania danych testowych
@@ -137,6 +138,18 @@ export default function Collections() {
               <option value={3}>3 columns</option>
               <option value={4}>4 columns</option>
             </select>
+          </div>
+          {/* View mode switch */}
+          <div className="collections-viewmode" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <label style={{ color: 'color-mix(in oklab, var(--accent) 30%, white)' }}>View</label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <input type="radio" name="collections-view" value="list" checked={viewMode==='list'} onChange={() => setViewMode('list')} />
+              List
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <input type="radio" name="collections-view" value="cards" checked={viewMode==='cards'} onChange={() => setViewMode('cards')} />
+              Cards
+            </label>
           </div>
           {/* Import / Export */}
           <button
@@ -294,7 +307,7 @@ export default function Collections() {
         </div>
       )}
       
-      <UserCollectionsSection editMode={editMode} rowCount={rowCount} />
+  <UserCollectionsSection editMode={editMode} rowCount={rowCount} viewMode={viewMode} />
     </MainOsuverseDiv>
   );
 }

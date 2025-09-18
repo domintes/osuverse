@@ -120,6 +120,37 @@
   min-width: 0;
 }
 
+// Topline with hardest difficulty and quick actions
+.beatmapset-hardest {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  color: color-mix(in oklab, var(--accent) 35%, white);
+  .hardest-name {
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .hardest-stars {
+    color: #ffd600;
+    font-weight: 600;
+  }
+  .hardest-action {
+    background: transparent;
+    border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent);
+    color: color-mix(in oklab, var(--accent) 40%, white);
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .hardest-action:hover {
+    background: color-mix(in oklab, var(--accent) 15%, transparent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+}
+
 .beatmapset-title {
   font-size: 1.1rem;
   font-weight: 600;

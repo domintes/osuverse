@@ -443,6 +443,28 @@
     gap: 8px;
   }
 
+  /* Cards view overrides */
+  .collection-group-body.cards-view {
+    .beatmaps-list {
+      display: grid;
+      gap: 12px;
+    }
+    .beatmap-row {
+      aspect-ratio: 1 / 1;
+      min-height: auto;
+      padding: 8px;
+      display: flex;
+      align-items: flex-end;
+      border-radius: 12px;
+    }
+    .row-overlay { background: linear-gradient(180deg, rgba(0,0,0,0.0) 30%, rgba(0,0,0,0.55) 100%); }
+    .row-content { gap: 4px; }
+    .row-title { font-size: 0.95rem; }
+    .row-meta { font-size: 0.85rem; gap: 6px; }
+    .set-expander-arrow { right: 8px; top: 8px; transform: none; }
+    .beatmapset-diffs { padding-left: 0; }
+  }
+
   .beatmap-row,
   .beatmapset-row {
     position: relative;

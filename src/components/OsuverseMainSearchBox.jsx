@@ -189,7 +189,7 @@ const OsuverseMainSearchBox = () => {
     setModalBeatmap(beatmap);
     setModals(prev => ({
       ...prev,
-      [MODAL_ID]: { open: true, state: {} }
+      [MODAL_ID]: { open: true, state: prev[MODAL_ID]?.state || {} }
     }));
   };
 
@@ -216,6 +216,7 @@ const OsuverseMainSearchBox = () => {
       ...modalBeatmap,
       userTags,
       notes: formData.notes,
+      collectionId: formData.collectionId || modalBeatmap.collectionId || undefined,
       beatmap_priority,
     };
     setCollections(prev => {
@@ -228,6 +229,11 @@ const OsuverseMainSearchBox = () => {
         },
       };
     });
+    // persist last used collectionId in modal state so the next open selects it by default
+    setModals(prev => ({
+      ...prev,
+      [MODAL_ID]: { ...(prev[MODAL_ID] || {}), state: { ...(prev[MODAL_ID]?.state || {}), collectionId: formData.collectionId } }
+    }));
     handleModalClose();
   };
 

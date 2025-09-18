@@ -36,6 +36,8 @@ export default function BeatmapSearchResults({
       [id]: !prev[id]
     }));
   };
+  const openExpanded = (id) => setExpandedSets(prev => ({ ...prev, [id]: true }));
+  const closeExpanded = (id) => setExpandedSets(prev => ({ ...prev, [id]: false }));
   const handleAddToCollection = (set, beatmap = null) => {
     setModalTarget({ set, beatmap, type: beatmap ? 'single' : 'all' });
     setModalOpen(true);
@@ -280,6 +282,8 @@ export default function BeatmapSearchResults({
               set={set}
               expanded={!!expandedSets[set.id]}
               toggleExpanded={() => toggleExpanded(set.id)}
+              openExpanded={() => openExpanded(set.id)}
+              closeExpanded={() => closeExpanded(set.id)}
               onAddToCollection={handleAddToCollection}
               onRemoveFromCollection={handleRemoveFromCollection}
               isBeatmapInCollection={isBeatmapInCollection}
@@ -353,6 +357,8 @@ function BeatmapsetItem({
   set,
   expanded,
   toggleExpanded,
+  openExpanded,
+  closeExpanded,
   onAddToCollection,
   onRemoveFromCollection,
   isBeatmapInCollection,
@@ -367,6 +373,7 @@ function BeatmapsetItem({
 }) {
   // Sortujemy beatmapy według poziomu trudności
   const sortedBeatmaps = [...(set.beatmaps || [])].sort((a, b) => a.difficulty_rating - b.difficulty_rating);
+  const hardest = sortedBeatmaps[sortedBeatmaps.length - 1];
 
   // Fallback dla obrazków okładek
   const coverSources = [
@@ -407,7 +414,7 @@ function BeatmapsetItem({
   return (
     <div
       className={classNames('beatmapset-item', { 'expanded': expanded })}
-      onMouseLeave={handleMouseLeave}
+      onMouseLeave={(e) => { handleMouseLeave(e); closeExpanded && closeExpanded(set.id); }}
     >
       {/* Left edge vertical action (plus full-height) */}
       <div className="beatmapset-action-rail left">
@@ -476,7 +483,25 @@ function BeatmapsetItem({
           </a>
         </div>
 
-        <div className="beatmapset-preview" onClick={() => toggleExpanded()}>
+        {/* Hardest difficulty topline with quick actions */}
+        {hardest && (
+          <div className="beatmapset-hardest">
+            <span className="hardest-name">{hardest.version}</span>
+            <span className="hardest-stars">{hardest.difficulty_rating.toFixed(2)}★</span>
+            <span className="hardest-sep">•</span>
+            <button
+              className="hardest-action"
+              onClick={(e) => { e.stopPropagation(); onAddToCollection(set, hardest); }}
+            >Add diff</button>
+            <span className="hardest-sep">|</span>
+            <button
+              className="hardest-action"
+              onClick={(e) => { e.stopPropagation(); onAddToCollection(set); }}
+            >Add mapset</button>
+          </div>
+        )}
+
+        <div className="beatmapset-preview" onMouseEnter={() => openExpanded && openExpanded(set.id)} onClick={() => toggleExpanded()}>
           <div className="beatmapset-difficulty-squares">
             {sortedBeatmaps.map(diff => (
               <div

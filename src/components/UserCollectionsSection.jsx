@@ -12,7 +12,7 @@ import { useAtom as useReducerAtom } from 'jotai';
 import { collectionsReducerAtom } from '@/store/collectionsReducerAtom';
 import { reorderBeatmaps, moveBeatmap } from '@/store/reducers/actions';
 
-export default function UserCollectionsSection({ editMode = false, rowCount = 2 }) {
+export default function UserCollectionsSection({ editMode = false, rowCount = 2, viewMode = 'list' }) {
   const [collections] = useAtom(collectionsAtom);
   const [globalTags] = useAtom(selectedTagsAtom);
   const { sortMode, sortDirection, sortBeatmaps, toggleSortMode, toggleSortDirection } = useBeatmapSort();
@@ -279,9 +279,9 @@ export default function UserCollectionsSection({ editMode = false, rowCount = 2 
             </div>
 
             {isExpanded(group.key) && (
-              <div className="collection-group-body">
+              <div className={`collection-group-body ${viewMode === 'cards' ? 'cards-view' : ''}`}>
                 {/* Widok listy beatmap pogrupowanych po beatmapsecie */}
-                {itemsSorted.length > 0 && (
+                {itemsSorted.length > 0 && viewMode === 'list' && (
                   <div className={`beatmaps-list collections-grid collections-grid-${rowCount}-columns`}>
                     {(() => {
                       const bySet = itemsSorted.reduce((acc, bm) => {
@@ -459,6 +459,42 @@ export default function UserCollectionsSection({ editMode = false, rowCount = 2 
                               </div>
                             )}
                           </React.Fragment>
+                        );
+                      });
+                    })()}
+                  </div>
+                )}
+                {/* Cards view similar to search page */}
+                {itemsSorted.length > 0 && viewMode === 'cards' && (
+                  <div className={`beatmaps-list collections-grid collections-grid-${rowCount}-columns`}>
+                    {(() => {
+                      const bySet = itemsSorted.reduce((acc, bm) => { const setKey = getSetId(bm) || `single_${bm.id}`; if (!acc[setKey]) acc[setKey] = []; acc[setKey].push(bm); return acc; }, {});
+                      return Object.entries(bySet).map(([setKey, arr]) => {
+                        const first = arr[0];
+                        const setId = getSetId(first);
+                        const cover = getSetCoverListUrl(first);
+                        const sortedDiffs = [...arr].sort((a, b) => (a.difficulty_rating || 0) - (b.difficulty_rating || 0));
+                        return (
+                          <div className="beatmap-row" key={`card_${setKey}`} style={{ backgroundImage: `url(${cover})`, minHeight: 120 }} onClick={(e) => { if (editMode) return; openSetInNewTab(setId); }}>
+                            <div className="row-overlay" />
+                            <div className="row-content">
+                              <div className="row-title">
+                                <a href={getSetUrl(first)} target="_blank" rel="noopener noreferrer" onClick={(e)=>e.stopPropagation()}>{first.title}</a>{' '}<span>by</span>{' '}<a href={`/search?artist=${encodeURIComponent(first.artist || '')}`} onClick={(e)=>e.stopPropagation()} title={`Search by artist: ${first.artist}`}>{first.artist}</a>
+                              </div>
+                              <div className="row-meta"><span className="mapper">mapped by <a href={`/search?mapper=${encodeURIComponent(first.creator || '')}`} onClick={(e)=>e.stopPropagation()} title={`Search by mapper: ${first.creator}`}>{first.creator}</a></span></div>
+                            </div>
+                            <button type="button" className={`set-expander-arrow ${isSetExpanded(setId) ? 'expanded' : ''}`} title={isSetExpanded(setId) ? 'Collapse difficulties' : 'Expand difficulties'} onClick={(e) => { e.stopPropagation(); toggleSet(setId); }} aria-label="Toggle difficulties">⮟</button>
+                            {isSetExpanded(setId) && (
+                              <div className="beatmapset-diffs">
+                                {(sortedDiffs).map(diff => (
+                                  <span className="chip" key={diff.id} title={`${diff.version} (${(diff.difficulty_rating || 0).toFixed(2)}★)`}>
+                                    <span className="stars">{(diff.difficulty_rating || 0).toFixed(2)}★</span>
+                                    <span className="version">[{diff.version}]</span>
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         );
                       });
                     })()}
