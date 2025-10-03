@@ -32,3 +32,21 @@ See [Docs.md](./Docs.md) for important files, component reuse, and future ideas.
 ---
 
 For more, see in-code comments and Docs.md
+
+## Environment variables
+
+This project expects a local environment file for secrets and configuration. Copy the example and fill in your values before running the app:
+
+1. Copy `.env.example` to `.env.local`.
+2. Fill in `OSU_API_CLIENT_ID` and `OSU_API_CLIENT_SECRET` (get them from https://osu.ppy.sh/oauth/applications).
+3. Ensure `OSU_REDIRECT_URI` matches the redirect you registered (e.g. `http://localhost:3000/api/auth/callback`).
+4. Optionally set `DATABASE_URL` (Prisma). For quick local setup you can use SQLite: `DATABASE_URL="file:./dev.db"`.
+
+Example:
+
+```powershell
+cp .env.example .env.local
+# edit .env.local and add your client id/secret
+```
+
+Note: `.env*` is ignored by git by default in this repository. Do not commit secrets.
