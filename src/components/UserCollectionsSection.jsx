@@ -31,8 +31,8 @@ export default function UserCollectionsSection({ editMode = false, rowCount = 2,
     for (const bm of Object.values(collections.beatmaps)) {
       const colId = bm.collectionId || 'unknown';
       const subId = bm.subcollectionId || null;
-      const colName = collectionsById[colId]?.name || 'Unsorted';
-      const subName = subId ? (collectionsById[colId]?.subcollections?.find(s => s.id === subId)?.name || '') : '';
+      const colName = collectionsById[colId]?.name?.trim() || 'Unsorted';
+      const subName = subId ? (collectionsById[colId]?.subcollections?.find(s => s.id === subId)?.name?.trim() || '') : '';
 
       const key = `${colId}__${subId || ''}`;
       if (!result[key]) result[key] = { key, collectionId: colId, subcollectionId: subId, collection: colName, subcollection: subName, items: [] };
@@ -271,7 +271,7 @@ export default function UserCollectionsSection({ editMode = false, rowCount = 2,
           <div className="collection-group" key={group.key}>
             <div className="collection-group-header" onClick={() => toggleGroup(group.key)}>
               <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                <span className="collection-name">{group.collection}</span>
+                <span className="collection-name">{group.collection || 'Unnamed Collection'}</span>
                 {group.subcollection && <span className="subcollection-name">/ {group.subcollection}</span>}
                 <span className="count">({itemsFiltered.length})</span>
               </div>

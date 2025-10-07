@@ -233,6 +233,9 @@ export default function Navigation() {
             <Link href="/collections" className={pathname === '/collections' ? 'active' : ''} onClick={handleNavLinkClick}>Collections</Link>
           </li>
           <li>
+            <Link href="/coolections" className={pathname === '/coolections' ? 'active' : ''} onClick={handleNavLinkClick}>Coolections</Link>
+          </li>
+          <li>
             <Link href="/about" className={pathname === '/about' ? 'active' : ''} onClick={handleNavLinkClick}>About</Link>
           </li>
           <li>
