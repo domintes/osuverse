@@ -514,7 +514,7 @@ function SortToolbar({ sortMode, sortDirection, setModeDir }) {
   const [dir, setDir] = useState(sortDirection);
   return (
     <div className="section-toolbar" style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
-      <span style={{ color: '#b8a6c1' }}>Sort by:</span>
+      <span style={{ color: 'var(--text-secondary, #b8a6c1)' }}>Sort by:</span>
       <select
         value={mode}
         onChange={(e) => {
@@ -523,7 +523,13 @@ function SortToolbar({ sortMode, sortDirection, setModeDir }) {
           // Directly set sort mode where available
           if (setModeDir.setSortMode) setModeDir.setSortMode(val);
         }}
-        style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid rgba(234,129,251,0.35)', background: 'rgba(0,0,0,0.2)', color: '#fff' }}
+        style={{
+          padding: '6px 10px',
+          borderRadius: 6,
+          border: '1px solid color-mix(in oklab, var(--accent) 40%, transparent)',
+          background: 'rgba(0,0,0,0.2)',
+          color: '#fff'
+        }}
       >
         <option value="date">Added Date</option>
         <option value="priority">Priority</option>

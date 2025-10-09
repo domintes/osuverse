@@ -251,8 +251,12 @@ export default function Collections() {
                 }
               }}
               style={{
-                border: '2px dashed rgba(234,129,251,0.5)', borderRadius: 10, padding: 20,
-                textAlign: 'center', color: 'color-mix(in oklab, var(--accent) 25%, white)', background: 'color-mix(in oklab, var(--accent) 8%, transparent)'
+                border: '2px dashed color-mix(in oklab, var(--accent) 45%, transparent)',
+                borderRadius: 10,
+                padding: 20,
+                textAlign: 'center',
+                color: 'color-mix(in oklab, var(--accent) 25%, white)',
+                background: 'color-mix(in oklab, var(--accent) 8%, transparent)'
               }}
             >
               <p style={{ margin: 0, marginBottom: 8 }}>Select or Drop Collection File</p>
@@ -269,7 +273,7 @@ export default function Collections() {
               />
             </div>
             {importError && (
-              <div style={{ marginTop: 10, color: '#ff7eba' }}>Error: {importError}</div>
+              <div style={{ marginTop: 10, color: 'color-mix(in oklab, var(--accent) 45%, white)' }}>Error: {importError}</div>
             )}
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
               <button onClick={() => setImportOpen(false)} style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(100,200,255,0.2)', border: '1px solid #64c8ff', color: '#fff' }}>Cancel</button>
@@ -286,8 +290,10 @@ export default function Collections() {
             padding: '10px 12px',
             borderRadius: 8,
             border: '1px solid',
-            borderColor: n.type === 'success' ? '#3ddc84' : '#ff7eba',
-            background: n.type === 'success' ? 'rgba(61,220,132,0.15)' : 'rgba(255,126,186,0.15)',
+            borderColor: n.type === 'success' ? '#3ddc84' : 'var(--accent)',
+            background: n.type === 'success'
+              ? 'rgba(61,220,132,0.15)'
+              : 'color-mix(in oklab, var(--accent) 15%, transparent)',
             color: '#fff',
             boxShadow: '0 6px 20px rgba(0,0,0,0.35)'
           }}>

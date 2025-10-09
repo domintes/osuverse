@@ -88,7 +88,7 @@
   
   .beatmapset-difficulty-mapper {
     font-size: 0.8rem;
-    color: #b8a6c1;
+    color: var(--text-secondary, #b8a6c1);
     white-space: nowrap;
   }
   
@@ -215,7 +215,7 @@
     
     .beatmapset-artist {
       font-size: 0.9rem;
-      color: #b8a6c1;
+      color: var(--text-secondary, #b8a6c1);
     }
   }
 }

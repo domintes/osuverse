@@ -15,7 +15,7 @@
     transition: all 0.2s ease;
     
     &:focus-within {
-      border-color: var(--neon-primary, #8c54ff);
+  border-color: var(--neon-primary, var(--accent));
       box-shadow: 0 0 0 2px rgba(140, 84, 255, 0.2);
     }
     

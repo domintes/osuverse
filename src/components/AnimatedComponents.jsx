@@ -10,7 +10,7 @@ import './animatedComponents.scss';
 export const AnimatedNeonButton = ({ 
   children, 
   onClick, 
-  color = '#8c54ff', 
+  color = 'var(--accent)', 
   className = '',
   disabled = false,
   ...props 
@@ -106,7 +106,7 @@ export const SlideIn = ({
  */
 export const NeonLoader = ({ 
   size = 50, 
-  color = '#8c54ff',
+  color = 'var(--accent)',
   thickness = 4,
   className = '',
   ...props 

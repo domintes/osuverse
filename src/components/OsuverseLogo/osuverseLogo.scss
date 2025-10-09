@@ -17,7 +17,11 @@
     font-size: 28px;
     font-weight: 900;
     color: var(--text);
-    text-shadow: 0 0 12px color-mix(in oklab, var(--accent) 80%, transparent), 0 0 24px color-mix(in oklab, var(--bg) 35%, transparent), 0 0 8px color-mix(in oklab, var(--accent) 40%, transparent);
+    /* Theme-aware text glow using accent color */
+    text-shadow:
+        0 0 5px var(--accent),
+        0 0 10px color-mix(in oklab, var(--accent) 55%, transparent),
+        0 0 18px color-mix(in oklab, var(--accent) 85%, transparent);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -41,7 +45,9 @@
     z-index: 10;
     font-weight: 900;
     font-family: 'Cracked Code';
-    text-shadow: 0 0 24px color-mix(in oklab, var(--bg) 35%, transparent), 0 0 8px color-mix(in oklab, var(--accent) 80%, transparent);
+    text-shadow:
+        0 0 24px color-mix(in oklab, var(--bg) 35%, transparent),
+        0 0 8px color-mix(in oklab, var(--accent) 85%, transparent);
     filter: drop-shadow(0 0 12px color-mix(in oklab, var(--bg) 35%, transparent));
 }
 
@@ -88,7 +94,10 @@
     font-family: 'Cracked Code';
     z-index: 777;
     color: var(--text);
-    text-shadow: 0 0 8px color-mix(in oklab, var(--accent) 80%, transparent), 0 0 16px color-mix(in oklab, var(--bg) 35%, transparent);
+    text-shadow:
+        0 0 5px var(--accent),
+        0 0 10px color-mix(in oklab, var(--accent) 55%, transparent),
+        0 0 15px color-mix(in oklab, var(--accent) 85%, transparent);
     transition: color 0.2s, text-shadow 0.2s;
 }
 

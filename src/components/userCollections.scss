@@ -414,10 +414,10 @@
   text-shadow: 0 0 10px color-mix(in oklab, var(--accent) 35%, transparent);
     }
     .subcollection-name {
-      color: #c9b2d0;
+      color: var(--text-tertiary, #c9b2d0);
     }
     .count {
-      color: #b8a6c1;
+      color: var(--text-secondary, #b8a6c1);
       font-size: 0.95em;
     }
     .expander-arrow {
@@ -535,7 +535,7 @@
     font-size: 0.92em;
   }
 
-  .row-meta .mapper { color: #c9b2d0; }
+  .row-meta .mapper { color: var(--text-tertiary, #c9b2d0); }
   .row-meta .diff { color: color-mix(in oklab, var(--accent) 35%, white); font-weight: 600; }
 
   .diff-chips {
@@ -555,7 +555,7 @@
   color: color-mix(in oklab, var(--accent) 20%, white);
     font-size: 0.9em;
     .stars { color: #64c8ff; font-weight: 700; }
-    .version { color: #b8a6c1; }
+  .version { color: var(--text-secondary, #b8a6c1); }
   }
 
   /* Expander chevron for beatmapset rows */
@@ -564,16 +564,16 @@
     right: 36px;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0,0,0,0.35);
-    border: 1px solid rgba(234,129,251,0.35);
-    color: #ffd6ec;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid color-mix(in oklab, var(--accent) 40%, transparent);
+  color: color-mix(in oklab, var(--accent) 35%, white);
     border-radius: 6px;
     padding: 2px 6px;
     cursor: pointer;
     z-index: 2;
-    filter: drop-shadow(0 0 6px rgba(234,129,251,0.4));
-    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
-    &:hover { background: rgba(0,0,0,0.5); border-color: rgba(234,129,251,0.6); }
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--accent) 45%, transparent));
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  &:hover { background: rgba(0,0,0,0.5); border-color: color-mix(in oklab, var(--accent) 60%, transparent); }
     &.expanded { transform: translateY(-50%) rotate(180deg); }
   }
 
@@ -636,12 +636,12 @@
   .beatmap-card .title,
   .beatmapset-title {
     font-weight: 700;
-    color: #ffd6ec;
+    color: color-mix(in oklab, var(--accent) 40%, white);
   }
 
   .beatmap-card .mapper,
   .beatmapset-mapper {
-    color: #c9b2d0;
+    color: var(--text-tertiary, #c9b2d0);
     font-size: 0.93em;
     margin-top: 2px;
   }
@@ -669,7 +669,7 @@
   border: 1px solid color-mix(in oklab, var(--accent) 25%, transparent);
   color: color-mix(in oklab, var(--accent) 20%, white);
     .stars { color: #64c8ff; font-weight: 700; }
-    .version { color: #b8a6c1; }
+    .version { color: var(--text-secondary, #b8a6c1); }
   }
 
   /* Grid layout for collections page (mirrors search page columns) */

@@ -118,6 +118,35 @@
 .beatmapset-info {
   flex: 1;
   min-width: 0;
+
+  .beatmap-title {
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .beatmap-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-secondary, #b8a6c1);
+  }
+
+  .title-actions {
+    position: absolute;
+    top: -2px;
+    right: 0;
+    display: flex;
+    gap: 6px;
+    z-index: 6;
+  }
+
+  a {
+    color: color-mix(in oklab, var(--accent) 25%, white);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+      color: var(--accent);
+    }
+  }
 }
 
 // Topline with hardest difficulty and quick actions
@@ -151,36 +180,6 @@
   }
 }
 
-.beatmapset-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-  white-space: nowrap;
-  position: relative;
-  padding-right: 72px; // room for star/zap
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  .title-actions {
-    position: absolute;
-    top: -2px;
-    right: 0;
-    display: flex;
-    gap: 6px;
-    z-index: 6;
-  }
-
-  a {
-  color: color-mix(in oklab, var(--accent) 25%, white);
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-  color: var(--accent);
-    }
-  }
-}
-
 // Vertical rail with full-height plus
 .beatmapset-action-rail {
   position: absolute;
@@ -207,7 +206,7 @@
   font-weight: 900;
 }
 .beatmapset-action-rail .action-btn.plus:hover {
-  background: rgba(234, 129, 251, 0.2);
+  background: color-mix(in oklab, var(--accent) 18%, transparent);
 }
 
 // Download button in bottom-right corner
@@ -253,11 +252,11 @@
 .action-btn.star svg { color: #ffd54f; }
 .action-btn.zap svg { color: #7ee0ff; }
 .action-btn.plus { color: var(--accent); font-weight: 700; }
-.action-btn.plus:hover { background: rgba(234, 129, 251, 0.2); }
+.action-btn.plus:hover { background: color-mix(in oklab, var(--accent) 18%, transparent); }
 
 .beatmapset-mapper {
   font-size: 0.9rem;
-  color: #b8a6c1;
+  color: var(--text-secondary, #b8a6c1);
   margin-bottom: 0.5rem;
 
   a {
@@ -279,7 +278,7 @@
   transition: background-color 0.2s;
   
   &:hover {
-    background-color: rgba(234, 129, 251, 0.1);
+    background-color: color-mix(in oklab, var(--accent) 12%, transparent);
   }
 }
 
@@ -294,8 +293,8 @@
   width: 16px;
   height: 10px;
   border-radius: 3px;
-  border: 1px solid #b144b1;
-  box-shadow: 0 0 4px rgba(234, 129, 251, 0.27);
+  border: 1px solid color-mix(in oklab, var(--accent) 55%, transparent);
+  box-shadow: 0 0 4px color-mix(in oklab, var(--accent) 30%, transparent);
   transition: transform 0.15s;
 
   &:hover {
@@ -609,7 +608,7 @@
   transition: all 0.2s;
 
   &:hover {
-    background: rgba(234, 129, 251, 0.1);
+    background: color-mix(in oklab, var(--accent) 12%, transparent);
   }
 }
 

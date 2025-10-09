@@ -175,8 +175,9 @@ export default function Navigation() {
                 />
                 <span style={{ fontWeight: 600 }}>{bm.artist} - {bm.title}</span>
                 {bm.version && (
-                  <span style={{ color: '#b8a6c1', marginLeft: 8, fontSize: '0.95em' }}>[{bm.version}]</span>
-                )}                {bm.userTags && bm.userTags.length > 0 && (
+                  <span style={{ color: 'var(--text-secondary, #b8a6c1)', marginLeft: 8, fontSize: '0.95em' }}>[{bm.version}]</span>
+                )}
+                {bm.userTags && bm.userTags.length > 0 && (
                   <span style={{ marginLeft: 8, fontSize: '0.9em', color: '#64c8ff' }}>
                     {bm.userTags.map(t => typeof t === 'string' ? `#${t}` : `#${t.tag}`).join(' ')}
                   </span>
@@ -208,7 +209,7 @@ export default function Navigation() {
                 />
                 <span style={{ fontWeight: 600 }}>{result.artist} - {result.title}</span>
                 {result.creator && (
-                  <span style={{ color: '#b8a6c1', marginLeft: 8, fontSize: '0.95em' }}>by {result.creator}</span>
+                  <span style={{ color: 'var(--text-secondary, #b8a6c1)', marginLeft: 8, fontSize: '0.95em' }}>by {result.creator}</span>
                 )}
               </a>
             ))

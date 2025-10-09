@@ -11,10 +11,15 @@
     font-weight: 700;
     margin-bottom: 1.5rem;
     text-align: center;
-    background: linear-gradient(to right, #8c54ff, #5ca2ff);
+    background: linear-gradient(
+      to right,
+      var(--accent),
+      color-mix(in oklab, var(--accent) 45%, var(--accent-on-white))
+    );
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 10px rgba(140, 84, 255, 0.5);
+  text-shadow: 0 0 10px var(--accent-glow);
   }
   
   .search-panel {
@@ -71,13 +76,13 @@
             
             &:hover {
               background-color: rgba(60, 60, 80, 0.8);
-              border-color: rgba(140, 84, 255, 0.6);
+              border-color: color-mix(in oklab, var(--accent) 55%, transparent);
             }
             
             &.active {
-              background-color: rgba(140, 84, 255, 0.2);
-              border-color: rgba(140, 84, 255, 0.8);
-              box-shadow: 0 0 5px rgba(140, 84, 255, 0.4);
+              background-color: color-mix(in oklab, var(--accent) 18%, transparent);
+              border-color: color-mix(in oklab, var(--accent) 70%, transparent);
+              box-shadow: 0 0 5px color-mix(in oklab, var(--accent) 45%, transparent);
             }
           }
         }

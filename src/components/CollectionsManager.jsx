@@ -17,8 +17,11 @@ export default function CollectionsManager() {
 
   return (
     <div className="collections-manager" style={{
-      margin: '10px 0 14px', padding: 12, borderRadius: 10,
-      background: 'rgba(234,129,251,0.08)', border: '1px solid rgba(234,129,251,0.25)'
+      margin: '10px 0 14px',
+      padding: 12,
+      borderRadius: 10,
+      background: 'color-mix(in oklab, var(--accent) 10%, transparent)',
+      border: '1px solid color-mix(in oklab, var(--accent) 30%, transparent)'
     }}>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 10 }}>
   <strong style={{ color: 'var(--accent)' }}>Manage Collections</strong>
@@ -27,7 +30,14 @@ export default function CollectionsManager() {
           value={newCollectionName}
           onChange={e => setNewCollectionName(e.target.value)}
           placeholder="New collection name"
-          style={{ flex: 1, padding: '6px 10px', borderRadius: 6, border: '1px solid rgba(234,129,251,0.35)', background: 'rgba(0,0,0,0.2)', color: '#fff' }}
+          style={{
+            flex: 1,
+            padding: '6px 10px',
+            borderRadius: 6,
+            border: '1px solid color-mix(in oklab, var(--accent) 40%, transparent)',
+            background: 'rgba(0,0,0,0.2)',
+            color: '#fff'
+          }}
         />
   <button onClick={handleAddCollection} style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid var(--accent)', background: 'color-mix(in oklab, var(--accent) 25%, transparent)', color: 'var(--text)' }}>Add</button>
       </div>
@@ -40,10 +50,28 @@ export default function CollectionsManager() {
                 type="text"
                 defaultValue={col.name}
                 onBlur={e => dispatch(editCollection(col.id, e.target.value))}
-                style={{ flex: 1, padding: '4px 8px', borderRadius: 6, border: '1px solid rgba(234,129,251,0.35)', background: 'rgba(0,0,0,0.2)', color: '#fff' }}
+                style={{
+                  flex: 1,
+                  padding: '4px 8px',
+                  borderRadius: 6,
+                  border: '1px solid color-mix(in oklab, var(--accent) 40%, transparent)',
+                  background: 'rgba(0,0,0,0.2)',
+                  color: '#fff'
+                }}
               />
               {!col.isSystemCollection && (
-                <button onClick={() => dispatch(removeCollection(col.id))} style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #ff7eba', background: 'rgba(255,126,186,0.2)', color: '#fff' }}>Remove</button>
+                <button
+                  onClick={() => dispatch(removeCollection(col.id))}
+                  style={{
+                    padding: '4px 8px',
+                    borderRadius: 6,
+                    border: '1px solid var(--accent)',
+                    background: 'color-mix(in oklab, var(--accent) 18%, transparent)',
+                    color: '#fff'
+                  }}
+                >
+                  Remove
+                </button>
               )}
             </div>
             <div style={{ marginTop: 8, paddingLeft: 8 }}>
@@ -66,7 +94,14 @@ function SubcollectionsEditor({ collection, onAdd, onEdit, onRemove }) {
           value={newName}
           onChange={e => setNewName(e.target.value)}
           placeholder="New subcollection name"
-          style={{ flex: 1, padding: '4px 8px', borderRadius: 6, border: '1px solid rgba(234,129,251,0.35)', background: 'rgba(0,0,0,0.2)', color: '#fff' }}
+          style={{
+            flex: 1,
+            padding: '4px 8px',
+            borderRadius: 6,
+            border: '1px solid color-mix(in oklab, var(--accent) 40%, transparent)',
+            background: 'rgba(0,0,0,0.2)',
+            color: '#fff'
+          }}
         />
         <button onClick={() => { if (newName.trim()) { onAdd(newName.trim()); setNewName(''); } }} style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #64c8ff', background: 'rgba(100,200,255,0.2)', color: '#fff' }}>Add sub</button>
       </div>
@@ -77,9 +112,27 @@ function SubcollectionsEditor({ collection, onAdd, onEdit, onRemove }) {
               type="text"
               defaultValue={sub.name}
               onBlur={e => onEdit(sub.id, e.target.value)}
-              style={{ flex: 1, padding: '4px 8px', borderRadius: 6, border: '1px solid rgba(234,129,251,0.35)', background: 'rgba(0,0,0,0.2)', color: '#fff' }}
+              style={{
+                flex: 1,
+                padding: '4px 8px',
+                borderRadius: 6,
+                border: '1px solid color-mix(in oklab, var(--accent) 40%, transparent)',
+                background: 'rgba(0,0,0,0.2)',
+                color: '#fff'
+              }}
             />
-            <button onClick={() => onRemove(sub.id)} style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #ff7eba', background: 'rgba(255,126,186,0.2)', color: '#fff' }}>Remove</button>
+            <button
+              onClick={() => onRemove(sub.id)}
+              style={{
+                padding: '4px 8px',
+                borderRadius: 6,
+                border: '1px solid var(--accent)',
+                background: 'color-mix(in oklab, var(--accent) 18%, transparent)',
+                color: '#fff'
+              }}
+            >
+              Remove
+            </button>
           </div>
         ))}
       </div>

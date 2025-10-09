@@ -49,8 +49,8 @@
 }
 
 .neon-border-box.neon-info .neon-border-grid {
-  background: repeating-linear-gradient(90deg, rgba(147,112,219,0.08) 0 1px, transparent 1px 16px),
-              repeating-linear-gradient(0deg, rgba(147,112,219,0.08) 0 1px, transparent 1px 16px);
+  background: repeating-linear-gradient(90deg, color-mix(in oklab, var(--accent) 18%, transparent) 0 1px, transparent 1px 16px),
+              repeating-linear-gradient(0deg, color-mix(in oklab, var(--accent) 18%, transparent) 0 1px, transparent 1px 16px);
 }
 
 .neon-border-box.neon-warning .neon-border-grid {
@@ -90,8 +90,8 @@
 }
 
 .neon-border-box.neon-info {
-  border-color: #9370DB;
-  box-shadow: 0 0 32px 0 #9370DBcc, 0 0 0 2.5px #fff, 0 0 80px 0 color-mix(in oklab, var(--bg1) 33%, transparent);
+  border-color: color-mix(in oklab, var(--accent) 70%, white);
+  box-shadow: 0 0 32px 0 color-mix(in oklab, var(--accent) 60%, transparent), 0 0 0 2.5px #fff, 0 0 80px 0 color-mix(in oklab, var(--bg1) 33%, transparent);
 }
 
 .neon-border-box.neon-warning {

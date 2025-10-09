@@ -1,4 +1,3 @@
-
 /* Theme variables */
 :root {
   --accent: #ff4fd8; /* default accent (legacy/pink) */
@@ -6,6 +5,15 @@
   --bg: #0b0b0f;
   --bg-soft: #111118;
   --text: #e6e6f0;
+  /* Accent derivations */
+  --accent-soft: color-mix(in oklab, var(--accent) 45%, transparent);
+  --accent-strong: color-mix(in oklab, var(--accent) 80%, transparent);
+  --accent-glow: color-mix(in oklab, var(--accent) 65%, transparent);
+  --accent-glass: color-mix(in oklab, var(--accent) 18%, transparent);
+  --accent-on-white: color-mix(in oklab, var(--accent) 70%, white);
+  --accent-on-dark: color-mix(in oklab, var(--accent) 25%, black);
+  --text-secondary: color-mix(in oklab, var(--text) 70%, var(--accent) 30%);
+  --text-tertiary: color-mix(in oklab, var(--text) 55%, var(--accent) 45%);
   /* Background and panel palette */
   --bg1: #2f0f3a;
   --bg2: #1a0a24;
@@ -172,8 +180,8 @@ body, html {
   position: relative;
   z-index: 3;
   background-image: 
-    repeating-linear-gradient(90deg, rgba(180, 120, 255, 0.015) 0px, rgba(180, 120, 255, 0.015) 1px, transparent 1px, transparent 20px),
-    repeating-linear-gradient(0deg, rgba(180, 120, 255, 0.015) 0px, rgba(180, 120, 255, 0.015) 1px, transparent 1px, transparent 20px);
+    repeating-linear-gradient(90deg, var(--accent-glass) 0px, var(--accent-glass) 1px, transparent 1px, transparent 20px),
+    repeating-linear-gradient(0deg, var(--accent-glass) 0px, var(--accent-glass) 1px, transparent 1px, transparent 20px);
 }
 
 // Focus mode: darker, more purple, remove bright overlay
