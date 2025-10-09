@@ -19,7 +19,7 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
-    const type = searchParams.get('type') || 'ranked'; // 'ranked', 'favourite', 'all'
+    const type = searchParams.get('type') || 'ranked'; // 'ranked', 'favourite', 'graveyard', 'all'
 
     if (!userId) {
       return NextResponse.json({ error: 'userId parameter is required' }, { status: 400 });
@@ -88,6 +88,27 @@ export async function GET(request) {
         }
       } catch (error) {
         console.error('Error fetching favourite beatmaps:', error);
+      }
+    }
+
+    // Fetch graveyard beatmaps
+    if (type === 'graveyard' || type === 'all') {
+      try {
+        const graveyardUrl = `https://osu.ppy.sh/api/v2/users/${userId}/beatmapsets/graveyard?limit=100`;
+        const graveyardResponse = await fetch(graveyardUrl, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        });
+
+        if (graveyardResponse.ok) {
+          const graveyardData = await graveyardResponse.json();
+          allBeatmaps = [...allBeatmaps, ...graveyardData];
+        }
+      } catch (error) {
+        console.error('Error fetching graveyard beatmaps:', error);
       }
     }
 

@@ -221,22 +221,37 @@ export default function DownloaderPage() {
                 {searchResults.map(user => (
                   <div key={user.id} className="user-result-card">
                     <div className="user-info">
-                      <Image 
-                        src={user.avatar_url} 
-                        alt={user.username}
-                        width={80}
-                        height={80}
-                        className="user-avatar"
-                        unoptimized
-                      />
+                      <a 
+                        href={`https://osu.ppy.sh/users/${user.id}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="user-avatar-link"
+                      >
+                        <Image 
+                          src={user.avatar_url} 
+                          alt={user.username}
+                          width={80}
+                          height={80}
+                          className="user-avatar"
+                          unoptimized
+                        />
+                      </a>
                       <div className="user-details">
-                        <h3 className="user-username">{user.username}</h3>
+                        <a 
+                          href={`https://osu.ppy.sh/users/${user.id}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="user-username-link"
+                        >
+                          <h3 className="user-username">{user.username}</h3>
+                        </a>
                         <p className="user-country">
                           {user.country?.name || user.country_code}
                         </p>
                         <div className="user-stats">
                           <span>Ranked Beatmaps: <strong>{user.ranked_beatmapset_count || 0}</strong></span>
                           <span>Favourite Beatmaps: <strong>{user.favourite_beatmapset_count || 0}</strong></span>
+                          <span>Graveyard Beatmaps: <strong>{user.graveyard_beatmapset_count || 0}</strong></span>
                         </div>
                       </div>
                     </div>
@@ -244,7 +259,7 @@ export default function DownloaderPage() {
                       <button
                         onClick={() => downloadUserBeatmaps(user.id, 'ranked')}
                         disabled={downloading || !user.ranked_beatmapset_count}
-                        className="download-button"
+                        className="download-button ranked-button"
                       >
                         Download Ranked ({user.ranked_beatmapset_count || 0})
                       </button>
@@ -254,6 +269,13 @@ export default function DownloaderPage() {
                         className="download-button favourite-button"
                       >
                         Download Favourites ({user.favourite_beatmapset_count || 0})
+                      </button>
+                      <button
+                        onClick={() => downloadUserBeatmaps(user.id, 'graveyard')}
+                        disabled={downloading || !user.graveyard_beatmapset_count}
+                        className="download-button graveyard-button"
+                      >
+                        Download Graveyard ({user.graveyard_beatmapset_count || 0})
                       </button>
                     </div>
                   </div>
