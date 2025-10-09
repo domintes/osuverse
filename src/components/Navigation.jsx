@@ -242,6 +242,9 @@ export default function Navigation() {
           <li>
             <Link href="/search" className={pathname === '/search' ? 'active' : ''} onClick={handleNavLinkClick}>Search</Link>
           </li>
+          <li>
+            <Link href="/downloader" className={pathname === '/downloader' ? 'active' : ''} onClick={handleNavLinkClick}>Downloader</Link>
+          </li>
           {/* Formularz wyszukiwania w navbarze */}
           <li className="search-container">
             <div ref={searchBoxRef} className={`search-dropdown ${showSearchBox ? 'visible' : 'hidden'}`}>
