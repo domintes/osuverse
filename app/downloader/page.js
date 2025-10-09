@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useAtom } from 'jotai';
 import Image from 'next/image';
+import JSZip from 'jszip';
 import { collectionsAtom } from '@/store/collectionAtom';
 import './downloader.scss';
 
@@ -16,6 +17,7 @@ export default function DownloaderPage() {
   const [downloadLogs, setDownloadLogs] = useState([]);
   const [selectedMirror, setSelectedMirror] = useState('bancho'); // 'bancho' or 'catboy'
   const [beatmapCounts, setBeatmapCounts] = useState({}); // Store counts for both mirrors
+  const [zipDownload, setZipDownload] = useState(false); // Enable zip download mode
 
   const addLog = (message, type = 'info') => {
     setDownloadLogs(prev => [...prev, { message, type, timestamp: new Date().toLocaleTimeString() }]);
@@ -107,45 +109,110 @@ export default function DownloaderPage() {
       setDownloadProgress({ current: 0, total: beatmaps.length, currentBeatmap: '' });
       addLog(`Found ${beatmaps.length} beatmaps to download`, 'success');
 
-      for (let i = 0; i < beatmaps.length; i++) {
-        const beatmap = beatmaps[i];
-        setDownloadProgress({ 
-          current: i + 1, 
-          total: beatmaps.length, 
-          currentBeatmap: `${beatmap.artist} - ${beatmap.title}` 
-        });
-        
-        try {
-          const downloadRes = await fetch('/api/downloader/download', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              beatmapsetId: beatmap.id,
-              mirror: selectedMirror 
-            })
-          });
+      // If zip mode is enabled, collect all beatmaps in a zip file
+      if (zipDownload) {
+        const zip = new JSZip();
+        let successCount = 0;
 
-          if (downloadRes.ok) {
-            const blob = await downloadRes.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${beatmap.id} ${beatmap.artist} - ${beatmap.title}.osz`;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-            
-            addLog(`✓ Downloaded: ${beatmap.artist} - ${beatmap.title}`, 'success');
-            
-            // Delay to avoid rate limiting (1-2 seconds between downloads)
-            await new Promise(resolve => setTimeout(resolve, 1500));
-          } else {
-            const errorData = await downloadRes.json();
-            addLog(`✗ Failed: ${beatmap.artist} - ${beatmap.title} (${errorData.error})`, 'error');
+        for (let i = 0; i < beatmaps.length; i++) {
+          const beatmap = beatmaps[i];
+          setDownloadProgress({ 
+            current: i + 1, 
+            total: beatmaps.length, 
+            currentBeatmap: `${beatmap.artist} - ${beatmap.title}` 
+          });
+          
+          try {
+            const downloadRes = await fetch('/api/downloader/download', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                beatmapsetId: beatmap.id,
+                mirror: selectedMirror 
+              })
+            });
+
+            if (downloadRes.ok) {
+              const blob = await downloadRes.blob();
+              const filename = `${beatmap.id} ${beatmap.artist} - ${beatmap.title}.osz`;
+              zip.file(filename, blob);
+              successCount++;
+              
+              addLog(`✓ Added to archive: ${beatmap.artist} - ${beatmap.title}`, 'success');
+              
+              // Delay to avoid rate limiting
+              await new Promise(resolve => setTimeout(resolve, 1500));
+            } else {
+              const errorData = await downloadRes.json();
+              addLog(`✗ Failed: ${beatmap.artist} - ${beatmap.title} (${errorData.error})`, 'error');
+            }
+          } catch (error) {
+            addLog(`✗ Error downloading ${beatmap.artist} - ${beatmap.title}: ${error.message}`, 'error');
           }
-        } catch (error) {
-          addLog(`✗ Error downloading ${beatmap.artist} - ${beatmap.title}: ${error.message}`, 'error');
+        }
+
+        // Generate and download the zip file
+        if (successCount > 0) {
+          addLog(`Creating zip archive with ${successCount} beatmaps...`, 'info');
+          const zipBlob = await zip.generateAsync({ 
+            type: 'blob',
+            compression: 'DEFLATE',
+            compressionOptions: { level: 6 }
+          });
+          
+          const url = window.URL.createObjectURL(zipBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `osuverse_beatmaps_${type}_${userId}_${Date.now()}.zip`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          
+          addLog(`✓ Downloaded archive with ${successCount} beatmaps!`, 'success');
+        }
+      } else {
+        // Regular download mode - download each beatmap individually
+        for (let i = 0; i < beatmaps.length; i++) {
+          const beatmap = beatmaps[i];
+          setDownloadProgress({ 
+            current: i + 1, 
+            total: beatmaps.length, 
+            currentBeatmap: `${beatmap.artist} - ${beatmap.title}` 
+          });
+          
+          try {
+            const downloadRes = await fetch('/api/downloader/download', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                beatmapsetId: beatmap.id,
+                mirror: selectedMirror 
+              })
+            });
+
+            if (downloadRes.ok) {
+              const blob = await downloadRes.blob();
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `${beatmap.id} ${beatmap.artist} - ${beatmap.title}.osz`;
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+              document.body.removeChild(a);
+              
+              addLog(`✓ Downloaded: ${beatmap.artist} - ${beatmap.title}`, 'success');
+              
+              // Delay to avoid rate limiting (1-2 seconds between downloads)
+              await new Promise(resolve => setTimeout(resolve, 1500));
+            } else {
+              const errorData = await downloadRes.json();
+              addLog(`✗ Failed: ${beatmap.artist} - ${beatmap.title} (${errorData.error})`, 'error');
+            }
+          } catch (error) {
+            addLog(`✗ Error downloading ${beatmap.artist} - ${beatmap.title}: ${error.message}`, 'error');
+          }
         }
       }
 
@@ -175,41 +242,105 @@ export default function DownloaderPage() {
     setDownloadProgress({ current: 0, total: beatmaps.length, currentBeatmap: '' });
     addLog(`Starting download of ${beatmaps.length} beatmaps from your collection...`, 'info');
 
-    for (let i = 0; i < beatmaps.length; i++) {
-      const beatmap = beatmaps[i];
-      setDownloadProgress({ 
-        current: i + 1, 
-        total: beatmaps.length, 
-        currentBeatmap: `${beatmap.artist} - ${beatmap.title}` 
-      });
-      
-      try {
-        const downloadRes = await fetch('/api/downloader/download', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ beatmapsetId: beatmap.beatmapset_id || beatmap.id })
-        });
+    if (zipDownload) {
+      const zip = new JSZip();
+      let successCount = 0;
 
-        if (downloadRes.ok) {
-          const blob = await downloadRes.blob();
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${beatmap.beatmapset_id || beatmap.id} ${beatmap.artist} - ${beatmap.title}.osz`;
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(a);
-          
-          addLog(`✓ Downloaded: ${beatmap.artist} - ${beatmap.title}`, 'success');
-          
-          await new Promise(resolve => setTimeout(resolve, 1500));
-        } else {
-          const errorData = await downloadRes.json();
-          addLog(`✗ Failed: ${beatmap.artist} - ${beatmap.title} (${errorData.error})`, 'error');
+      for (let i = 0; i < beatmaps.length; i++) {
+        const beatmap = beatmaps[i];
+        setDownloadProgress({ 
+          current: i + 1, 
+          total: beatmaps.length, 
+          currentBeatmap: `${beatmap.artist} - ${beatmap.title}` 
+        });
+        
+        try {
+          const downloadRes = await fetch('/api/downloader/download', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              beatmapsetId: beatmap.beatmapset_id || beatmap.id,
+              mirror: selectedMirror 
+            })
+          });
+
+          if (downloadRes.ok) {
+            const blob = await downloadRes.blob();
+            const filename = `${beatmap.beatmapset_id || beatmap.id} ${beatmap.artist} - ${beatmap.title}.osz`;
+            zip.file(filename, blob);
+            successCount++;
+            
+            addLog(`✓ Added to archive: ${beatmap.artist} - ${beatmap.title}`, 'success');
+            
+            await new Promise(resolve => setTimeout(resolve, 1500));
+          } else {
+            const errorData = await downloadRes.json();
+            addLog(`✗ Failed: ${beatmap.artist} - ${beatmap.title} (${errorData.error})`, 'error');
+          }
+        } catch (error) {
+          addLog(`✗ Error downloading ${beatmap.artist} - ${beatmap.title}: ${error.message}`, 'error');
         }
-      } catch (error) {
-        addLog(`✗ Error downloading ${beatmap.artist} - ${beatmap.title}: ${error.message}`, 'error');
+      }
+
+      if (successCount > 0) {
+        addLog(`Creating zip archive with ${successCount} beatmaps...`, 'info');
+        const zipBlob = await zip.generateAsync({ 
+          type: 'blob',
+          compression: 'DEFLATE',
+          compressionOptions: { level: 6 }
+        });
+        
+        const url = window.URL.createObjectURL(zipBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `osuverse_collection_${Date.now()}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        addLog(`✓ Downloaded archive with ${successCount} beatmaps!`, 'success');
+      }
+    } else {
+      for (let i = 0; i < beatmaps.length; i++) {
+        const beatmap = beatmaps[i];
+        setDownloadProgress({ 
+          current: i + 1, 
+          total: beatmaps.length, 
+          currentBeatmap: `${beatmap.artist} - ${beatmap.title}` 
+        });
+        
+        try {
+          const downloadRes = await fetch('/api/downloader/download', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              beatmapsetId: beatmap.beatmapset_id || beatmap.id,
+              mirror: selectedMirror 
+            })
+          });
+
+          if (downloadRes.ok) {
+            const blob = await downloadRes.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${beatmap.beatmapset_id || beatmap.id} ${beatmap.artist} - ${beatmap.title}.osz`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            addLog(`✓ Downloaded: ${beatmap.artist} - ${beatmap.title}`, 'success');
+            
+            await new Promise(resolve => setTimeout(resolve, 1500));
+          } else {
+            const errorData = await downloadRes.json();
+            addLog(`✗ Failed: ${beatmap.artist} - ${beatmap.title} (${errorData.error})`, 'error');
+          }
+        } catch (error) {
+          addLog(`✗ Error downloading ${beatmap.artist} - ${beatmap.title}: ${error.message}`, 'error');
+        }
       }
     }
 
@@ -246,32 +377,49 @@ export default function DownloaderPage() {
         <section className="download-section user-section">
           <h2>Search osu! Users</h2>
           
-          {/* Mirror Selection */}
-          <div className="mirror-selection">
-            <label className="mirror-label">Mirror:</label>
-            <div className="mirror-options">
-              <label className="mirror-option">
+          {/* Download Options */}
+          <div className="download-options-container">
+            {/* Zip Download Checkbox */}
+            <div className="zip-checkbox-container">
+              <label className="zip-checkbox-label">
                 <input
-                  type="radio"
-                  name="mirror"
-                  value="bancho"
-                  checked={selectedMirror === 'bancho'}
-                  onChange={(e) => setSelectedMirror(e.target.value)}
+                  type="checkbox"
+                  checked={zipDownload}
+                  onChange={(e) => setZipDownload(e.target.checked)}
                   disabled={downloading}
+                  className="zip-checkbox"
                 />
-                <span>Bancho (Official)</span>
+                <span>Zip beatmaps before downloading</span>
               </label>
-              <label className="mirror-option">
-                <input
-                  type="radio"
-                  name="mirror"
-                  value="catboy"
-                  checked={selectedMirror === 'catboy'}
-                  onChange={(e) => setSelectedMirror(e.target.value)}
-                  disabled={downloading}
-                />
-                <span>Catboy.best</span>
-              </label>
+            </div>
+
+            {/* Mirror Selection */}
+            <div className="mirror-selection">
+              <label className="mirror-label">Mirror:</label>
+              <div className="mirror-options">
+                <label className="mirror-option">
+                  <input
+                    type="radio"
+                    name="mirror"
+                    value="bancho"
+                    checked={selectedMirror === 'bancho'}
+                    onChange={(e) => setSelectedMirror(e.target.value)}
+                    disabled={downloading}
+                  />
+                  <span>Bancho (Official)</span>
+                </label>
+                <label className="mirror-option">
+                  <input
+                    type="radio"
+                    name="mirror"
+                    value="catboy"
+                    checked={selectedMirror === 'catboy'}
+                    onChange={(e) => setSelectedMirror(e.target.value)}
+                    disabled={downloading}
+                  />
+                  <span>Catboy.best</span>
+                </label>
+              </div>
             </div>
           </div>
 
