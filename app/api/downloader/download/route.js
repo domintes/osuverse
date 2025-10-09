@@ -93,14 +93,46 @@ async function downloadFromNerinyan(beatmapsetId) {
   throw new Error(`Nerinyan: ${response.status} ${response.statusText}`);
 }
 
+// Download from Catboy.best mirror (alternative source)
+async function downloadFromCatboy(beatmapsetId) {
+  const url = `https://catboy.best/d/${beatmapsetId}`;
+  
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0'
+    },
+    redirect: 'follow'
+  });
+
+  if (response.ok) {
+    return await response.blob();
+  }
+  
+  throw new Error(`Catboy: ${response.status} ${response.statusText}`);
+}
+
 // Try downloading from multiple sources
-async function downloadBeatmapWithFallback(beatmapsetId, token) {
-  const sources = [
-    { name: 'osu!', fn: () => downloadFromOsu(beatmapsetId, token) },
-    { name: 'Nerinyan', fn: () => downloadFromNerinyan(beatmapsetId) },
-    { name: 'Chimu', fn: () => downloadFromChimu(beatmapsetId) },
-    { name: 'Beatconnect', fn: () => downloadFromBeatconnect(beatmapsetId) }
-  ];
+async function downloadBeatmapWithFallback(beatmapsetId, token, preferredMirror = 'bancho') {
+  // Build sources list based on preferred mirror
+  let sources = [];
+  
+  if (preferredMirror === 'catboy') {
+    sources = [
+      { name: 'Catboy', fn: () => downloadFromCatboy(beatmapsetId) },
+      { name: 'Nerinyan', fn: () => downloadFromNerinyan(beatmapsetId) },
+      { name: 'Chimu', fn: () => downloadFromChimu(beatmapsetId) },
+      { name: 'Beatconnect', fn: () => downloadFromBeatconnect(beatmapsetId) },
+      { name: 'osu!', fn: () => downloadFromOsu(beatmapsetId, token) }
+    ];
+  } else {
+    sources = [
+      { name: 'osu!', fn: () => downloadFromOsu(beatmapsetId, token) },
+      { name: 'Nerinyan', fn: () => downloadFromNerinyan(beatmapsetId) },
+      { name: 'Chimu', fn: () => downloadFromChimu(beatmapsetId) },
+      { name: 'Beatconnect', fn: () => downloadFromBeatconnect(beatmapsetId) },
+      { name: 'Catboy', fn: () => downloadFromCatboy(beatmapsetId) }
+    ];
+  }
 
   let lastError = null;
 
@@ -124,7 +156,7 @@ async function downloadBeatmapWithFallback(beatmapsetId, token) {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { beatmapsetId } = body;
+    const { beatmapsetId, mirror = 'bancho' } = body;
 
     if (!beatmapsetId) {
       return NextResponse.json({ error: 'beatmapsetId is required' }, { status: 400 });
@@ -145,7 +177,7 @@ export async function POST(request) {
     const token = await getOAuthToken();
 
     // Try to download from multiple sources with fallback
-    const { blob, source } = await downloadBeatmapWithFallback(beatmapsetId, token);
+    const { blob, source } = await downloadBeatmapWithFallback(beatmapsetId, token, mirror);
 
     // Return the blob as a downloadable file
     return new NextResponse(blob, {

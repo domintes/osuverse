@@ -14,6 +14,8 @@ export default function DownloaderPage() {
   const [downloading, setDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState({ current: 0, total: 0, currentBeatmap: '' });
   const [downloadLogs, setDownloadLogs] = useState([]);
+  const [selectedMirror, setSelectedMirror] = useState('bancho'); // 'bancho' or 'catboy'
+  const [beatmapCounts, setBeatmapCounts] = useState({}); // Store counts for both mirrors
 
   const addLog = (message, type = 'info') => {
     setDownloadLogs(prev => [...prev, { message, type, timestamp: new Date().toLocaleTimeString() }]);
@@ -24,12 +26,18 @@ export default function DownloaderPage() {
     
     setSearching(true);
     setSearchResults([]);
+    setBeatmapCounts({});
     try {
       const res = await fetch(`/api/downloader/user-search?query=${encodeURIComponent(searchQuery)}`);
       const data = await res.json();
       
       if (data.users) {
         setSearchResults(data.users);
+        
+        // Fetch beatmap counts for both mirrors
+        for (const user of data.users) {
+          await fetchBeatmapCountsForUser(user.id);
+        }
       } else {
         addLog('No users found', 'error');
       }
@@ -41,13 +49,52 @@ export default function DownloaderPage() {
     }
   };
 
+  const fetchBeatmapCountsForUser = async (userId) => {
+    try {
+      // Fetch from both mirrors to get accurate counts
+      const [banchoRanked, banchoFav, banchoGrave, catboyRanked, catboyGrave] = await Promise.all([
+        fetch(`/api/downloader/user-beatmaps?userId=${userId}&type=ranked`).then(r => r.json()),
+        fetch(`/api/downloader/user-beatmaps?userId=${userId}&type=favourite`).then(r => r.json()),
+        fetch(`/api/downloader/user-beatmaps?userId=${userId}&type=graveyard`).then(r => r.json()),
+        fetch(`/api/downloader/catboy-beatmaps?userId=${userId}&type=ranked`).then(r => r.json()),
+        fetch(`/api/downloader/catboy-beatmaps?userId=${userId}&type=graveyard`).then(r => r.json())
+      ]);
+
+      setBeatmapCounts(prev => ({
+        ...prev,
+        [userId]: {
+          bancho: {
+            ranked: banchoRanked.count || 0,
+            favourite: banchoFav.count || 0,
+            graveyard: banchoGrave.count || 0,
+            rankedIds: new Set((banchoRanked.beatmaps || []).map(b => b.id)),
+            graveyardIds: new Set((banchoGrave.beatmaps || []).map(b => b.id))
+          },
+          catboy: {
+            ranked: catboyRanked.count || 0,
+            favourite: 0, // Catboy doesn't support favourites
+            graveyard: catboyGrave.count || 0,
+            rankedIds: new Set((catboyRanked.beatmaps || []).map(b => b.id)),
+            graveyardIds: new Set((catboyGrave.beatmaps || []).map(b => b.id))
+          }
+        }
+      }));
+    } catch (error) {
+      console.error('Error fetching beatmap counts:', error);
+    }
+  };
+
   const downloadUserBeatmaps = async (userId, type = 'all') => {
     setDownloading(true);
     setDownloadProgress({ current: 0, total: 0, currentBeatmap: '' });
-    addLog(`Starting download of ${type} beatmaps for user ${userId}...`, 'info');
+    addLog(`Starting download of ${type} beatmaps for user ${userId} from ${selectedMirror}...`, 'info');
 
     try {
-      const res = await fetch(`/api/downloader/user-beatmaps?userId=${userId}&type=${type}`);
+      const apiEndpoint = selectedMirror === 'catboy' 
+        ? `/api/downloader/catboy-beatmaps?userId=${userId}&type=${type}`
+        : `/api/downloader/user-beatmaps?userId=${userId}&type=${type}`;
+      
+      const res = await fetch(apiEndpoint);
       const data = await res.json();
       
       if (!data.beatmaps || data.beatmaps.length === 0) {
@@ -72,7 +119,10 @@ export default function DownloaderPage() {
           const downloadRes = await fetch('/api/downloader/download', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ beatmapsetId: beatmap.id })
+            body: JSON.stringify({ 
+              beatmapsetId: beatmap.id,
+              mirror: selectedMirror 
+            })
           });
 
           if (downloadRes.ok) {
@@ -195,6 +245,36 @@ export default function DownloaderPage() {
         {/* User Search Section */}
         <section className="download-section user-section">
           <h2>Search osu! Users</h2>
+          
+          {/* Mirror Selection */}
+          <div className="mirror-selection">
+            <label className="mirror-label">Mirror:</label>
+            <div className="mirror-options">
+              <label className="mirror-option">
+                <input
+                  type="radio"
+                  name="mirror"
+                  value="bancho"
+                  checked={selectedMirror === 'bancho'}
+                  onChange={(e) => setSelectedMirror(e.target.value)}
+                  disabled={downloading}
+                />
+                <span>Bancho (Official)</span>
+              </label>
+              <label className="mirror-option">
+                <input
+                  type="radio"
+                  name="mirror"
+                  value="catboy"
+                  checked={selectedMirror === 'catboy'}
+                  onChange={(e) => setSelectedMirror(e.target.value)}
+                  disabled={downloading}
+                />
+                <span>Catboy.best</span>
+              </label>
+            </div>
+          </div>
+
           <div className="search-panel">
             <div className="search-input-group">
               <input
@@ -218,7 +298,32 @@ export default function DownloaderPage() {
             {/* Search Results */}
             {searchResults.length > 0 && (
               <div className="search-results">
-                {searchResults.map(user => (
+                {searchResults.map(user => {
+                  const counts = beatmapCounts[user.id];
+                  const currentMirrorCounts = counts?.[selectedMirror];
+                  const otherMirror = selectedMirror === 'bancho' ? 'catboy' : 'bancho';
+                  const otherMirrorCounts = counts?.[otherMirror];
+                  
+                  // Calculate unavailable beatmaps (available in other mirror but not in current)
+                  let unavailableRanked = 0;
+                  let unavailableGraveyard = 0;
+                  
+                  if (counts && currentMirrorCounts && otherMirrorCounts) {
+                    // Count beatmaps in other mirror that aren't in current mirror
+                    if (selectedMirror === 'bancho') {
+                      // Catboy has more than Bancho
+                      unavailableRanked = Math.max(0, otherMirrorCounts.ranked - currentMirrorCounts.ranked);
+                      unavailableGraveyard = Math.max(0, otherMirrorCounts.graveyard - currentMirrorCounts.graveyard);
+                    } else {
+                      // Bancho has more than Catboy (some removed from Catboy)
+                      unavailableRanked = Math.max(0, otherMirrorCounts.ranked - currentMirrorCounts.ranked);
+                      unavailableGraveyard = Math.max(0, otherMirrorCounts.graveyard - currentMirrorCounts.graveyard);
+                    }
+                  }
+                  
+                  const totalUnavailable = unavailableRanked + unavailableGraveyard;
+                  
+                  return (
                   <div key={user.id} className="user-result-card">
                     <div className="user-info">
                       <a 
@@ -249,37 +354,43 @@ export default function DownloaderPage() {
                           {user.country?.name || user.country_code}
                         </p>
                         <div className="user-stats">
-                          <span>Ranked Beatmaps: <strong>{user.ranked_beatmapset_count || 0}</strong></span>
-                          <span>Favourite Beatmaps: <strong>{user.favourite_beatmapset_count || 0}</strong></span>
-                          <span>Graveyard Beatmaps: <strong>{user.graveyard_beatmapset_count || 0}</strong></span>
+                          <span>Ranked Beatmaps: <strong>{currentMirrorCounts?.ranked ?? user.ranked_beatmapset_count ?? 0}</strong></span>
+                          <span>Favourite Beatmaps: <strong>{currentMirrorCounts?.favourite ?? user.favourite_beatmapset_count ?? 0}</strong></span>
+                          <span>Graveyard Beatmaps: <strong>{currentMirrorCounts?.graveyard ?? user.graveyard_beatmapset_count ?? 0}</strong></span>
+                          {totalUnavailable > 0 && (
+                            <span className="unavailable-count">
+                              Unavailable on {selectedMirror === 'bancho' ? 'Bancho' : 'Catboy'}: <strong>{totalUnavailable}</strong>
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
                     <div className="download-actions">
                       <button
                         onClick={() => downloadUserBeatmaps(user.id, 'ranked')}
-                        disabled={downloading || !user.ranked_beatmapset_count}
+                        disabled={downloading || !(currentMirrorCounts?.ranked ?? user.ranked_beatmapset_count)}
                         className="download-button ranked-button"
                       >
-                        Download Ranked ({user.ranked_beatmapset_count || 0})
+                        Download Ranked ({currentMirrorCounts?.ranked ?? user.ranked_beatmapset_count ?? 0})
                       </button>
                       <button
                         onClick={() => downloadUserBeatmaps(user.id, 'favourite')}
-                        disabled={downloading || !user.favourite_beatmapset_count}
+                        disabled={downloading || selectedMirror === 'catboy' || !(currentMirrorCounts?.favourite ?? user.favourite_beatmapset_count)}
                         className="download-button favourite-button"
                       >
-                        Download Favourites ({user.favourite_beatmapset_count || 0})
+                        Download Favourites ({currentMirrorCounts?.favourite ?? user.favourite_beatmapset_count ?? 0})
                       </button>
                       <button
                         onClick={() => downloadUserBeatmaps(user.id, 'graveyard')}
-                        disabled={downloading || !user.graveyard_beatmapset_count}
+                        disabled={downloading || !(currentMirrorCounts?.graveyard ?? user.graveyard_beatmapset_count)}
                         className="download-button graveyard-button"
                       >
-                        Download Graveyard ({user.graveyard_beatmapset_count || 0})
+                        Download Graveyard ({currentMirrorCounts?.graveyard ?? user.graveyard_beatmapset_count ?? 0})
                       </button>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
