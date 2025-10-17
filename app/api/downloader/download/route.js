@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 // Rate limiting storage (in-memory, you might want to use Redis in production)
 const downloadQueue = new Map();
-const RATE_LIMIT_DELAY = 1000; // 1 second between downloads
+const RATE_LIMIT_DELAY = 1500; // 1.5 seconds between downloads to be more respectful
 const MAX_RETRIES = 3;
 
 // Helper to get OAuth token

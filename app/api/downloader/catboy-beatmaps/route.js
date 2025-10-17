@@ -1,4 +1,41 @@
 import { NextResponse } from 'next/server';
+// In-memory cache for catboy beatmaps
+const catboyBeatmapsCache = new Map();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const PAGE_LIMIT = 100;
+const RATE_GUARD_INTERVAL = 400;
+
+let lastOsuRequest = 0;
+
+async function waitForRateLimit() {
+  const now = Date.now();
+  const elapsed = now - lastOsuRequest;
+
+  if (elapsed < RATE_GUARD_INTERVAL) {
+    await new Promise(resolve => setTimeout(resolve, RATE_GUARD_INTERVAL - elapsed));
+  }
+
+  lastOsuRequest = Date.now();
+}
+
+function getCacheKey(userId, type) {
+  return `catboy-${userId}-${type}`;
+}
+
+function getCachedData(cacheKey) {
+  const cached = catboyBeatmapsCache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.data;
+  }
+  return null;
+}
+
+function setCachedData(cacheKey, data) {
+  catboyBeatmapsCache.set(cacheKey, {
+    data,
+    timestamp: Date.now()
+  });
+}
 
 // Helper to get OAuth token for fallback to osu! API
 async function getOAuthToken() {
@@ -25,26 +62,52 @@ export async function GET(request) {
       return NextResponse.json({ error: 'userId parameter is required' }, { status: 400 });
     }
 
+    const cacheKey = getCacheKey(userId, type);
+    
+    // Check cache first
+    const cachedData = getCachedData(cacheKey);
+    if (cachedData) {
+      console.log(`Using cached catboy data for user ${userId}, type ${type}`);
+      return NextResponse.json({ 
+        ...cachedData, 
+        cached: true 
+      });
+    }
+
     // Catboy.best doesn't have a direct user beatmaps endpoint like osu! API
     // We'll need to use osu! API to get the beatmap IDs, then check availability on catboy
     const token = await getOAuthToken();
     let allBeatmaps = [];
 
-    // Fetch from osu! API first to get beatmap list
+    // Fetch from osu! API first to get beatmap list with pagination
     if (type === 'ranked' || type === 'all') {
       try {
-        const rankedUrl = `https://osu.ppy.sh/api/v2/users/${userId}/beatmapsets/ranked?limit=100`;
-        const rankedResponse = await fetch(rankedUrl, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
-        });
+        let offset = 0;
+        let hasMoreResults = true;
+        
+        while (hasMoreResults) {
+          await waitForRateLimit(); // Respect rate limits
+          const rankedUrl = `https://osu.ppy.sh/api/v2/users/${userId}/beatmapsets/ranked?limit=${PAGE_LIMIT}&offset=${offset}`;
+          const rankedResponse = await fetch(rankedUrl, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          });
 
-        if (rankedResponse.ok) {
-          const rankedData = await rankedResponse.json();
-          allBeatmaps = [...allBeatmaps, ...rankedData];
+          if (rankedResponse.ok) {
+            const rankedData = await rankedResponse.json();
+            if (rankedData.length > 0) {
+              allBeatmaps = [...allBeatmaps, ...rankedData];
+              offset += rankedData.length;
+              hasMoreResults = rankedData.length === PAGE_LIMIT;
+            } else {
+              hasMoreResults = false;
+            }
+          } else {
+            hasMoreResults = false;
+          }
         }
       } catch (error) {
         console.error('Error fetching ranked beatmaps:', error);
@@ -53,18 +116,32 @@ export async function GET(request) {
 
     if (type === 'graveyard' || type === 'all') {
       try {
-        const graveyardUrl = `https://osu.ppy.sh/api/v2/users/${userId}/beatmapsets/graveyard?limit=100`;
-        const graveyardResponse = await fetch(graveyardUrl, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
-        });
+        let offset = 0;
+        let hasMoreResults = true;
+        
+        while (hasMoreResults) {
+          await waitForRateLimit(); // Respect rate limits
+          const graveyardUrl = `https://osu.ppy.sh/api/v2/users/${userId}/beatmapsets/graveyard?limit=${PAGE_LIMIT}&offset=${offset}`;
+          const graveyardResponse = await fetch(graveyardUrl, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          });
 
-        if (graveyardResponse.ok) {
-          const graveyardData = await graveyardResponse.json();
-          allBeatmaps = [...allBeatmaps, ...graveyardData];
+          if (graveyardResponse.ok) {
+            const graveyardData = await graveyardResponse.json();
+            if (graveyardData.length > 0) {
+              allBeatmaps = [...allBeatmaps, ...graveyardData];
+              offset += graveyardData.length;
+              hasMoreResults = graveyardData.length === PAGE_LIMIT;
+            } else {
+              hasMoreResults = false;
+            }
+          } else {
+            hasMoreResults = false;
+          }
         }
       } catch (error) {
         console.error('Error fetching graveyard beatmaps:', error);
@@ -73,21 +150,69 @@ export async function GET(request) {
 
     if (type === 'favourite') {
       try {
-        const favouriteUrl = `https://osu.ppy.sh/api/v2/users/${userId}/beatmapsets/favourite?limit=100`;
-        const favouriteResponse = await fetch(favouriteUrl, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
-        });
+        let offset = 0;
+        let hasMoreResults = true;
+        
+        while (hasMoreResults) {
+          await waitForRateLimit(); // Respect rate limits
+          const favouriteUrl = `https://osu.ppy.sh/api/v2/users/${userId}/beatmapsets/favourite?limit=${PAGE_LIMIT}&offset=${offset}`;
+          const favouriteResponse = await fetch(favouriteUrl, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          });
 
-        if (favouriteResponse.ok) {
-          const favouriteData = await favouriteResponse.json();
-          allBeatmaps = [...allBeatmaps, ...favouriteData];
+          if (favouriteResponse.ok) {
+            const favouriteData = await favouriteResponse.json();
+            if (favouriteData.length > 0) {
+              allBeatmaps = [...allBeatmaps, ...favouriteData];
+              offset += favouriteData.length;
+              hasMoreResults = favouriteData.length === PAGE_LIMIT;
+            } else {
+              hasMoreResults = false;
+            }
+          } else {
+            hasMoreResults = false;
+          }
         }
       } catch (error) {
         console.error('Error fetching favourite beatmaps:', error);
+      }
+    }
+
+    if (type === 'loved' || type === 'all') {
+      try {
+        let offset = 0;
+        let hasMoreResults = true;
+
+        while (hasMoreResults) {
+          await waitForRateLimit();
+          const lovedUrl = `https://osu.ppy.sh/api/v2/users/${userId}/beatmapsets/loved?limit=${PAGE_LIMIT}&offset=${offset}`;
+          const lovedResponse = await fetch(lovedUrl, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          });
+
+          if (lovedResponse.ok) {
+            const lovedData = await lovedResponse.json();
+            if (lovedData.length > 0) {
+              allBeatmaps = [...allBeatmaps, ...lovedData];
+              offset += lovedData.length;
+              hasMoreResults = lovedData.length === PAGE_LIMIT;
+            } else {
+              hasMoreResults = false;
+            }
+          } else {
+            hasMoreResults = false;
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching loved beatmaps:', error);
       }
     }
 
