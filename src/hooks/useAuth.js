@@ -18,8 +18,7 @@ export function useAuth() {
                 const data = await res.json();
                 setToken(data.access_token);
             } catch (err) {
-                console.error("Auth error:", err.message);
-                // Nie ustawiamy tokenu w przypadku błędu
+                console.log("Auth error:", err.message);
             }
         };
 
